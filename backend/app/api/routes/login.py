@@ -3,14 +3,14 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import EmailStr
 from sqlalchemy import select
 
 from backend.app.api.deps import CurrentUser, SessionDep
 from backend.app.core import security
 from backend.app.core.config import settings
-from backend.app.utils.security import (
-    generate_password_reset_token, verify_password_reset_token
-)
+from backend.app.utils.emails import generate_reset_password_email, send_email
+from backend.app.utils.security import generate_password_reset_token, verify_password_reset_token
 import backend.app.crud.user as user_crud
 from backend.app.db.models.user import User
 from backend.app.db.schemas import Token, Message, NewPassword
@@ -33,18 +33,18 @@ async def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
-        access_token=await security.create_access_token(
+        access_token=security.create_access_token(
             user.id, expires_delta=access_token_expires
         )
     )
 
 
 @router.post("/password-recovery/{email}")
-async def recover_password(email: str, session: SessionDep) -> Message:
+async def recover_password(email: EmailStr, session: SessionDep) -> Message:
     """
     Password Recovery
     """
-    user = await user_crud.get_user_by_email(session=session, email=email)
+    user = await user_crud.get_user(session=session, email=email)
 
     if not user:
         raise HTTPException(
@@ -84,7 +84,7 @@ async def reset_password(session: SessionDep, body: NewPassword) -> Message:
             detail="The user with this email does not exist in the system.",
         )
 
-    hashed_password = await security.get_password_hash(password=body.new_password)
+    hashed_password = security.get_password_hash(password=body.new_password)
     user.hashed_password = hashed_password
 
     session.add(user)

@@ -50,7 +50,9 @@ class Settings(BaseSettings):
     
     FRONTEND_HOST: str
     
-    
+    # consts
+    DEFAULT_QUERY_LIMIT: int
+    MIN_PASSWORD_LENGTH: int
 
     class Config:
         env_file = ".env"

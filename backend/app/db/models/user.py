@@ -30,8 +30,6 @@ class UserRegister(SQLModel):
 
 class UserUpdate(UserBase):
     email: Optional[EmailStr] = Field(default=None, max_length=255)
-    updated_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now)
 
 
 class UserUpdateMe(UserBase):
