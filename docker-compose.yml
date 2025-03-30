@@ -19,8 +19,8 @@ services:
       retries: 10
       start_period: 10s
 
-  api:
-    container_name: api
+  backend:
+    container_name: backend
     build:
       context: .
       dockerfile: ./backend/Dockerfile
