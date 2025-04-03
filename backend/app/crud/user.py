@@ -65,8 +65,6 @@ async def update_user(session: AsyncSession, db_user: User, user_in: User) -> Us
         else:
             setattr(db_user, key, value)
 
-    db_user.updated_at = func.now()
-
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)

@@ -69,7 +69,7 @@ async def update_user_me(
 
 @router.delete("/me", response_model=Message)
 async def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
-    """
+    """`
     Delete the current authenticated user.
     """
     await user_crud.delete_user(session=session, user_id=current_user.id)
@@ -113,7 +113,11 @@ async def update_user(
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to update this user")
     
-    user = await user_crud.update_user(session=session, user_id=user_id, user_in=user_in)
+    db_user = await user_crud.get_user(session=session, id=user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user = await user_crud.update_user(session=session, db_user=db_user, user_in=user_in)
     return user
 
 

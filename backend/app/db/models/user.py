@@ -1,19 +1,41 @@
-import datetime
-from typing import List, Optional
-import uuid
+from datetime import datetime
+from enum import Enum
+from typing import TYPE_CHECKING, List, Optional
+from uuid import UUID, uuid4
 from pydantic import EmailStr
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from backend.app.db.models.admin_action import AdminAction
+
+
+class RoleEnum(str, Enum):
+    user = "user"
+    moderator = "moderator"
+    admin = "admin"
+
+
+class StatusEnum(str, Enum):
+    active = "active"
+    blocked = "blocked"
 
 
 class UserBase(SQLModel):
-    name: str = Field(max_length=255, nullable=True)
-    surname: str = Field(max_length=255, nullable=True)
-    email: EmailStr = Field(max_length=255, nullable=True)
-    patronymic: str = Field(max_length=255, nullable=True)
-    updated_at: Optional[datetime.datetime] = Field(
-        default_factory=datetime.datetime.now, nullable=True)
-    created_at: Optional[datetime.datetime] = Field(
-        default_factory=datetime.datetime.now, nullable=True)
+    email: EmailStr = Field(max_length=255)
+    name: str = Field(max_length=255)
+    surname: str = Field(max_length=255)
+    patronymic: str = Field(max_length=255)
+    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+
+
+class User(UserBase, table=True):
+    __tablename__ = "users"
+    id: Optional[UUID] = Field(primary_key=True, default_factory=uuid4)
+    hashed_password: Optional[str] = Field(default=None, nullable=True)
+
+    admin_actions: List["AdminAction"] = Relationship(back_populates="admin", sa_relationship_kwargs={"foreign_keys": "AdminAction.admin_id"})
+    targeted_actions: List["AdminAction"] = Relationship(back_populates="target_user", sa_relationship_kwargs={"foreign_keys": "AdminAction.target_user_id"})
 
 
 class UserCreate(UserBase):
@@ -34,21 +56,13 @@ class UserUpdate(UserBase):
 
 class UserUpdateMe(UserBase):
     email: Optional[EmailStr] = Field(default=None, max_length=255)
-    updated_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now)
 
 
 class UserPublic(UserBase):
-    id: uuid.UUID
-
-
-class User(UserBase, table=True):
-    __tablename__ = 'users'
-    id: Optional[uuid.UUID] = Field(
-        primary_key=True, default_factory=uuid.uuid4)
-    hashed_password: Optional[str] = Field(default=None, nullable=True)
+    id: UUID
 
 
 class UsersPublic(SQLModel):
     data: List[UserPublic]
     count: int
+    
