@@ -20,27 +20,38 @@ class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
     email: str = Field(unique=True, nullable=False, max_length=255)
     contact_info: Optional[str] = None
-    status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
 
 
 class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
+    status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
+    
     created_at: datetime = Field(default_factory=datetime.now)
 
-    admin_actions: List["AdminAction"] = Relationship(back_populates="target_org", sa_relationship_kwargs={"foreign_keys": "AdminAction.target_org_id"})
+    admin_actions: List["AdminAction"] = Relationship(
+        back_populates="target_org",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.target_org_id"
+        }
+    )
 
 
 class OrganizationCreate(OrganizationBase):
     pass
 
 
-class OrganizationUpdate(SQLModel):
-    contact_info: Optional[str] = None
+class OrganizationUpdate(OrganizationBase):
     status: Optional[OrgStatusEnum] = None
 
 
 class OrganizationPublic(OrganizationBase):
     id: UUID
+    status: OrgStatusEnum
     created_at: datetime
+    
+
+class OrganizationsPublic(SQLModel):
+    data: List[OrganizationPublic]
+    count: int
     

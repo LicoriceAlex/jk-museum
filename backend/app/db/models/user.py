@@ -25,17 +25,29 @@ class UserBase(SQLModel):
     email: EmailStr = Field(max_length=255)
     name: str = Field(max_length=255)
     surname: str = Field(max_length=255)
+    status: StatusEnum = Field(default=StatusEnum.active)
+    role: RoleEnum = Field(default=RoleEnum.user)
     patronymic: str = Field(max_length=255)
-    created_at: Optional[datetime] = Field(default_factory=datetime.now)
 
 
 class User(UserBase, table=True):
     __tablename__ = "users"
     id: Optional[UUID] = Field(primary_key=True, default_factory=uuid4)
     hashed_password: Optional[str] = Field(default=None, nullable=True)
+    created_at: Optional[datetime] = Field(default_factory=datetime.now)
 
-    admin_actions: List["AdminAction"] = Relationship(back_populates="admin", sa_relationship_kwargs={"foreign_keys": "AdminAction.admin_id"})
-    targeted_actions: List["AdminAction"] = Relationship(back_populates="target_user", sa_relationship_kwargs={"foreign_keys": "AdminAction.target_user_id"})
+    admin_actions: List["AdminAction"] = Relationship(
+        back_populates="admin",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.admin_id"
+        }
+    )
+    targeted_actions: List["AdminAction"] = Relationship(
+        back_populates="target_user",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.target_user_id"
+        }
+    )
 
 
 class UserCreate(UserBase):
@@ -48,6 +60,7 @@ class UserRegister(SQLModel):
     name: str
     surname: str
     patronymic: str
+    role: Optional[RoleEnum] = Field(default=RoleEnum.user)
 
 
 class UserUpdate(UserBase):
@@ -60,6 +73,7 @@ class UserUpdateMe(UserBase):
 
 class UserPublic(UserBase):
     id: UUID
+    created_at: Optional[datetime] = Field(default_factory=datetime.now)
 
 
 class UsersPublic(SQLModel):

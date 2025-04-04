@@ -15,6 +15,7 @@ class ActionTypeEnum(str, Enum):
     unblock_user = "unblock_user"
     reset_password = "reset_password"
 
+
 class AdminActionBase(SQLModel):
     action_type: ActionTypeEnum
 
@@ -27,9 +28,24 @@ class AdminAction(AdminActionBase, table=True):
     target_org_id: Optional[UUID] = Field(foreign_key="organizations.id")
     created_at: datetime = Field(default_factory=datetime.now)
 
-    admin: "User" = Relationship(back_populates="admin_actions", sa_relationship_kwargs={"foreign_keys": "AdminAction.admin_id"})
-    target_user: Optional["User"] = Relationship(back_populates="targeted_actions", sa_relationship_kwargs={"foreign_keys": "AdminAction.target_user_id"})
-    target_org: Optional["Organization"] = Relationship(back_populates="admin_actions", sa_relationship_kwargs={"foreign_keys": "AdminAction.target_org_id"})
+    admin: "User" = Relationship(
+        back_populates="admin_actions",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.admin_id"
+        }
+    )
+    target_user: Optional["User"] = Relationship(
+        back_populates="targeted_actions",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.target_user_id"
+        }
+    )
+    target_org: Optional["Organization"] = Relationship(
+        back_populates="admin_actions",
+        sa_relationship_kwargs={
+            "foreign_keys": "AdminAction.target_org_id"
+        }
+    )
 
 
 class AdminActionCreate(AdminActionBase):
