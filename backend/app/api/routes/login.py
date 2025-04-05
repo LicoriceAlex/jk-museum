@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlalchemy import select
 
-from backend.app.api.deps.common import SessionDep
+from backend.app.api.dependencies.common import SessionDep
 from backend.app.core import security
 from backend.app.core.config import settings
 from backend.app.utils.emails import generate_reset_password_email, send_email

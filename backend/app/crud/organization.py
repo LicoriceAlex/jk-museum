@@ -32,6 +32,27 @@ async def create_organization(
     return organization
 
 
+async def update_organization(
+    session: AsyncSession,
+    organization: Organization,
+    organization_in: OrganizationCreate
+) -> Organization:
+    for key, value in organization_in.model_dump().items():
+        setattr(organization, key, value)
+    session.add(organization)
+    await session.commit()
+    await session.refresh(organization)
+    return organization
+
+
+async def delete_organization(
+    session: AsyncSession,
+    organization: Organization
+) -> None:
+    await session.delete(organization)
+    await session.commit()
+
+
 async def get_organizations(
     session: AsyncSession,
     skip: int = 0,

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 
-from backend.app.api.deps.common import SessionDep
-from backend.app.api.deps.organizations import OrgnizationOr404
+from backend.app.api.dependencies.common import SessionDep
+from backend.app.api.dependencies.organizations import OrgnizationOr404
 from backend.app.core.config import settings
 from backend.app.crud import organization as organization_crud
 from backend.app.db.models.organization import (

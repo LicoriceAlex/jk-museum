@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from backend.app.api.deps.users import (
+from backend.app.api.dependencies.users import (
     UserOr404,
     CurrentUser,
     get_current_admin_or_moderator,
@@ -10,7 +10,7 @@ from backend.app.api.deps.users import (
     verify_role_permission,
 )
 from backend.app.crud import user as user_crud
-from backend.app.api.deps.common import (
+from backend.app.api.dependencies.common import (
     SessionDep,
 )
 from backend.app.core.config import settings
