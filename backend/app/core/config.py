@@ -1,4 +1,4 @@
-from pydantic import computed_field, field_validator
+from pydantic import ConfigDict, computed_field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_PORT: int
     
+    # Test database settings
+    TEST_POSTGRES_SERVER: str
+    TEST_POSTGRES_USER: str
+    TEST_POSTGRES_PASSWORD: str
+    TEST_POSTGRES_DB: str
+    TEST_POSTGRES_PORT: int
+    
     @computed_field
     @property
     def async_db(self) -> str:
@@ -35,6 +42,11 @@ class Settings(BaseSettings):
     @property
     def sync_db(self) -> str:
         return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}'
+
+    @computed_field
+    @property
+    def test_db(self) -> str:
+        return f'postgresql+asyncpg://{self.TEST_POSTGRES_USER}:{self.TEST_POSTGRES_PASSWORD}@{self.TEST_POSTGRES_SERVER}:{self.TEST_POSTGRES_PORT}/{self.TEST_POSTGRES_DB}'
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int
@@ -54,8 +66,10 @@ class Settings(BaseSettings):
     DEFAULT_QUERY_LIMIT: int
     MIN_PASSWORD_LENGTH: int
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = ConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="allow"
+    )
         
 settings = Settings()

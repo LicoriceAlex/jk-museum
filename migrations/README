@@ -1,1 +1,5 @@
-Generic single-database configuration.
+# HOWTO
+```
+docker-compose up -d postgres
+docker-compose run --rm --build migrations alembic revision --autogenerate -m "migrate message"
+```

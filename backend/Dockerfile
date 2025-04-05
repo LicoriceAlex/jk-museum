@@ -1,4 +1,4 @@
-# Stage 1: Сборка зависимостей
+# Сборка зависимостей
 FROM python:3.12-slim AS builder
 WORKDIR /app
 
@@ -18,7 +18,7 @@ COPY backend/app /app/backend/app
 COPY migrations /app/migrations
 COPY .env /app/
 
-# Stage 2: Миграции
+# Миграции
 FROM python:3.12-slim AS migrations
 WORKDIR /app
 
@@ -33,7 +33,7 @@ ENV PYTHONPATH="/app:/app/backend"
 ENV ALEMBIC_CONFIG=/app/migrations/alembic.ini
 CMD ["alembic", "upgrade", "head"]
 
-# Stage 3: Development
+# Development
 FROM python:3.12-slim AS dev
 WORKDIR /app
 
@@ -47,7 +47,7 @@ ENV PYTHONPATH="/app:/app/backend"
 ENV ALEMBIC_CONFIG=/app/migrations/alembic.ini
 CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
-# Stage 4: Production
+# Production
 FROM python:3.12-slim AS prod
 WORKDIR /app
 
@@ -60,3 +60,20 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app:/app/backend"
 ENV ALEMBIC_CONFIG=/app/migrations/alembic.ini
 CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
+# Tests
+FROM python:3.12-slim AS test
+WORKDIR /app
+
+COPY --from=builder /app/.venv /app/.venv
+
+COPY backend /app/backend
+COPY tests /app/tests
+COPY .env /app/
+COPY pytest.ini /app/
+
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app:/app/backend"
+CMD ["pytest", "-v", "/app/tests"]
