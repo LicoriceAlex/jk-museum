@@ -1,0 +1,43 @@
+.authLayout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+}
+.authLayout .leftSection {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+.authLayout .rightSection {
+  display: flex;
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(218, 215, 205, 0.9);
+  position: relative;
+}
+.authLayout .logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 2rem;
+}
+.authLayout .logoContainer p {
+  font-size: 52px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+.authLayout .museumSvg {
+  width: 80px;
+  height: 80px;
+}
+
+/*# sourceMappingURL=AuthLayout.module.css.map */

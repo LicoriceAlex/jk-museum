@@ -1,0 +1,12 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300..700;1,300..700&family=Zen+Old+Mincho&display=swap");
+/* Базовые глобальные стили */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Cormorant Infant", serif;
+  background-color: #f8f8f8;
+}
+
+/*# sourceMappingURL=global.css.map */
