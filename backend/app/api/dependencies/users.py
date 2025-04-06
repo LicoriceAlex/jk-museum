@@ -5,7 +5,7 @@ from jwt.exceptions import InvalidTokenError
 import jwt
 from pydantic import ValidationError
 
-from backend.app.api.deps.common import SessionDep, TokenDep
+from backend.app.api.dependencies.common import SessionDep, TokenDep
 from backend.app.core import security
 from backend.app.core.config import settings
 from backend.app.crud import user as user_crud
@@ -90,7 +90,7 @@ async def verify_user_ownership(
             status_code=403,
             detail="Not authorized to access this resource"
         )
-        
+
 async def verify_role_permission(
     current_user: CurrentUser,
     user: User

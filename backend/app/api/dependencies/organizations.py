@@ -2,7 +2,7 @@ from typing import Annotated
 import uuid
 
 from fastapi import Depends, HTTPException
-from backend.app.api.deps.common import SessionDep
+from backend.app.api.dependencies.common import SessionDep
 from backend.app.db.models.organization import Organization
 from backend.app.crud import organization as organization_crud
 
