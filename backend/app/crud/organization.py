@@ -48,9 +48,10 @@ async def update_organization(
 async def delete_organization(
     session: AsyncSession,
     organization: Organization
-) -> None:
+) -> Organization:
     await session.delete(organization)
     await session.commit()
+    return organization
 
 
 async def get_organizations(

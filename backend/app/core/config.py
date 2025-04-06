@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def test_db(self) -> str:
+        # return f"sqlite+aiosqlite:///:memory:"
         return f'postgresql+asyncpg://{self.TEST_POSTGRES_USER}:{self.TEST_POSTGRES_PASSWORD}@{self.TEST_POSTGRES_SERVER}:{self.TEST_POSTGRES_PORT}/{self.TEST_POSTGRES_DB}'
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int

@@ -24,4 +24,6 @@ dependencies = [
     "pytest>=8.3.5",
     "pytest-asyncio>=0.26.0",
     "greenlet>=3.1.1",
+    "bcrypt>=4.3.0",
+    "aiosqlite>=0.21.0",
 ]

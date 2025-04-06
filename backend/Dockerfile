@@ -73,7 +73,6 @@ COPY tests /app/tests
 COPY .env /app/
 COPY pytest.ini /app/
 
-
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app:/app/backend"
 CMD ["pytest", "-v", "/app/tests"]

@@ -3,6 +3,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, List, Optional
 from uuid import UUID, uuid4
 
+from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -18,7 +19,7 @@ class OrgStatusEnum(str, Enum):
 
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
-    email: str = Field(unique=True, nullable=False, max_length=255)
+    email: EmailStr = Field(unique=True, nullable=False, max_length=255)
     contact_info: Optional[str] = None
 
 
