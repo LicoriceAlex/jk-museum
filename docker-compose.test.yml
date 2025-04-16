@@ -1,3 +1,4 @@
+
 services:
   postgres-test:
     image: postgres:16-alpine
@@ -27,3 +28,6 @@ services:
     depends_on:
       postgres-test:
         condition: service_healthy
+        
+include:
+  - docker-compose.yml
