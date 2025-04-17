@@ -7,8 +7,10 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 
+
 if TYPE_CHECKING:
     from backend.app.db.models.admin_action import AdminAction
+    from backend.app.db.models.exhibit import Exhibit
     
     
 class OrgStatusEnum(str, Enum):
@@ -35,6 +37,9 @@ class Organization(OrganizationBase, table=True):
         sa_relationship_kwargs={
             "foreign_keys": "AdminAction.target_org_id"
         }
+    )
+    exhibits: Optional[List["Exhibit"]] = Relationship(
+        back_populates="organization"
     )
 
 

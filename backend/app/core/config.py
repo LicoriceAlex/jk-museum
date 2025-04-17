@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     TEST_POSTGRES_DB: str
     TEST_POSTGRES_PORT: int
     
+    # Minio settings
+    MINIO_ACCESS_KEY: str
+    MINIO_SECRET_KEY: str
+    MINIO_ENDPOINT: str
+    MINIO_BUCKET: str
+    
     @computed_field
     @property
     def async_db(self) -> str:
