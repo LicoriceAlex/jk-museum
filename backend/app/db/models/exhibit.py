@@ -22,7 +22,7 @@ class ExhibitBase(SQLModel):
     creation_date: datetime.date = Field(default_factory=datetime.date.today)
     description: str = Field(max_length=255)
     exhibit_type: ExhibitType = Field(default=ExhibitType.other, nullable=False)
-    image_url: str = Field(max_length=255, nullable=False)
+    image_key: str = Field(max_length=255, nullable=False)
     
 
 class Exhibit(ExhibitBase, table=True):

@@ -2,7 +2,8 @@ from fastapi import APIRouter
 
 from backend.app.api.routes import (
     users, login, healthcheck,
-    organizations, exhibits
+    organizations, exhibits,
+    files
 )
 
 
@@ -24,5 +25,10 @@ api_router.include_router(
     exhibits.router,
     tags=["exhibits"],
     prefix="/exhibits"
+)
+api_router.include_router(
+    files.router,
+    tags=["files"],
+    prefix="/files"
 )
 api_router.include_router(healthcheck.router)

@@ -30,6 +30,25 @@ services:
     depends_on:
       - db
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"  # MinIO API
+      - "9001:9001"  # MinIO Console
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   backend:
     container_name: backend
     build:
@@ -38,6 +57,8 @@ services:
       target: prod
     depends_on:
       db:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     ports:
       - "8000:8000"
@@ -84,3 +105,4 @@ services:
 
 volumes:
   postgres_data:
+  minio_data:
