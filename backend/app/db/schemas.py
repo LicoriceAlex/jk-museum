@@ -26,3 +26,8 @@ class UpdatePassword(SQLModel):
 
 class FilePath(SQLModel):
     file_path: str
+    
+    
+class FileUploadResponse(SQLModel):
+    object_key: str
+    file_url: str
