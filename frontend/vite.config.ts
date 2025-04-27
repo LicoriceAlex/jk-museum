@@ -23,7 +23,7 @@ export default defineConfig({
     proxy: {
       // Пример прокси для API (если нужно)
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8000',
         changeOrigin: true
       },
       fs: {
