@@ -17,18 +17,21 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5173,
-    // УБЕРИТЕ middlewareMode: true, если не используете собственный сервер
-    // middlewareMode предназначен для интеграции с Express/Node.js сервером
+    host: true,
+    port: 3000,
+    strictPort: true,
+    watch: {
+      usePolling: true,
+      interval: 100
+    },
     proxy: {
-      // Пример прокси для API (если нужно)
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true
-      },
-      fs: {
-        allow: ['..'] // Разрешает доступ к родительским директориям
       }
+    },
+    fs: {
+      allow: ['..']
     }
   }
 })

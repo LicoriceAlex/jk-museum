@@ -1,0 +1,90 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.card {
+  background-color: #E9E8DF;
+  overflow: hidden;
+  height: 320px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.imageContainer {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: #1A2620;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: rgba(233, 232, 223, 0.8); /* светлая полупрозрачная подложка */
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.titleOverlay {
+  margin: 0;
+  color: #1A2620;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* ограничение в 2 строки */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: Cormorant SC, serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0px;
+}
+
+.viewButtonOverlay {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #1A2620;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  font-family: Cormorant SC, serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0px;
+}
+.viewButtonOverlay::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background-color: #1A2620;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.viewButtonOverlay:hover {
+  opacity: 0.8;
+}
+
+/*# sourceMappingURL=ExhibitCard.module.css.map */
