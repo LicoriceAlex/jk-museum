@@ -1,5 +1,10 @@
-# HOWTO
+# HOWTO GENERATE MIGRATIONS FILE
 ```
-docker-compose up -d postgres
+docker-compose up -d db
 docker-compose run --rm --build migrations alembic revision --autogenerate -m "migrate message"
+```
+
+# HOWTO RUN TESTS
+```
+docker-compose -f docker-compose.test.yml up -d --no-deps --build
 ```

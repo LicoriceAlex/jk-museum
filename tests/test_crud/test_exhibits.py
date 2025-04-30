@@ -37,7 +37,7 @@ async def test_exhibit(db_session: AsyncSession, test_organization) -> Exhibit:
         title=TEST_EXHIBIT_TITLE,
         author=TEST_EXHIBIT_AUTHOR,
         description=TEST_EXHIBIT_DESCRIPTION,
-        image_url=TEST_EXHIBIT_IMAGE_URL,
+        image_key=TEST_EXHIBIT_IMAGE_URL,
         exhibit_type=TEST_EXHIBIT_TYPE,
         organization_id=test_organization.id
     )
@@ -50,7 +50,7 @@ async def test_create_exhibit(db_session: AsyncSession, test_organization):
         title=TEST_EXHIBIT_TITLE,
         author=TEST_EXHIBIT_AUTHOR,
         description=TEST_EXHIBIT_DESCRIPTION,
-        image_url=TEST_EXHIBIT_IMAGE_URL,
+        image_key=TEST_EXHIBIT_IMAGE_URL,
         exhibit_type=TEST_EXHIBIT_TYPE,
         organization_id=test_organization.id
     )
@@ -61,7 +61,7 @@ async def test_create_exhibit(db_session: AsyncSession, test_organization):
     assert created_exhibit.title == TEST_EXHIBIT_TITLE
     assert created_exhibit.author == TEST_EXHIBIT_AUTHOR
     assert created_exhibit.description == TEST_EXHIBIT_DESCRIPTION
-    assert created_exhibit.image_url == TEST_EXHIBIT_IMAGE_URL
+    assert created_exhibit.image_key == TEST_EXHIBIT_IMAGE_URL
     assert created_exhibit.exhibit_type == TEST_EXHIBIT_TYPE
     assert created_exhibit.organization_id == test_organization.id
     assert created_exhibit.created_at is not None
@@ -76,7 +76,7 @@ async def test_get_exhibit(db_session: AsyncSession, test_exhibit):
     assert retrieved_exhibit.title == TEST_EXHIBIT_TITLE
     assert retrieved_exhibit.author == TEST_EXHIBIT_AUTHOR
     assert retrieved_exhibit.description == TEST_EXHIBIT_DESCRIPTION
-    assert retrieved_exhibit.image_url == TEST_EXHIBIT_IMAGE_URL
+    assert retrieved_exhibit.image_key == TEST_EXHIBIT_IMAGE_URL
     assert retrieved_exhibit.exhibit_type == TEST_EXHIBIT_TYPE
 
 
@@ -86,7 +86,7 @@ async def test_update_exhibit(db_session: AsyncSession, test_exhibit):
         title=UPDATED_EXHIBIT_TITLE,
         author=UPDATED_EXHIBIT_AUTHOR,
         description=TEST_EXHIBIT_DESCRIPTION,
-        image_url=TEST_EXHIBIT_IMAGE_URL,
+        image_key=TEST_EXHIBIT_IMAGE_URL,
         exhibit_type=ExhibitType.sculpture,
         organization_id=test_exhibit.organization_id
     )
@@ -117,7 +117,7 @@ async def test_get_exhibits(db_session: AsyncSession, test_organization, test_ex
         title=TEST_2_EXHIBIT_TITLE,
         author=TEST_2_EXHIBIT_AUTHOR,
         description=TEST_EXHIBIT_DESCRIPTION,
-        image_url=TEST_EXHIBIT_IMAGE_URL,
+        image_key=TEST_EXHIBIT_IMAGE_URL,
         exhibit_type=ExhibitType.sculpture,
         organization_id=test_organization.id
     )

@@ -1,11 +1,9 @@
-import asyncio
 import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from backend.app.core.config import settings
-from backend.app.db.models import Organization, User, AdminAction
 
 
 @pytest_asyncio.fixture(scope="function")
