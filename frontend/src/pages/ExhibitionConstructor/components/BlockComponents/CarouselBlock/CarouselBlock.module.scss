@@ -1,0 +1,194 @@
+// components/BlockComponents/CarouselBlock.module.scss
+
+.block {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #F8F5EE; // Цвет фона, как на ваших макетах
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.carouselWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; // Важно, чтобы скрыть лишние части слайдов
+}
+
+.carouselContainer {
+  flex-grow: 1;
+  overflow: hidden; // Скрывает части слайдов, выходящие за пределы контейнера
+  width: 100%; // Контейнер для отображаемых слайдов
+  display: flex;
+  justify-content: center; // Центрирует текущий слайд
+}
+
+.slides {
+  display: flex;
+  align-items: center;
+  // Не используем transition на .slides напрямую, так как мы будем управлять позицией через transform
+  // Вместо этого, можно применить transition к отдельным .slide элементам
+}
+
+.slide {
+  flex-shrink: 0; // Запрещаем слайдам сжиматься
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 10px; // Пространство между слайдами
+
+  &.prev, &.next {
+    width: 25%; // Пример ширины для соседних слайдов
+    opacity: 0.5; // Делаем соседние слайды менее заметными
+    transform: scale(0.85); // Уменьшаем соседние слайды
+    z-index: 1;
+  }
+
+  &.current {
+    width: 50%; // Пример ширины для центрального (текущего) слайда
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2; // Текущий слайд поверх остальных
+  }
+
+  // Медиа-запросы для адаптивности
+  @media (max-width: 768px) {
+    &.prev, &.next {
+      width: 20%;
+    }
+    &.current {
+      width: 60%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    &.prev, &.next {
+      width: 15%; // Или полностью скрыть, если экран слишком мал
+      // display: none;
+    }
+    &.current {
+      width: 70%;
+    }
+  }
+}
+
+.imageWrapper {
+  width: 100%;
+  .slide.prev &, .slide.next & {
+    // Уменьшить размеры ImageBlock в превью
+    :global(.image-block-container) {
+      padding-bottom: 80%; // Или другое соотношение для превью
+    }
+  }
+  .slide.current & {
+    // Основной размер ImageBlock для текущего слайда
+    :global(.image-block-container) {
+      padding-bottom: 75%; // 4:3 для основного изображения
+    }
+  }
+
+  :global(.image-block-container) {
+    width: 100%;
+    position: relative;
+    background-color: #DCD9D3; // Цвет плейсхолдера
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  :global(.image-block-image) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  :global(.image-block-placeholder) {
+    color: #888;
+    font-size: 14px;
+  }
+}
+
+.captionWrapper {
+  margin-top: 15px;
+  width: 100%;
+  .slide.prev &, .slide.next & {
+    display: none; // Скрыть подписи для соседних слайдов
+  }
+  :global(.editableText) {
+    font-size: 1em;
+    color: #333;
+    line-height: 1.4;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+.navButton {
+  background: none;
+  border: none;
+  font-size: 3rem;
+  color: #555;
+  cursor: pointer;
+  padding: 0 15px;
+  position: absolute; // Абсолютное позиционирование относительно .carouselWrapper
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: #333;
+  }
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+.emptyCarousel {
+  width: 100%;
+  padding-bottom: 50%;
+  background-color: #DCD9D3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-size: 1.2em;
+  border-radius: 4px;
+}
+
+.addSlideButton {
+  background-color: #1F3B2C;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 20px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #2a503a;
+  }
+}

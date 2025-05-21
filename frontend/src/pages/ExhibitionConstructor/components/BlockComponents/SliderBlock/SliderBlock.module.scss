@@ -1,0 +1,149 @@
+.sliderBlock {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #E8E5DE; // Цвет фона, как на ваших макетах
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  max-width: 900px; // Максимальная ширина для слайдера, подстраивайте
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.slideContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 50px; // Отступ, чтобы стрелки не накладывались на изображение
+}
+
+.imageWrapper {
+  width: 100%;
+  // Аспектное соотношение для ImageBlock внутри слайда
+  :global(.image-block-container) {
+    width: 100%;
+    padding-bottom: 75%; // Пример 4:3, измените на 100% для квадрата или другое
+    position: relative;
+    background-color: #DCD9D3; // Цвет плейсхолдера
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  :global(.image-block-image) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  :global(.image-block-placeholder) {
+    color: #888;
+    font-size: 14px;
+  }
+}
+
+.captionWrapper {
+  margin-top: 15px;
+  width: 100%;
+  :global(.editableText) {
+    font-size: 1em;
+    color: #333;
+    line-height: 1.4;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+.navButton {
+  background: none;
+  border: none;
+  font-size: 3rem;
+  color: #555;
+  cursor: pointer;
+  padding: 0 15px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10; // Чтобы кнопки были над изображением
+  transition: color 0.2s ease-in-out;
+
+  &:hover:not(:disabled) {
+    color: #333;
+  }
+  &:disabled {
+    color: #bbb;
+    cursor: not-allowed;
+  }
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+.emptySlider {
+  width: 100%;
+  padding-bottom: 50%; // Placeholder height
+  background-color: #DCD9D3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-size: 1.2em;
+  border-radius: 4px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.addButton {
+  background-color: #1F3B2C; // Цвет вашей основной кнопки
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #2a503a;
+  }
+}
+
+.slideCounter {
+  font-size: 0.9em;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .navButton {
+    font-size: 2rem;
+    padding: 0 5px;
+  }
+  .slideContent {
+    padding: 0 30px;
+  }
+}

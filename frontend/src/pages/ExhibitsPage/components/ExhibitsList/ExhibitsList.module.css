@@ -9,6 +9,15 @@
   margin: 0 auto;
 }
 
+.empty {
+  font-family: Cormorant Infant, serif;
+  font-weight: 600;
+  font-size: 52px;
+  line-height: 110%;
+  text-align: center;
+  color: #344E41;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

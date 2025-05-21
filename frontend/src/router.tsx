@@ -1,11 +1,13 @@
 import React from 'react'
-import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import AuthLayout from './layouts/AuthLayout/AuthLayout'
 import { LoginForm } from './pages/LoginForm/LoginForm'
 import { RegisterForm } from './pages/RegisterForm/RegisterForm'
 import { OrganisationRegisterForm } from './pages/OrganisationRegistration/OrganistaionRegisterForm'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage.tsx';
 import ExhibitsPage from './pages/ExhibitsPage/ExhibitsPage.tsx';
+import ExhibitionConstructor
+  from './pages/ExhibitionConstructor/ExhibitionConstructor.tsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
       { path: 'organisation-register', element: <OrganisationRegisterForm /> },
       {path: 'exhibits', element: <ExhibitsPage/>},
     ],
+  },
+  {
+    path: 'constructor',
+    children: [
+      { index: true, element: <ExhibitionConstructor /> },
+      { path: ':id', element: <ExhibitionConstructor /> }, // Для редактирования существующей выставки
+      { path: 'new', element: <ExhibitionConstructor /> }, // Для создания новой выставки
+    ]
   },
   {path: 'exhibits', element: <ExhibitsPage/>},
   { path: '*', element: <NotFoundPage /> }

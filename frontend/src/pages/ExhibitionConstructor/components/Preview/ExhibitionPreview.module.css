@@ -1,0 +1,46 @@
+@charset "UTF-8";
+.previewArea {
+  padding: 40px; /* Внутренние отступы для контента */
+  box-sizing: border-box;
+  overflow-y: auto; /* Если контента много, будет прокрутка */
+  /* Общие стили для текста внутри превью, чтобы использовать fontSettings */
+}
+.previewArea h1, .previewArea h2, .previewArea h3, .previewArea h4, .previewArea h5, .previewArea h6, .previewArea p, .previewArea span, .previewArea div {
+  margin-bottom: 1em; /* Стандартный отступ между текстовыми элементами */
+  line-height: 1.5;
+}
+
+.headerContent {
+  display: flex;
+  gap: 20px; /* Расстояние между обложкой и текстом */
+  align-items: flex-start; /* Выравнивает элементы по верху */
+  margin-bottom: 40px; /* Отступ после шапки перед блоками */
+}
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column; /* На маленьких экранах обложка и текст будут друг под другом */
+    align-items: center; /* Центрируем элементы при колонке */
+    text-align: center; /* Центрируем текст */
+  }
+}
+
+.coverImage {
+  width: 200px; /* Фиксированная ширина обложки */
+  height: auto; /* Автоматическая высота для сохранения пропорций */
+  object-fit: cover; /* Обрезка изображения, чтобы оно заполнило контейнер */
+  border-radius: 8px; /* Немного скругляем углы */
+  flex-shrink: 0; /* Запрещает изображению сжиматься */
+}
+@media (max-width: 768px) {
+  .coverImage {
+    width: 80%; /* На маленьких экранах обложка будет занимать больше места */
+    max-width: 300px; /* Но не будет слишком большой */
+    margin-bottom: 20px; /* Отступ между обложкой и текстом в колонке */
+  }
+}
+
+.textContent {
+  flex-grow: 1; /* Позволяет текстовому содержимому занимать доступное пространство */
+}
+
+/*# sourceMappingURL=ExhibitionPreview.module.css.map */

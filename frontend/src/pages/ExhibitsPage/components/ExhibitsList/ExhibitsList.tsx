@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import ExhibitCard from '../ExhibitCard/ExhibitCard.tsx';
-import ExhibitModal from '../ExhibitsModal/ExhibitModal.tsx';
-import CreateExhibitModal from '../CreateExhibitModal/CreateExhibitModal.tsx';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import ExhibitCard from '../ExhibitCard/ExhibitCard';
+import ExhibitModal from '../ExhibitsModal/ExhibitModal';
+import CreateExhibitModal from '../CreateExhibitModal/CreateExhibitModal';
 import styles from './ExhibitsList.module.scss';
 
 interface Exhibit {
@@ -21,7 +21,11 @@ interface ExhibitsListProps {
   onSaveExhibit?: (newExhibit: any) => void;
 }
 
-const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
+// Используем forwardRef для передачи ссылки
+const ExhibitsList = forwardRef<
+  { fetchExhibits: () => Promise<void> },
+  ExhibitsListProps
+>(({ onSaveExhibit }, ref) => {
   const [exhibits, setExhibits] = useState<Exhibit[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +33,11 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   
-  // Fetch exhibits on component mount
+  // Экспортируем функцию fetchExhibits через ref
+  useImperativeHandle(ref, () => ({
+    fetchExhibits
+  }));
+  
   useEffect(() => {
     fetchExhibits();
   }, []);
@@ -46,8 +54,6 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
       }
       
       const data = await response.json();
-      
-      // The API returns data in the format { data: [...], count: number }
       setExhibits(data.data || []);
       
     } catch (err) {
@@ -71,40 +77,47 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
     setSelectedExhibit(null);
   };
   
-  const handleOpenCreateModal = () => {
-    setIsCreateModalOpen(true);
-  };
-  
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
   };
   
-  const handleSaveExhibit = (newExhibit: any) => {
-    // Add the new exhibit to our local state
-    setExhibits(prevExhibits => [...prevExhibits, newExhibit]);
-    
-    // Call the parent component's onSaveExhibit if provided
-    if (onSaveExhibit) {
-      onSaveExhibit(newExhibit);
+  const handleSaveExhibit = async (newExhibit: any) => {
+    try {
+      // Добавляем новый экспонат в локальное состояние
+      setExhibits(prevExhibits => [...prevExhibits, newExhibit]);
+      
+      onSaveExhibit?.(newExhibit);
+      
+      // Обновляем список с сервера
+      await fetchExhibits();
+    } catch (err) {
+      console.error('Error updating exhibits list:', err);
+    }
+  };
+  
+  const handleUpdateExhibit = async (updatedExhibit: Exhibit) => {
+    try {
+      // Обновляем экспонат в локальном состоянии
+      setExhibits(prevExhibits =>
+        prevExhibits.map(exhibit =>
+          exhibit.id === updatedExhibit.id ? updatedExhibit : exhibit
+        )
+      );
+      
+      // Вызываем колбэк если есть
+      onSaveExhibit?.(updatedExhibit);
+      
+      // Обновляем список с сервера
+      await fetchExhibits();
+    } catch (err) {
+      console.error('Error after updating exhibit:', err);
     }
   };
   
   return (
-    <div className={styles.container}>
-      {/* Add create button */}
-      <div className={styles.header}>
-        <h2 className={styles.title}>Экспонаты</h2>
-        <button
-          className={styles.createButton}
-          onClick={handleOpenCreateModal}
-        >
-          Добавить экспонат
-        </button>
-      </div>
-      
-      {/* Error message */}
+    <div className={styles.exhibitsList}>
       {error && (
-        <div className={styles.errorMessage}>
+        <div className={styles.error}>
           {error}
           <button
             className={styles.retryButton}
@@ -115,29 +128,22 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
         </div>
       )}
       
-      {/* Loading state */}
       {isLoading ? (
-        <div className={styles.loadingState}>
+        <div className={styles.loading}>
           Загрузка экспонатов...
         </div>
       ) : exhibits.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p>Экспонатов пока нет</p>
-          <button
-            className={styles.createButton}
-            onClick={handleOpenCreateModal}
-          >
-            Добавить первый экспонат
-          </button>
+        <div className={styles.empty}>
+          <p>Здесь пока ничего нет</p>
         </div>
       ) : (
         <div className={styles.grid}>
           {exhibits.map(exhibit => (
-            <div key={exhibit.id} className={styles.gridItem}>
+            <div key={exhibit.id} className={styles.item}>
               <ExhibitCard
                 id={exhibit.id}
                 title={exhibit.title}
-                imageUrl={exhibit.image_key}
+                imageUrl={`${import.meta.env.VITE_API_URL}/api/v1/files/${exhibit.image_key}`}
                 onViewClick={handleViewClick}
               />
             </div>
@@ -145,15 +151,14 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
         </div>
       )}
       
-      {/* View exhibit modal */}
       {isModalOpen && selectedExhibit && (
         <ExhibitModal
           exhibit={selectedExhibit}
           onClose={handleCloseModal}
+          onUpdate={handleUpdateExhibit}
         />
       )}
       
-      {/* Create exhibit modal */}
       {isCreateModalOpen && (
         <CreateExhibitModal
           onClose={handleCloseCreateModal}
@@ -162,6 +167,6 @@ const ExhibitsList: React.FC<ExhibitsListProps> = ({ onSaveExhibit }) => {
       )}
     </div>
   );
-};
+});
 
 export default ExhibitsList;

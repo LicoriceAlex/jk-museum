@@ -1,0 +1,21 @@
+.Text {
+  outline: none;
+  cursor: text;
+  min-height: 1.2em;
+  padding: 5px;
+  border: 1px dashed transparent;
+  transition: border-color 0.2s ease-in-out;
+  white-space: pre-wrap;
+}
+.Text:empty:before {
+  content: attr(data-placeholder);
+  color: #888;
+  cursor: text;
+  pointer-events: none;
+}
+.Text:focus {
+  border-color: #ccc;
+  background-color: #f9f9f9;
+}
+
+/*# sourceMappingURL=TextBlock.module.css.map */

@@ -1,0 +1,61 @@
+.block {
+  margin-bottom: 30px;
+  padding: 40px 20px;
+  background-color: #E8E5DE;
+  border-radius: 8px;
+}
+
+.layout {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.imageWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.imageWrapper :global(.image-block-container) {
+  width: 100%;
+  padding-bottom: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #DCD9D3;
+  border-radius: 4px;
+}
+.imageWrapper :global(.image-block-image) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.imageWrapper :global(.image-block-placeholder) {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 1;
+}
+.imageWrapper :global(.image-block-placeholder input[type="file"]) {
+  display: none;
+}
+
+/*# sourceMappingURL=LayoutImgTextImgBlock.module.css.map */

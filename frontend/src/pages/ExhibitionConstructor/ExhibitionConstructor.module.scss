@@ -1,0 +1,33 @@
+/* ExhibitionConstructor.module.scss */
+
+// Цветовая палитра для всего приложения (можно вынести в отдельный файл _variables.scss)
+$primary-app-color: #007bff; // Пример: синий для акцентов
+$secondary-app-color: #6c757d; // Пример: серый для второстепенных элементов
+$header-bg-color: #343a40; // Темный фон для шапки
+$header-text-color: #ffffff; // Белый текст для шапки
+$app-bg-color: #f0f2f5; // Легкий серый фон для всего приложения
+
+.constructorWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; // Занимает всю высоту viewport
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; // Пример базового шрифта
+  background-color: $app-bg-color;
+}
+
+
+.main {
+  display: flex;
+  padding-top: 112px;
+  flex-grow: 1; // Занимает все оставшееся вертикальное пространство
+  overflow: hidden; // Предотвращает переполнение, если контент слишком большой
+}
+
+// Стили для ExhibitionPreview, чтобы он занимал оставшееся пространство
+// (Sidebar уже имеет фиксированную ширину)
+.exhibitionPreview {
+  flex-grow: 1; // Позволяет ExhibitionPreview занять все оставшееся горизонтальное пространство
+  overflow-y: auto; // Добавляем прокрутку, если содержимое превышает высоту
+  padding: 20px; // Отступы вокруг предпросмотра
+  background-color: #ffffff; // Белый фон для области предпросмотра
+}

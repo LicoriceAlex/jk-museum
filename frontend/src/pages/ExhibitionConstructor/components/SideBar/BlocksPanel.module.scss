@@ -1,0 +1,314 @@
+/* components/BlocksPanel/BlocksPanel.module.scss */
+
+.blocksPanel {
+  background-color: #F7F5F0; // Предполагаемый светлый фон
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; // Фиксированная ширина панели, можно изменить
+  box-sizing: border-box;
+  font-family: 'PT Serif', serif; // Пример шрифта
+  color: #333333; // Цвет текста
+}
+
+.blocksPanel__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.blocksPanel__category {
+  background-color: #EAE6DF; // Цвет фона для каждой категории
+  border-radius: 6px;
+  overflow: hidden; // Чтобы дочерние элементы не выходили за рамки
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.blocksPanel__categoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #EAE6DF; // Цвет фона заголовка категории
+  border: none;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #1F3B2C; // Темный цвет для заголовка
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken(#EAE6DF, 3%);
+  }
+
+  svg {
+    transition: transform 0.2s ease;
+  }
+}
+
+.blocksPanel__options {
+  padding: 10px 0;
+  background-color: #F7F5F0; // Фон для опций внутри категории
+  border-top: 1px solid #D6D0C4; // Разделитель
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative; // Для позиционирования configMenu
+}
+
+.blocksPanel__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #FFFFFF; // Фон для каждой опции
+  border: 1px solid #D6D0C4;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95em;
+  color: #333333;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  font-family: 'Open Sans', sans-serif; // Пример шрифта для опций
+  height: 72px;
+
+  &:hover {
+    background-color: #F0F0F0;
+    border-color: #A67F5D; // Акцентный цвет при наведении
+  }
+
+  &.activeOption {
+    background-color: #A67F5D; // Активный цвет для выбранной опции
+    color: #FFFFFF;
+    border-color: #A67F5D;
+
+    svg {
+      stroke: #FFFFFF;
+      fill: #FFFFFF;
+    }
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: #1F3B2C; // Цвет иконок
+    fill: none;
+  }
+}
+
+.iconGroup {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Стили для открывающейся менюшки настройки */
+.blocksPanel__configMenu { // Отступ от основной панели
+  position: absolute;
+  top: 0; // Начинается от самого верха родительского .blocksPanel__options
+  left: 0;  // Начинается от самого левого края родительского .blocksPanel__options
+  width: 100%; // Занимает всю ширину родительского .blocksPanel__options
+  height: 100%; // Занимает всю высоту родительского .blocksPanel__options
+
+  // background-color, border, border-radius, box-shadow, padding, z-index - оставляем как есть
+  background-color: #FFFFFF; // Или тот же цвет, что и у .blocksPanel__options, если хотите бесшовный переход
+  border: 1px solid #D6D0C4;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  z-index: 10;
+  box-sizing: border-box;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1F3B2C;
+    font-size: 1.2em;
+    font-family: 'PT Serif', serif;
+  }
+
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #A67F5D;
+
+    &:hover {
+      color: darken(#A67F5D, 10%);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+    }
+  }
+}
+
+.photoUploadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); // Адаптивная сетка
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.photoUploadThumbnail {
+  width: 76px;
+  padding-top: 64px; // Для создания квадратных превью
+  position: relative;
+  background-color: #F0F0F0;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px dashed #D6D0C4;
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholderThumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #A67F5D; // Цвет плюсика
+    font-size: 2em;
+    svg {
+      width: 30px;
+      height: 30px;
+      stroke: currentColor;
+    }
+  }
+
+  .removeThumbnailButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    cursor: pointer;
+    z-index: 2; // Поверх изображения
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+  }
+}
+
+.photoCountControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .photoCountButton {
+    background-color: #A67F5D;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+  span {
+    font-weight: bold;
+    color: #1F3B2C;
+  }
+}
+
+.addConfiguredBlockButton {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #1F3B2C; // Цвет кнопки "Добавить"
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken(#1F3B2C, 10%);
+  }
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.configMenuTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #D6D0C4;
+  border-radius: 4px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.95em;
+  resize: vertical;
+  margin-top: 15px; // Отступ от фото
+  box-sizing: border-box; // Учитываем padding и border в ширине
+}
+
+.carouselTypeSelection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+
+  .carouselTypeButton {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #D6D0C4;
+    border-radius: 4px;
+    background-color: #F0F0F0;
+    color: #333333;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    &.activeType {
+      background-color: #A67F5D;
+      color: #FFFFFF;
+      border-color: #A67F5D;
+    }
+    &:hover:not(.activeType) {
+      background-color: darken(#F0F0F0, 5%);
+    }
+  }
+}
+
+.optionConfig__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #1F3B2C;
+  font-weight: bold;
+}

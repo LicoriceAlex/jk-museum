@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Header from '../../components/layout/Header/Header.tsx';
 import ExhibitsList from './components/ExhibitsList/ExhibitsList.tsx';
 import CreateExhibitModal from './components/CreateExhibitModal/CreateExhibitModal.tsx';
@@ -16,6 +16,8 @@ interface Exhibit {
 
 const ExhibitsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  // Создаем ref для ExhibitsList
+  const exhibitsListRef = useRef<{ fetchExhibits: () => Promise<void> } | null>(null);
   
   const handleOpenCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -26,9 +28,12 @@ const ExhibitsPage: React.FC = () => {
   };
   
   const handleSaveExhibit = (newExhibit: any) => {
-    // In a real application, you might want to do something with the new exhibit here
-    // For example, make an API call to save it to the backend
     console.log('New exhibit saved:', newExhibit);
+    
+    // Обновляем список экспонатов через ref
+    if (exhibitsListRef.current) {
+      exhibitsListRef.current.fetchExhibits();
+    }
   };
   
   return (
@@ -56,6 +61,7 @@ const ExhibitsPage: React.FC = () => {
           </div>
           <ExhibitsList
             onSaveExhibit={handleSaveExhibit}
+            ref={exhibitsListRef}
           />
           
           <div className={styles.addButtonContainer}>

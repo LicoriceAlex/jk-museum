@@ -1,0 +1,177 @@
+.block {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #F8F5EE;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.carouselWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.carouselContainer {
+  flex-grow: 1;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.slides {
+  display: flex;
+  align-items: center;
+}
+
+.slide {
+  flex-shrink: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 10px;
+}
+.slide.prev, .slide.next {
+  width: 25%;
+  opacity: 0.5;
+  transform: scale(0.85);
+  z-index: 1;
+}
+.slide.current {
+  width: 50%;
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
+@media (max-width: 768px) {
+  .slide.prev, .slide.next {
+    width: 20%;
+  }
+  .slide.current {
+    width: 60%;
+  }
+}
+@media (max-width: 480px) {
+  .slide.prev, .slide.next {
+    width: 15%;
+  }
+  .slide.current {
+    width: 70%;
+  }
+}
+
+.imageWrapper {
+  width: 100%;
+}
+.slide.prev .imageWrapper :global(.image-block-container), .slide.next .imageWrapper :global(.image-block-container) {
+  padding-bottom: 80%;
+}
+.slide.current .imageWrapper :global(.image-block-container) {
+  padding-bottom: 75%;
+}
+.imageWrapper :global(.image-block-container) {
+  width: 100%;
+  position: relative;
+  background-color: #DCD9D3;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.imageWrapper :global(.image-block-image) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.imageWrapper :global(.image-block-placeholder) {
+  color: #888;
+  font-size: 14px;
+}
+
+.captionWrapper {
+  margin-top: 15px;
+  width: 100%;
+}
+.slide.prev .captionWrapper, .slide.next .captionWrapper {
+  display: none;
+}
+.captionWrapper :global(.editableText) {
+  font-size: 1em;
+  color: #333;
+  line-height: 1.4;
+  text-align: center;
+  width: 100%;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  font-size: 3rem;
+  color: #555;
+  cursor: pointer;
+  padding: 0 15px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  transition: color 0.2s ease-in-out;
+}
+.navButton:hover {
+  color: #333;
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+.emptyCarousel {
+  width: 100%;
+  padding-bottom: 50%;
+  background-color: #DCD9D3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-size: 1.2em;
+  border-radius: 4px;
+}
+
+.addSlideButton {
+  background-color: #1F3B2C;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 20px;
+  transition: background-color 0.2s ease;
+}
+.addSlideButton:hover {
+  background-color: #2a503a;
+}
+
+/*# sourceMappingURL=CarouselBlock.module.css.map */

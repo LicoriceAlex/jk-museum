@@ -1,0 +1,24 @@
+/* ExhibitionConstructor.module.scss */
+.constructorWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  background-color: #f0f2f5;
+}
+
+.main {
+  display: flex;
+  padding-top: 112px;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.exhibitionPreview {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+/*# sourceMappingURL=ExhibitionConstructor.module.css.map */

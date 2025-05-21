@@ -1,0 +1,157 @@
+/* Sidebar.module.scss */
+
+// Цветовая палитра (пример, можно настроить)
+$primary-color: #1F3B2C; // Соответствует цвету Primary из ExhibitionConstructor
+$secondary-color: #E8E5DE; // Соответствует Secondary
+$background-light: #F7F5F2; // Легкий фон, соответствующий превью
+$background-dark: #343A40; // Темный фон для шапки/вкладок сайдбара (как на скрине)
+$text-color-dark: #333333; // Цвет текста
+$text-color-light: #ffffff; // Белый текст
+$border-color: #dee2e6;
+$active-tab-bg: #E8E5DE; // Светлый фон для активной вкладки, похожий на secondary
+$active-tab-color: #1F3B2C; // Цвет текста/иконки активной вкладки
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: row; // Расположить элементы сайдбара горизонтально
+  width: 489px; // <-- Устанавливаем общую ширину для всего сайдбара
+  background-color: $background-light;
+  border-right: 1px solid $border-color;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  transition: width 0.3s ease-in-out;
+}
+
+.sidebar__tabs {
+  display: flex;
+  flex-direction: column; // Расположить кнопки вкладок вертикально
+  flex-shrink: 0; // Не даем вкладкам сжиматься
+  width: 64px; // Фиксированная ширина для панели вкладок
+  padding: 15px 0;
+  background-color: $primary-color;
+  align-items: center;
+  gap: 15px;
+}
+
+.sidebar__tab {
+  background: none;
+  border: none;
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: lighten($secondary-color, 30%);
+  transition: all 0.2s ease-in-out;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+
+  &:hover {
+    background-color: rgba($text-color-light, 0.1);
+    color: $text-color-light;
+  }
+
+  &--active {
+    background-color: $active-tab-bg;
+    color: $active-tab-color;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  &-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.sidebar__content {
+  padding: 20px;
+  // Теперь здесь не нужно использовать flex-grow: 1, так как родительская ширина и ширина вкладок
+  // уже определены, и это поле должно занимать оставшееся пространство.
+  // Задаем явную ширину 425px. Flexbox учтет это.
+  width: 425px; // <-- Явная ширина для контента
+  overflow-y: auto; // Прокрутка для содержимого панели
+  background-color: $background-light;
+  color: $text-color-dark;
+}
+
+// Общие стили для полей ввода внутри сайдбара (если они появятся в InfoPanel, StylesPanel и т.д.)
+:global {
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 0.9em;
+      color: $text-color-dark;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      font-size: 1em;
+      box-sizing: border-box; // Учитываем padding и border в ширине
+      transition: border-color 0.2s ease-in-out;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+      }
+    }
+
+    textarea {
+      resize: vertical; // Разрешаем изменять размер по вертикали
+      min-height: 80px;
+    }
+  }
+
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: all 0.15s ease-in-out;
+
+    &--primary {
+      color: $text-color-light;
+      background-color: $primary-color;
+      border-color: $primary-color;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+        border-color: darken($primary-color, 12%);
+      }
+    }
+
+    &--secondary {
+      color: $text-color-dark;
+      background-color: $secondary-color;
+      border-color: $secondary-color;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+        border-color: darken($secondary-color, 12%);
+      }
+    }
+  }
+}

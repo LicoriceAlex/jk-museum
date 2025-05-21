@@ -1,0 +1,21 @@
+.Text {
+  outline: none; // Remove default focus outline
+  cursor: text;
+  min-height: 1.2em; // Ensure it's visible even when empty
+  padding: 5px; // Add some padding for easier clicking/editing
+  border: 1px dashed transparent; // Default transparent border
+  transition: border-color 0.2s ease-in-out;
+  white-space: pre-wrap; // Preserve whitespace and line breaks
+
+  &:empty:before {
+    content: attr(data-placeholder);
+    color: #888;
+    cursor: text;
+    pointer-events: none; // Allow clicks to pass through to the actual contenteditable div
+  }
+
+  &:focus {
+    border-color: #ccc; // Show border on focus
+    background-color: #f9f9f9; // Slight background change on focus
+  }
+}
