@@ -50,7 +50,7 @@ class ExhibitUpdate(SQLModel):
     creation_date: Optional[datetime.date] = None
     description: Optional[str] = None
     exhibit_type: Optional[ExhibitType] = None
-    image_url: Optional[str] = None
+    image_key: Optional[str] = None
 
 
 class ExhibitPublic(ExhibitBase):
