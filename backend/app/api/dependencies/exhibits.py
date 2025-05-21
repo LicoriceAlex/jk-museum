@@ -9,11 +9,11 @@ from backend.app.crud import exhibit as exhibit_crud
 
 async def get_exhibit_or_404(
     session: SessionDep,
-    organization_id: uuid.UUID
+    exhibit_id: uuid.UUID
 ) -> Exhibit:
     exhibit = await exhibit_crud.get_exhibit(
         session=session,
-        id=organization_id
+        id=exhibit_id
     )
     if not exhibit:
         raise HTTPException(

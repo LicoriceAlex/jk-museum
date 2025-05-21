@@ -2,3 +2,13 @@ from .user import *
 from .admin_action import *
 from .organization import *
 from .exhibit import *
+from .tag import *
+from .exhibition import *
+from .exhibition_exhibit import *
+from .exhibition_rating import *
+from .exhibition_tag import *
+from .user_exhibition_like import *
+from .exhibition_block import *
+from .exhibition_block_item import *
+from .exhibition_participant import *
+from .template import *
