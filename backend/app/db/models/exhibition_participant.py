@@ -1,0 +1,21 @@
+from sqlmodel import Field, SQLModel
+from uuid import UUID, uuid4
+from datetime import datetime
+from typing import TYPE_CHECKING, Optional, List
+
+
+if TYPE_CHECKING:
+    pass
+
+
+class ExhibitionParticipantBase(SQLModel):
+    name: str = Field(max_length=100, nullable=False)
+    
+
+class ExhibitionParticipant(ExhibitionParticipantBase, table=True):
+    __tablename__ = "exhibition_participants"
+    
+    id: UUID = Field(primary_key=True, nullable=False, default_factory=uuid4)
+    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False)
+    
+    created_at: datetime = Field(default_factory=datetime.now)
