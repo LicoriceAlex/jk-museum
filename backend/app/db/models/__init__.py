@@ -1,8 +1,8 @@
 from .user import *
 from .admin_action import *
-from .organization import *
 from .exhibit import *
 from .tag import *
+from .organization import *
 from .exhibition_exhibit import *
 from .exhibition_tag import *
 from .exhibition_participant import *
@@ -15,4 +15,6 @@ from .exhibition import *
 
 
 ExhibitionPublic.model_rebuild()
+OrganizationPublic.model_rebuild()
+OrganizationsPublic.model_rebuild()
 ExhibitionsPublic.model_rebuild()

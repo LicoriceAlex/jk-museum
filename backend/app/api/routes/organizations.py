@@ -3,10 +3,11 @@ from fastapi import APIRouter, Depends, Query
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.organizations import OrgnizationOr404
 from backend.app.api.dependencies.pagination import PaginationDep
+from backend.app.api.dependencies.users import CurrentUser
 from backend.app.core.config import settings
 from backend.app.crud import organization as organization_crud
 from backend.app.db.models.organization import (
-    Organization, OrganizationCreate, OrganizationPublic, OrganizationsPublic
+    Organization, OrganizationCreate, OrganizationPublic, OrganizationPublicShort, OrganizationsPublic
 )
 
 router = APIRouter()
@@ -32,7 +33,6 @@ async def create_organization(
 
 @router.patch(
     "/{organization_id}/confirm",
-    response_model=OrganizationPublic,
 )
 async def confirm_organization(
     session: SessionDep,
@@ -86,13 +86,47 @@ async def get_organizations(
 
 
 @router.get(
-    "/{organization_id}",
-    response_model=OrganizationPublic,
+    "/{organization_id}/profile",
 )
-async def get_organization(
-    organization: OrgnizationOr404,
+async def get_organization_profile(
+    current_user: CurrentUser,
+    organization_id: str,
+    session: SessionDep,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
 ):
     """
-    Get an organization.
+    Get organization profile with published exhibitions (paginated).
     """
+    org = await organization_crud.get_organization_profile_with_exhibitions(
+        session=session,
+        organization_id=organization_id,
+        skip=skip,
+        limit=limit,
+        current_user_id=current_user.id
+    )
+    if not org:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return org
+
+
+@router.put(
+    "/{organization_id}/profile",
+    response_model=OrganizationPublicShort,
+    dependencies=[Depends(CurrentUser.is_organization) or Depends(CurrentUser.is_admin_or_moderator)],
+)
+async def update_organization_profile(
+    session: SessionDep,
+    organization: OrgnizationOr404,
+    organization_in: OrganizationCreate,
+):
+    """
+    Update organization profile.
+    """
+    organization = await organization_crud.update_organization_profile(
+        session=session,
+        organization=organization,
+        organization_in=organization_in
+    )
     return organization

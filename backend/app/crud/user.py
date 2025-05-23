@@ -6,9 +6,13 @@ from backend.app.core.config import settings
 from backend.app.core.security import (
     get_password_hash, verify_password
 )
+from backend.app.crud.exhibition import get_exhibition
+from backend.app.crud.exhibition_tag import get_exhibition_tags
+from backend.app.db.models.exhibition import Exhibition, ExhibitionPublic
 from backend.app.db.models.user import (
     StatusEnum, User, UserCreate, UsersPublic
 )
+from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 
 
 async def get_user(
@@ -185,3 +189,88 @@ async def unban_user(
     await session.refresh(user)
 
     return user
+
+
+async def get_liked_exhibitions(
+    session: AsyncSession,
+    user_id: str,
+    skip: int = 0,
+    limit: int = settings.DEFAULT_QUERY_LIMIT
+) -> list[User]:
+    liked_exhibitions_ids = (await session.execute(
+        select(UserExhibitionLike).where(
+            UserExhibitionLike.user_id == user_id
+        )
+    )).scalars().all()
+    exhibitions = []
+    for exhibition in liked_exhibitions_ids:
+        exhibition = await get_exhibition(
+            session=session,
+            id=exhibition.exhibition_id
+        )
+        exhibition.is_liked_by_current_user = True
+        exhibitions.append(exhibition)
+    return exhibitions
+
+
+async def like_exhibition(
+    session: AsyncSession,
+    exhibition_id: str,
+    user_id: str
+) -> ExhibitionPublic:
+    exhibition = await get_exhibition(
+        session=session,
+        id=exhibition_id
+    )
+    if not exhibition:
+        raise HTTPException(
+            status_code=404,
+            detail="Exhibition not found"
+        )
+
+    user_exhibition_like = UserExhibitionLike(
+        exhibition_id=exhibition.id,
+        user_id=user_id
+    )
+    session.add(user_exhibition_like)
+    await session.commit()
+    await session.refresh(user_exhibition_like)
+
+    exhibition.is_liked_by_current_user = True
+    return ExhibitionPublic.model_validate(exhibition)
+
+
+async def unlike_exhibition(
+    session: AsyncSession,
+    exhibition_id: str,
+    user_id: str
+) -> ExhibitionPublic:
+    exhibition = await get_exhibition(
+        session=session,
+        id=exhibition_id
+    )
+    if not exhibition:
+        raise HTTPException(
+            status_code=404,
+            detail="Exhibition not found"
+        )
+
+    user_exhibition_like = await session.execute(
+        select(UserExhibitionLike).where(
+            UserExhibitionLike.exhibition_id == exhibition.id,
+            UserExhibitionLike.user_id == user_id
+        )
+    )
+    user_exhibition_like = user_exhibition_like.scalar_one_or_none()
+    if not user_exhibition_like:
+        raise HTTPException(
+            status_code=404,
+            detail="Like not found"
+        )
+
+    await session.delete(user_exhibition_like)
+    await session.commit()
+
+    exhibition.is_liked_by_current_user = False
+    return ExhibitionPublic.model_validate(exhibition)
+

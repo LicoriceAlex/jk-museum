@@ -48,3 +48,13 @@ async def update_exhibition_participants(
     await session.execute(delete(ExhibitionParticipant).where(ExhibitionParticipant.exhibition_id == exhibition_id))
     await session.commit()
     return await create_exhibition_participants(session, participants_in, exhibition_id)
+
+
+async def get_exhibition_participants(
+    session: AsyncSession,
+    exhibition_id: UUID
+) -> Optional[list[ExhibitionParticipant]]:
+    statement = select(ExhibitionParticipant).filter_by(exhibition_id=exhibition_id)
+    result = await session.execute(statement)
+    exhibition_participants = result.scalars().all()
+    return exhibition_participants

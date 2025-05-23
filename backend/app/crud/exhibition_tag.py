@@ -21,6 +21,24 @@ async def get_exhibition_tag(
     return exhibition_tag
 
 
+async def get_exhibition_tags(
+    session: AsyncSession,
+    exhibition_id: UUID
+) -> Optional[list[Tag]]:
+    statement = select(ExhibitionTag).filter_by(exhibition_id=exhibition_id)
+    result = await session.execute(statement)
+    exhibition_tags = result.scalars().all()
+    tags = []
+    for exhibition_tag in exhibition_tags:
+        tag = await session.execute(
+            select(Tag).filter_by(id=exhibition_tag.tag_id)
+        )
+        tag = tag.scalar_one_or_none()
+        if tag is not None:
+            tags.append(tag)
+    return tags
+
+
 async def create_exhibition_tag(
     session: AsyncSession,
     exhibition_tag_in: ExhibitionTagCreate

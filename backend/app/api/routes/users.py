@@ -19,6 +19,7 @@ from backend.app.db.models import (
     User, UserCreate, UserPublic,
     UserRegister, UsersPublic
 )
+from backend.app.db.models.exhibition import ExhibitionsPublic
 from backend.app.db.models.user import UserUpdate
 from backend.app.db.schemas import (
     Message, UpdatePassword,
@@ -45,7 +46,7 @@ async def read_users(
     return users
 
 
-@router.get("/me", response_model=UserPublic)
+@router.get("/me/profile", response_model=UserPublic)
 async def read_user_me(current_user: CurrentUser) -> Any:
     """
     Retrieve information about the current authenticated user.
@@ -53,7 +54,7 @@ async def read_user_me(current_user: CurrentUser) -> Any:
     return current_user
 
 
-@router.put("/me", response_model=UserPublic)
+@router.put("/me/profile", response_model=UserPublic)
 async def update_user_me(
     session: SessionDep,
     user_in: UserUpdate,
@@ -62,15 +63,7 @@ async def update_user_me(
     """
     Update the current authenticated user's information.
     """
-    if user_in.email and user_in.email != current_user.email:
-        existing_user = await user_crud.get_user(
-            session=session,
-            email=user_in.email
-        )
-        if existing_user:
-            raise HTTPException(
-                status_code=400, detail="Email already registered")
-
+    
     user = await user_crud.update_user(
         session=session,
         db_user=current_user,
@@ -151,7 +144,69 @@ async def update_user(
     return user
 
 
-@router.patch("/me/password", response_model=Message)
+@router.get(
+    '/me/liked-exhibitions',
+)
+async def get_liked_exhibitions(
+    session: SessionDep,
+    current_user: CurrentUser,
+    pagination: PaginationDep,
+) -> Any:
+    """
+    Retrieve a list of exhibitions liked by the current authenticated user.
+    """
+    liked_exhibitions = await user_crud.get_liked_exhibitions(
+        session=session,
+        user_id=current_user.id,
+        skip=pagination.skip,
+        limit=pagination.limit
+    )
+    return ExhibitionsPublic(
+        data=liked_exhibitions,
+        count=len(liked_exhibitions)
+    )
+    
+    
+@router.post(
+    '/me/liked-exhibitions/{exhibition_id}',
+)
+async def like_exhibition(
+    session: SessionDep,
+    current_user: CurrentUser,
+    exhibition_id: uuid.UUID,
+) -> Any:
+    """
+    Like an exhibition for the current authenticated user.
+    """
+    await user_crud.like_exhibition(
+        session=session,
+        user_id=current_user.id,
+        exhibition_id=exhibition_id
+    )
+    return Message(message="Exhibition liked successfully")
+
+
+
+@router.delete(
+    '/me/liked-exhibitions/{exhibition_id}',
+)
+async def unlike_exhibition(
+    session: SessionDep,
+    current_user: CurrentUser,
+    exhibition_id: uuid.UUID,
+) -> Any:
+    """
+    Unlike an exhibition for the current authenticated user.
+    """
+    await user_crud.unlike_exhibition(
+        session=session,
+        user_id=current_user.id,
+        exhibition_id=exhibition_id
+    )
+    return Message(message="Exhibition unliked successfully")
+
+
+@router.patch("/me/account/password", response_model=Message)
 async def update_password_me(
     session: SessionDep,
     body: UpdatePassword,

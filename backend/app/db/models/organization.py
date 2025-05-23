@@ -7,12 +7,12 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 
-
 if TYPE_CHECKING:
+    from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
     from backend.app.db.models.admin_action import AdminAction
     from backend.app.db.models.exhibit import Exhibit
-    
-    
+
+
 class OrgStatusEnum(str, Enum):
     pending = "pending"
     approved = "approved"
@@ -23,13 +23,15 @@ class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
     contact_info: Optional[str] = None
+    description: Optional[str] = Field(default=None, nullable=True)
+    logo_key: Optional[str] = Field(default=None, nullable=True)
 
 
 class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
-    
+
     created_at: datetime = Field(default_factory=datetime.now)
 
     admin_actions: List["AdminAction"] = Relationship(
@@ -47,17 +49,31 @@ class OrganizationCreate(OrganizationBase):
     pass
 
 
-class OrganizationUpdate(OrganizationBase):
-    status: Optional[OrgStatusEnum] = None
+class OrganizationUpdate(SQLModel):
+    name: Optional[str] = None
+    contact_info: Optional[str] = None
+    description: Optional[str] = None
+    logo_key: Optional[str] = None
 
 
 class OrganizationPublic(OrganizationBase):
     id: UUID
     status: OrgStatusEnum
     created_at: datetime
-    
+    exhibitions: "ExhibitionsPublicWithPagination"
+
+
+class OrganizationPublicShort(OrganizationBase):
+    id: UUID
+    status: OrgStatusEnum
+    created_at: datetime
+    logo_key: Optional[str] = None
+
 
 class OrganizationsPublic(SQLModel):
-    data: List[OrganizationPublic]
+    data: List["OrganizationPublicShort"]
     count: int
-    
+
+
+OrganizationPublicShort.model_rebuild()
+OrganizationsPublic.model_rebuild()

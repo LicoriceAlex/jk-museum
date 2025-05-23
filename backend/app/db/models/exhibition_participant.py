@@ -1,11 +1,11 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from uuid import UUID, uuid4
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional, List
 
 
 if TYPE_CHECKING:
-    pass
+    from backend.app.db.models.exhibition import Exhibition
 
 
 class ExhibitionParticipantBase(SQLModel):
@@ -19,6 +19,8 @@ class ExhibitionParticipant(ExhibitionParticipantBase, table=True):
     exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False, ondelete="CASCADE")
     
     created_at: datetime = Field(default_factory=datetime.now)
+    
+    exhibition: "Exhibition" = Relationship(back_populates="participants")
     
 
 class ExhibitionParticipantCreate(ExhibitionParticipantBase):

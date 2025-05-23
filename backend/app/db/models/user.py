@@ -25,6 +25,8 @@ class UserBase(SQLModel):
     email: EmailStr = Field(max_length=255)
     name: str = Field(max_length=255)
     surname: str = Field(max_length=255)
+    profile_image_key: Optional[str] = Field(default=None, nullable=True)
+    about_me: Optional[str] = Field(default=None, nullable=True)
     status: StatusEnum = Field(default=StatusEnum.active)
     role: RoleEnum = Field(default=RoleEnum.user)
     patronymic: str = Field(max_length=255)
@@ -63,8 +65,11 @@ class UserRegister(SQLModel):
     role: Optional[RoleEnum] = Field(default=RoleEnum.user)
 
 
-class UserUpdate(UserBase):
-    email: Optional[EmailStr] = Field(default=None, max_length=255)
+class UserUpdate(SQLModel):
+    name: Optional[str]
+    surname: Optional[str]
+    profile_image_key: Optional[str]
+    about_me: Optional[str]
 
 
 class UserUpdateMe(UserBase):
