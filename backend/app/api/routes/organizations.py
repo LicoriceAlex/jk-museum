@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.organizations import OrgnizationOr404
+from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.core.config import settings
 from backend.app.crud import organization as organization_crud
 from backend.app.db.models.organization import (
@@ -71,19 +72,15 @@ async def reject_organization(
 )
 async def get_organizations(
     session: SessionDep,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(
-        default=settings.DEFAULT_QUERY_LIMIT,
-        ge=1, le=100
-    ),
+    pagination: PaginationDep
 ):
     """
     Get organizations.
     """
     organizations = await organization_crud.get_organizations(
         session=session,
-        skip=skip,
-        limit=limit
+        skip=pagination.skip,
+        limit=pagination.limit
     )
     return organizations
 

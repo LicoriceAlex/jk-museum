@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.exhibition import ExhibitionOr404
 from backend.app.api.dependencies.exhibits import ExhibitOr404
+from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.api.dependencies.users import get_current_admin_or_moderator
 from backend.app.core.config import settings
 from backend.app.crud import exhibition as exhibition_crud
@@ -19,6 +20,27 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
 router = APIRouter()
+
+
+@router.get(
+    "/"
+)
+async def read_exhibitions(
+    session: SessionDep,
+    pagination: PaginationDep
+) -> Any:
+    """
+    Retrieve a list of exhibitions with pagination.
+    """
+    exhibitions = await exhibition_crud.get_exhibitions(
+        session=session,
+        skip=pagination.skip,
+        limit=pagination.limit
+    )
+    return ExhibitionsPublic(
+        data=exhibitions,
+        count=len(exhibitions)
+    )
 
 
 @router.post(

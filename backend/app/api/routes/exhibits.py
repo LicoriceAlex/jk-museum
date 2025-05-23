@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.exhibits import ExhibitOr404
+from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.api.dependencies.users import get_current_admin_or_moderator
 from backend.app.core.config import settings
 from backend.app.crud import exhibit as exhibit_crud
@@ -19,19 +20,15 @@ router = APIRouter()
 )
 async def read_exhibits(
     session: SessionDep,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(
-        default=settings.DEFAULT_QUERY_LIMIT,
-        ge=1, le=100
-    ),
+    pagination: PaginationDep
 ) -> Any:
     """
     Retrieve a list of exhibits with pagination.
     """
     exhibits = await exhibit_crud.get_exhibits(
         session=session,
-        skip=skip,
-        limit=limit
+        skip=pagination.skip,
+        limit=pagination.limit
     )
     return exhibits
 

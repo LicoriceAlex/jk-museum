@@ -2,6 +2,7 @@ import uuid
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.api.dependencies.users import (
     UserOr404,
     CurrentUser,
@@ -34,16 +35,12 @@ router = APIRouter()
 )
 async def read_users(
     session: SessionDep,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(
-        default=settings.DEFAULT_QUERY_LIMIT,
-        ge=1, le=100
-    ),
+    pagination: PaginationDep,
 ) -> Any:
     users = await user_crud.get_users(
         session=session,
-        skip=skip,
-        limit=limit
+        skip=pagination.skip,
+        limit=pagination.limit
     )
     return users
 

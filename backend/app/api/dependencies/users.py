@@ -54,8 +54,8 @@ async def get_user_or_404(
     return user
 
 
-CurrentUser = Annotated[User, Depends(get_current_user)]
 UserOr404 = Annotated[User, Depends(get_user_or_404)]
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 async def get_current_admin(
