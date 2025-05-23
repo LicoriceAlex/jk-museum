@@ -6,6 +6,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column
 from typing import TYPE_CHECKING, Optional
 
+from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
+
 
 if TYPE_CHECKING:
     pass
@@ -37,10 +39,22 @@ class ExhibitionBlock(ExhibitionBlockBase, table=True):
 
     id: UUID = Field(primary_key=True, nullable=False, default_factory=uuid4)
 
-    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False, index=True)
+    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False, index=True, ondelete="CASCADE")
 
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
         sa_column_kwargs={"onupdate": datetime.now}
     )
+    
+    
+class ExhibitionBlockCreate(ExhibitionBlockBase):
+    exhibition_id: UUID
+    
+    
+class ExhibitionBlockUpdateBase(ExhibitionBlockBase):
+    pass
+
+
+class ExhibitionBlockUpdate(ExhibitionBlockUpdateBase):
+    items: Optional[list[ExhibitionBlockItemCreate]]

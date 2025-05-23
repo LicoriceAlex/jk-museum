@@ -28,4 +28,5 @@ dependencies = [
     "aiosqlite>=0.21.0",
     "aiobotocore>=2.21.1",
     "boto3>=1.37.1",
+    "bleach>=6.2.0",
 ]

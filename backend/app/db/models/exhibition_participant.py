@@ -16,6 +16,10 @@ class ExhibitionParticipant(ExhibitionParticipantBase, table=True):
     __tablename__ = "exhibition_participants"
     
     id: UUID = Field(primary_key=True, nullable=False, default_factory=uuid4)
-    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False)
+    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False, ondelete="CASCADE")
     
     created_at: datetime = Field(default_factory=datetime.now)
+    
+
+class ExhibitionParticipantCreate(ExhibitionParticipantBase):
+    exhibition_id: UUID

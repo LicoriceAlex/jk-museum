@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from backend.app.api.routes import (
     users, login, healthcheck,
     organizations, exhibits,
-    files
+    files, exhibitions, exhibition_blocks
 )
 
 
@@ -32,3 +32,13 @@ api_router.include_router(
     prefix="/files"
 )
 api_router.include_router(healthcheck.router)
+api_router.include_router(
+    exhibitions.router,
+    tags=["exhibitions"],
+    prefix="/exhibitions"
+)
+api_router.include_router(
+    exhibition_blocks.router,
+    tags=["exhibitions"],
+    prefix="/exhibitions/{exhibition_id}/blocks"
+)

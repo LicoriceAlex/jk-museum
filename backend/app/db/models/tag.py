@@ -21,3 +21,8 @@ class Tag(TagBase, table=True):
     
 class TagCreate(TagBase):
     pass
+
+
+class TagPublic(TagBase):
+    id: UUID
+    created_at: datetime
