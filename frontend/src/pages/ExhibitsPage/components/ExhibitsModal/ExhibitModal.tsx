@@ -102,7 +102,6 @@ const ExhibitModal: React.FC<ExhibitModalProps> = ({ exhibit, onClose, onUpdate 
   );
 };
 
-// Компонент для редактирования экспоната как презентационный компонент
 const EditExhibitModal: React.FC<EditExhibitModalProps> = ({
                                                              onClose,
                                                              formData,

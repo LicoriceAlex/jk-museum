@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styles from './TextBlock.module.scss'; // Create this SCSS module
+import styles from './TextBlock.module.scss';
 
 interface EditableTextProps {
   initialContent: string;
   onContentChange: (newContent: string) => void;
   style?: React.CSSProperties;
   placeholder?: string;
-  isHeader?: boolean; // To apply header-like styles or semantic tags
+  isHeader?: boolean;
 }
 
 const TextBlock: React.FC<EditableTextProps> = ({
@@ -18,8 +18,6 @@ const TextBlock: React.FC<EditableTextProps> = ({
                                                    }) => {
   const [content, setContent] = useState(initialContent);
   const divRef = useRef<HTMLDivElement>(null);
-  
-  // Update internal content when initialContent prop changes (e.g., block is loaded)
   useEffect(() => {
     setContent(initialContent);
     if (divRef.current && divRef.current.textContent !== initialContent) {
@@ -34,10 +32,10 @@ const TextBlock: React.FC<EditableTextProps> = ({
   };
   
   const handleBlur = () => {
-    onContentChange(content); // Save changes when focus leaves
+    onContentChange(content);
   };
   
-  const Tag = isHeader ? 'h2' : 'p'; // Use h2 for headers, p for body text
+  const Tag = isHeader ? 'h2' : 'p';
   
   return (
     <Tag
@@ -48,9 +46,9 @@ const TextBlock: React.FC<EditableTextProps> = ({
       onBlur={handleBlur}
       className={styles.Text}
       style={style}
-      data-placeholder={placeholder} // For placeholder styling
+      data-placeholder={placeholder}
     >
-      {initialContent || ''} {/* Display initial content directly */}
+      {initialContent || ''}
     </Tag>
   );
 };

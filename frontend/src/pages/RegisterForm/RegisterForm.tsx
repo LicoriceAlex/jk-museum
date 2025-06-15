@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./RegisterForm.module.scss";
-import { register } from "../../features/auth/services/authService.ts"; // путь к authService
+import { register } from "../../features/auth/services/authService.ts";
 
 export const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export const RegisterForm: React.FC = () => {
     const result = await register({
       email,
       password,
-      name: "Имя", // можно позже добавить в форму
+      name: "Имя",
       surname: "Фамилия",
       patronymic: "Отчество",
       role: "user",

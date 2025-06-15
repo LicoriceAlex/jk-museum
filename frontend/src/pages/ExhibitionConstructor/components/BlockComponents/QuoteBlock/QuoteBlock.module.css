@@ -1,40 +1,83 @@
-.block {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  font-size: 16px;
-  margin-bottom: 12px;
+/* components/BlockComponents/QuoteBlock/QuoteBlock.module.scss */
+.quoteBlock {
+  position: relative;
+  padding: 40px 60px; /* Adjust padding as needed for spacing from edges */
+  background-color: #f5eedc; /* Light background color from the screenshot */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px; /* Adjust minimum height as needed */
+  text-align: center;
+  font-family: "Georgia", serif;
   color: #333;
 }
 
-.quoteText {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  font-size: 14px;
-  font-style: italic;
-  resize: vertical;
-  min-height: 100px;
+.quoteMarkTopLeft,
+.quoteMarkBottomRight {
+  position: absolute;
+  font-size: 8em; /* Large quote marks */
+  color: #a0a09a; /* Slightly desaturated color for quote marks */
+  line-height: 0;
+  height: 0;
+  z-index: 1;
 }
 
-.meta {
+.quoteMarkTopLeft {
+  top: 15px;
+  left: 20px;
+  transform: rotate(180deg);
+}
+
+.quoteMarkBottomRight {
+  bottom: 15px;
+  right: 20px;
+}
+
+.quoteContentWrapper {
+  position: relative;
+  z-index: 2;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
 }
 
-.input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+.quoteText {
+  font-size: 1.8em;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  color: #555;
+  font-style: italic;
+}
+.quoteText::placeholder {
+  color: #a0a09a;
+  font-style: italic;
+}
+
+.quoteSeparator {
+  border: none;
+  border-top: 1px solid #a0a09a; /* Thin line, similar color to quote marks */
+  width: 60%; /* Adjust width of the line */
+  margin: 20px 0;
+}
+
+.quoteAuthor {
+  font-size: 1.2em;
+  font-weight: normal;
+  color: #777;
+  margin-top: 20px;
+  text-align: right;
+  width: 100%;
+}
+.quoteAuthor::placeholder {
+  color: #a0a09a;
+}
+
+:global(.textBlockEditable):focus {
+  outline: none;
+  border: none;
 }
 
 /*# sourceMappingURL=QuoteBlock.module.css.map */

@@ -1,4 +1,3 @@
-// Типы для регистрации и логина
 export interface RegisterPayload {
   email: string;
   password: string;

@@ -1,7 +1,7 @@
 .sliderBlock {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: #E8E5DE; // Цвет фона, как на ваших макетах
+  background-color: #E8E5DE;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
 .sliderContainer {
   position: relative;
   width: 100%;
-  max-width: 900px; // Максимальная ширина для слайдера, подстраивайте
+  max-width: 900px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,17 +24,16 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 50px; // Отступ, чтобы стрелки не накладывались на изображение
+  padding: 0 50px;
 }
 
 .imageWrapper {
   width: 100%;
-  // Аспектное соотношение для ImageBlock внутри слайда
   :global(.image-block-container) {
     width: 100%;
-    padding-bottom: 75%; // Пример 4:3, измените на 100% для квадрата или другое
+    padding-bottom: 75%;
     position: relative;
-    background-color: #DCD9D3; // Цвет плейсхолдера
+    background-color: #DCD9D3;
     border-radius: 4px;
     overflow: hidden;
     display: flex;
@@ -78,7 +77,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10; // Чтобы кнопки были над изображением
+  z-index: 10;
   transition: color 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
@@ -100,7 +99,7 @@
 
 .emptySlider {
   width: 100%;
-  padding-bottom: 50%; // Placeholder height
+  padding-bottom: 50%;
   background-color: #DCD9D3;
   display: flex;
   justify-content: center;
@@ -119,7 +118,7 @@
 }
 
 .addButton {
-  background-color: #1F3B2C; // Цвет вашей основной кнопки
+  background-color: #1F3B2C;
   color: #FFFFFF;
   border: none;
   padding: 10px 20px;

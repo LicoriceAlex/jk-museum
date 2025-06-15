@@ -2,10 +2,10 @@
 import React from 'react';
 import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import styles from './ImagesGridBlock.module.scss';
-import { BlockItem } from '../../../types'; // Импортируем BlockItem
+import { BlockItem } from '../../../types';
 
 interface ImagesGridBlockProps {
-  images: BlockItem[]; // ИЗМЕНЕНИЕ ЗДЕСЬ: Ожидаем массив BlockItem
+  images: BlockItem[];
   onUpload: (index: number, file: File) => void;
   onRemove: (index: number) => void;
   style?: React.CSSProperties;
@@ -27,7 +27,7 @@ const ImagesGridBlock: React.FC<ImagesGridBlockProps> = ({
       {images.map((image, index) => (
         <div key={image.id || index} className={styles.gridItem}>
           <ImageBlock
-            imageUrl={image.image_url} // <--- Это выглядит правильно!
+            imageUrl={image.image_url}
             onUpload={(file: File) => onUpload(index, file)}
             onRemove={() => onRemove(index)}
             style={style}

@@ -1,10 +1,7 @@
 @charset "UTF-8";
 /* components/BlocksPanel/BlocksPanel.module.scss */
 .blocksPanel {
-  background-color: #F7F5F0;
-  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
   font-family: "PT Serif", serif;
@@ -18,10 +15,8 @@
 }
 
 .blocksPanel__category {
-  background-color: #EAE6DF;
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .blocksPanel__categoryHeader {
@@ -30,13 +25,16 @@
   align-items: center;
   width: 100%;
   padding: 12px 15px;
-  background-color: #EAE6DF;
   border: none;
   cursor: pointer;
-  font-size: 1.1em;
-  font-weight: bold;
   color: #1F3B2C;
   transition: background-color 0.2s ease;
+  background-color: transparent;
+  font-family: "Cormorant Infant", serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 120%;
+  letter-spacing: 0;
 }
 .blocksPanel__categoryHeader:hover {
   background-color: rgb(227.9377358491, 222.7830188679, 213.7622641509);
@@ -46,48 +44,55 @@
 }
 
 .blocksPanel__options {
-  padding: 10px 0;
-  background-color: #F7F5F0;
-  border-top: 1px solid #D6D0C4;
   display: flex;
   flex-direction: column;
   gap: 8px;
   position: relative;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0px;
+  box-shadow: none;
+}
+.blocksPanel__options span {
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
 }
 
 .blocksPanel__option {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #FFFFFF;
-  border: 1px solid #D6D0C4;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background-color: #F5EBE0;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.95em;
   color: #333333;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease;
   font-family: "Open Sans", sans-serif;
   height: 72px;
+  box-shadow: none !important;
 }
 .blocksPanel__option:hover {
   background-color: #F0F0F0;
-  border-color: #A67F5D;
-}
-.blocksPanel__option.activeOption {
-  background-color: #A67F5D;
-  color: #FFFFFF;
-  border-color: #A67F5D;
-}
-.blocksPanel__option.activeOption svg {
-  stroke: #FFFFFF;
-  fill: #FFFFFF;
 }
 .blocksPanel__option svg {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   stroke: #1F3B2C;
   fill: none;
+}
+
+.activeOption {
+  background-color: #D3D3D3;
+  box-shadow: none !important;
+}
+
+.blocksPanel__option:focus,
+.blocksPanel__option:active {
+  outline: none;
+  box-shadow: none;
 }
 
 .iconGroup {
@@ -98,25 +103,20 @@
 
 /* Стили для открывающейся менюшки настройки */
 .blocksPanel__configMenu {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #FFFFFF;
-  border: 1px solid #D6D0C4;
+  padding: 16px 24px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  padding: 20px;
+  background-color: rgba(245, 235, 224, 0.5019607843);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   z-index: 10;
   box-sizing: border-box;
 }
 .blocksPanel__configMenu h3 {
   margin-top: 0;
-  margin-bottom: 20px;
   color: #1F3B2C;
-  font-size: 1.2em;
-  font-family: "PT Serif", serif;
+  font-size: 18px;
+  font-family: "Cormorant SC", serif;
 }
 .blocksPanel__configMenu .closeButton {
   position: absolute;
@@ -137,52 +137,62 @@
   stroke: currentColor;
 }
 
+.textSideSelection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.textSideSelection label {
+  margin-top: 0;
+  color: #1F3B2C;
+  font-size: 18px;
+  font-family: "Cormorant SC", serif;
+}
+.textSideSelection .toggleAlignButton {
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .photoUploadGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
 }
 
 .photoUploadThumbnail {
-  width: 76px;
-  padding-top: 64px;
-  position: relative;
-  background-color: #F0F0F0;
+  width: 76px; /* <-- Убедитесь, что это установлено */
+  height: 64px; /* <-- Убедитесь, что это установлено */
+  background-color: var(--color-background-secondary); /* Или любой другой цвет */
   border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex; /* Чтобы центрировать содержимое */
+  justify-content: center; /* Центрирование по горизонтали */
+  align-items: center; /* Центрирование по вертикали */
   cursor: pointer;
-  border: 1px dashed #D6D0C4;
+  position: relative; /* Для позиционирования кнопки X */
+  overflow: hidden; /* Обрезать содержимое, если оно выходит за пределы */
 }
 .photoUploadThumbnail img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Или contain, в зависимости от нужд */
 }
-.photoUploadThumbnail .placeholderThumbnail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
+
+.placeholderThumbnail {
+  width: 76px; /* <-- Добавьте или убедитесь, что это есть */
+  height: 64px; /* <-- Добавьте или убедитесь, что это есть */
+  display: flex; /* Для центрирования плюсика */
   justify-content: center;
   align-items: center;
-  color: #A67F5D;
-  font-size: 2em;
+  border-radius: 4px; /* Скругление углов */
+  cursor: pointer;
+  background-color: #F5EBE0;
 }
-.photoUploadThumbnail .placeholderThumbnail svg {
-  width: 30px;
-  height: 30px;
-  stroke: currentColor;
-}
-.photoUploadThumbnail .removeThumbnailButton {
+
+.removeThumbnailButton {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -199,7 +209,7 @@
   cursor: pointer;
   z-index: 2;
 }
-.photoUploadThumbnail .removeThumbnailButton:hover {
+.removeThumbnailButton:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -228,16 +238,26 @@
   color: #1F3B2C;
 }
 
-.addConfiguredBlockButton {
+.addButtonWrapper {
   width: 100%;
-  padding: 12px 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.addConfiguredBlockButton {
+  width: 129px;
+  padding: 8px 24px;
   background-color: #1F3B2C;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 1em;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0px;
 }
 .addConfiguredBlockButton:hover {
   background-color: rgb(13.4333333333, 25.5666666667, 19.0666666667);

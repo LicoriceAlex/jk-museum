@@ -35,8 +35,6 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear any previous errors when user makes changes
     if (error) setError(null);
   };
   
@@ -48,8 +46,6 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
         image: imageFile,
         imagePreviewUrl: URL.createObjectURL(imageFile),
       }));
-      
-      // Clear any previous errors when user makes changes
       if (error) setError(null);
     } else {
       setFormData(prev => ({ ...prev, image: null, imagePreviewUrl: null }));
@@ -58,11 +54,8 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
   
   const uploadImage = async (file: File): Promise<string> => {
     try {
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append('file', file);
-      
-      // Send POST request to the file upload endpoint
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/files/upload`, {
         method: 'POST',
         body: formData,
@@ -71,10 +64,8 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
       if (!response.ok) {
         throw new Error('Не удалось загрузить изображение');
       }
-      
-      // Parse the response to get the object_key
       const data = await response.json();
-      return data.object_key; // We need to return the object_key for the exhibit
+      return data.object_key;
     } catch (error) {
       console.error('Error uploading image:', error);
       throw new Error('Не удалось загрузить изображение');
@@ -87,17 +78,11 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
     try {
       setIsSubmitting(true);
       setError(null);
-      
-      // Validate form
       if (!formData.title) {
         throw new Error('Название экспоната обязательно для заполнения');
       }
-      
-      // Use the date value directly (it will be in YYYY-MM-DD format from the date input)
       const formattedDate = formData.creation_date || '';
-      
-      // Upload image if available
-      let imageKey = ''; // Default empty value
+      let imageKey = '';
       if (formData.image) {
         try {
           imageKey = await uploadImage(formData.image);
@@ -105,8 +90,6 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
           throw new Error(`Ошибка загрузки изображения: ${uploadError}`);
         }
       }
-      
-      // Prepare data for API
       const exhibitData = {
         title: formData.title,
         author: formData.author || 'Неизвестен',
@@ -118,8 +101,6 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
       };
       
       console.log('Sending exhibit data to API:', exhibitData);
-      
-      // Send to API
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/exhibits/`, {
         method: 'POST',
         headers: {
@@ -135,17 +116,12 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
           const errorData = await response.json();
           errorMessage = errorData.message || errorData.error || errorMessage;
         } catch (e) {
-          // If we can't parse the error JSON, use the default message
         }
         throw new Error(errorMessage);
       }
       
       const savedExhibit = await response.json();
-      
-      // Call the onSave prop with the data from the API
       onSave(savedExhibit);
-      
-      // Close the modal
       onClose();
       
     } catch (err) {

@@ -10,7 +10,6 @@ interface ImageUploadBlockProps {
 
 const ImageUploadBlock: React.FC<ImageUploadBlockProps> = ({
                                                              onUpload,
-                                                             //style,
                                                              compactMode = false
                                                            }) => {
   const [preview, setPreview] = useState<string | null>(null);

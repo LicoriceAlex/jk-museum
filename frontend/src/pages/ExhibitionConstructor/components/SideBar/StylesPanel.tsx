@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontSettings, ColorSettings } from '../../types';
 import styles from './StylesPanel.module.scss';
 import { HexColorPicker, HexColorInput } from 'react-colorful';
+import { ChevronDown } from 'lucide-react';
 
 interface StylesPanelProps {
   fontSettings: FontSettings;
@@ -10,7 +11,6 @@ interface StylesPanelProps {
   setColorSettings: (settings: ColorSettings) => void;
 }
 
-// Расширенный набор предустановленных цветовых схем
 const COLOR_PRESETS = [
   {
     id: 'classic',
@@ -74,8 +74,18 @@ const COLOR_PRESETS = [
   },
 ];
 
-// Типы цветовых ролей
 type ColorRole = 'primary' | 'secondary' | 'background' | 'text';
+
+const fontOptions = [
+  "PT Serif",
+  "Open Sans",
+  "Roboto",
+  "Playfair Display",
+  "Merriweather",
+  "Lato",
+  "Montserrat"
+];
+
 
 const StylesPanel: React.FC<StylesPanelProps> = ({
                                                    fontSettings,
@@ -86,21 +96,37 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
   const [showFontDetails, setShowFontDetails] = useState(false);
   const [expandedPanels, setExpandedPanels] = useState({
     font: true,
-    color: true,
+    color: false,
   });
   const [editingColorRole, setEditingColorRole] = useState<ColorRole | null>(null);
   const [tempColor, setTempColor] = useState<string>('');
   const [pickerPosition, setPickerPosition] = useState<{ top: number; left: number } | null>(null);
   
-  // Ref для элемента, по которому кликнули, чтобы отслеживать его позицию
   const clickedSwatchRef = useRef<HTMLDivElement | null>(null);
   
   const togglePanel = (panel: 'font' | 'color') => {
-    setExpandedPanels({
-      ...expandedPanels,
-      [panel]: !expandedPanels[panel],
+    setExpandedPanels((prev) => {
+      const newState = { ...prev };
+      if (newState[panel]) {
+        newState[panel] = false;
+      } else {
+        Object.keys(newState).forEach((key) => {
+          newState[key as 'font' | 'color'] = false;
+        });
+        newState[panel] = true;
+      }
+      return newState;
     });
+    if (panel === 'font' && expandedPanels.font === false) {
+      setShowFontDetails(false);
+    }
+    if (editingColorRole && panel !== 'color') {
+      setEditingColorRole(null);
+      setPickerPosition(null);
+      clickedSwatchRef.current = null;
+    }
   };
+  
   
   const applyColorPreset = (presetId: string) => {
     const preset = COLOR_PRESETS.find((p) => p.id === presetId);
@@ -112,20 +138,18 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
   const calculatePickerPosition = () => {
     if (clickedSwatchRef.current) {
       const rect = clickedSwatchRef.current.getBoundingClientRect();
-      // Позиционируем пикер справа от кликнутого элемента
-      // и по центру по вертикали относительно него
       setPickerPosition({
-        top: rect.top + window.scrollY + (rect.height / 2) - 100, // Центрируем по вертикали, вычитаем половину высоты пикера (приблизительно 200px / 2 = 100)
-        left: rect.right + window.scrollX + 15, // 15px отступ справа от элемента
+        top: rect.top + window.scrollY + (rect.height / 2) - 100,
+        left: rect.right + window.scrollX + 15,
       });
     }
   };
   
   const handleColorSwatchClick = (role: ColorRole, event: React.MouseEvent<HTMLDivElement>) => {
     setEditingColorRole(role);
-    setTempColor(colorSettings[role]); // Initialize temp color with current color
-    clickedSwatchRef.current = event.currentTarget; // Сохраняем ссылку на элемент
-    calculatePickerPosition(); // Вычисляем начальную позицию
+    setTempColor(colorSettings[role]);
+    clickedSwatchRef.current = event.currentTarget;
+    calculatePickerPosition();
   };
   
   const handleConfirmColor = () => {
@@ -137,20 +161,18 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
     }
     setEditingColorRole(null);
     setPickerPosition(null);
-    clickedSwatchRef.current = null; // Очищаем ссылку
+    clickedSwatchRef.current = null;
   };
   
   const handleCancelColor = () => {
     setEditingColorRole(null);
     setPickerPosition(null);
-    clickedSwatchRef.current = null; // Очищаем ссылку
+    clickedSwatchRef.current = null;
   };
   
-  // Эффект для отслеживания прокрутки
   useEffect(() => {
     if (editingColorRole && clickedSwatchRef.current) {
       window.addEventListener('scroll', calculatePickerPosition);
-      // Очистка слушателя события при размонтировании компонента или закрытии пикера
       return () => {
         window.removeEventListener('scroll', calculatePickerPosition);
       };
@@ -159,22 +181,22 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
   
   return (
     <div className={styles.sidebar__styles}>
-      {/* Панель настройки шрифта */}
       <div className={styles.sidebar__stylesGroup}>
         <h3
           className={styles.sidebar__stylesTitle}
           onClick={() => togglePanel('font')}
         >
           Шрифт
-          <span className={styles.arrow}>
-            {expandedPanels.font ? '▼' : '▲'}
-          </span>
+          <ChevronDown
+            size={20}
+            className={`${styles.arrowIcon} ${expandedPanels.font ? styles.arrowIconActive : ''}`}
+          />
         </h3>
         
-        {expandedPanels.font && !showFontDetails && (
-          <>
+        {expandedPanels.font && (
+          <div className={styles.sidebar__fontContent} style={{ display: showFontDetails ? 'none' : 'block' }}>
             <div className={styles.sidebar__stylesGroup}>
-              <label className={styles.sidebar__label}>ШРИФТОВАЯ ПАРА</label>
+              <label className={styles.sidebar__label}>Шрифтовая пара (заголовок)</label>
               <select
                 className={styles.sidebar__select}
                 value={fontSettings.titleFont}
@@ -182,16 +204,30 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                   setFontSettings({ ...fontSettings, titleFont: e.target.value })
                 }
               >
-                <option value="PT Serif">PT Serif</option>
-                <option value="Open Sans">Open Sans</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Playfair Display">Playfair Display</option>
+                {fontOptions.map(font => (
+                  <option key={font} value={font}>{font}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className={styles.sidebar__stylesGroup}>
+              <label className={styles.sidebar__label}>Шрифтовая пара (основной текст)</label>
+              <select
+                className={styles.sidebar__select}
+                value={fontSettings.bodyFont || fontSettings.titleFont}
+                onChange={(e) =>
+                  setFontSettings({ ...fontSettings, bodyFont: e.target.value })
+                }
+              >
+                {fontOptions.map(font => (
+                  <option key={font} value={font}>{font}</option>
+                ))}
               </select>
             </div>
             
             <div className={styles.sidebar__fontExample}>
-              <h4 className={styles.exampleTitle}>Цифровой музей</h4>
-              <p className={styles.exampleText}>
+              <h4 className={styles.exampleTitle} style={{ fontFamily: fontSettings.titleFont }}>Цифровой музей</h4>
+              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont }}>
                 Искусство становится ближе — исследуйте коллекции онлайн в любое
                 время.
               </p>
@@ -204,12 +240,11 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
               РЕДАКТИРОВАТЬ ШРИФТ
               <span className={styles.arrow}>→</span>
             </button>
-          </>
+          </div>
         )}
         
         {expandedPanels.font && showFontDetails && (
           <div className={styles.sidebar__fontDetails}>
-            {/* Кнопка "Назад" */}
             <button
               className={styles.sidebar__editButton}
               onClick={() => setShowFontDetails(false)}
@@ -220,7 +255,7 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
             </button>
             
             <div className={styles.fontDetail}>
-              <label className={styles.sidebar__label}>ЗАГОЛОВОК</label>
+              <label className={styles.sidebar__label}>ЗАГОЛОВОК (шрифт)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
                 value={fontSettings.titleFont}
@@ -228,18 +263,17 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                   setFontSettings({ ...fontSettings, titleFont: e.target.value })
                 }
               >
-                <option value="PT Serif">PT Serif</option>
-                <option value="Open Sans">Open Sans</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Playfair Display">Playfair Display</option>
+                {fontOptions.map(font => (
+                  <option key={font} value={font}>{font}</option>
+                ))}
               </select>
             </div>
             
             <div className={styles.fontDetail}>
-              <label className={styles.sidebar__label}>НАЧЕРТАНИЕ</label>
+              <label className={styles.sidebar__label}>ЗАГОЛОВОК (начертание)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
-                value={fontSettings.titleWeight || 'Bold'}
+                value={fontSettings.titleWeight || 'Normal'}
                 onChange={(e) =>
                   setFontSettings({ ...fontSettings, titleWeight: e.target.value })
                 }
@@ -252,12 +286,43 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
             </div>
             
             <div className={styles.fontDetail}>
-              <label className={styles.sidebar__label}>РАЗМЕР</label>
+              <label className={styles.sidebar__label}>ОСНОВНОЙ ТЕКСТ (шрифт)</label>
+              <select
+                className={styles.sidebar__fontDetailSelect}
+                value={fontSettings.bodyFont || 'Open Sans'}
+                onChange={(e) =>
+                  setFontSettings({ ...fontSettings, bodyFont: e.target.value })
+                }
+              >
+                {fontOptions.map(font => (
+                  <option key={font} value={font}>{font}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className={styles.fontDetail}>
+              <label className={styles.sidebar__label}>ОСНОВНОЙ ТЕКСТ (начертание)</label>
+              <select
+                className={styles.sidebar__fontDetailSelect}
+                value={fontSettings.bodyWeight || 'Normal'}
+                onChange={(e) =>
+                  setFontSettings({ ...fontSettings, bodyWeight: e.target.value })
+                }
+              >
+                <option value="Normal">Normal</option>
+                <option value="Bold">Bold</option>
+                <option value="Light">Light</option>
+                <option value="Italic">Italic</option>
+              </select>
+            </div>
+            
+            <div className={styles.fontDetail}>
+              <label className={styles.sidebar__label}>РАЗМЕР БАЗОВОГО ШРИФТА (px)</label>
               <div className={styles.sidebar__rangeContainer}>
                 <input
                   type="range"
                   min="12"
-                  max="48"
+                  max="24"
                   step="1"
                   className={styles.sidebar__range}
                   value={fontSettings.fontSize}
@@ -275,10 +340,38 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
             </div>
             
             <div className={styles.sidebar__fontExample}>
-              <h4 className={styles.exampleTitle}>Подзаголовок</h4>
-              <p className={styles.exampleText}>ПРИМЕР ВЫБРАННЫХ ШРИФТОВ</p>
-              <p className={styles.exampleText}>Цифровой музей</p>
-              <p className={styles.exampleText}>
+              <h4 className={styles.exampleTitle} style={{ fontFamily: fontSettings.titleFont,
+                fontWeight: fontSettings.titleWeight === 'Normal' ? 'normal' :
+                  fontSettings.titleWeight === 'Bold' ? 'bold' :
+                    fontSettings.titleWeight === 'Light' ? 300 :
+                      'normal',
+                fontStyle: fontSettings.titleWeight === 'Italic' ? 'italic' : 'normal',
+                fontSize: `${fontSettings.fontSize * 2}px`
+              }}>Подзаголовок</h4>
+              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
+                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
+                    fontSettings.bodyWeight === 'Light' ? 300 :
+                      'normal',
+                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
+                fontSize: `${fontSettings.fontSize}px`
+              }}>ПРИМЕР ВЫБРАННЫХ ШРИФТОВ</p>
+              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
+                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
+                    fontSettings.bodyWeight === 'Light' ? 300 :
+                      'normal',
+                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
+                fontSize: `${fontSettings.fontSize}px`
+              }}>Цифровой музей</p>
+              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
+                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
+                    fontSettings.bodyWeight === 'Light' ? 300 :
+                      'normal',
+                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
+                fontSize: `${fontSettings.fontSize * 0.9}px`
+              }}>
                 Искусство становится ближе — исследуйте коллекции онлайн в любое
                 время.
               </p>
@@ -287,16 +380,16 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
         )}
       </div>
       
-      {/* Панель настройки цвета */}
       <div className={styles.sidebar__stylesGroup}>
         <h3
           className={styles.sidebar__stylesTitle}
           onClick={() => togglePanel('color')}
         >
           Цвет
-          <span className={styles.arrow}>
-            {expandedPanels.color ? '▼' : '▲'}
-          </span>
+          <ChevronDown
+            size={20}
+            className={`${styles.arrowIcon} ${expandedPanels.color ? styles.arrowIconActive : ''}`}
+          />
         </h3>
         
         {expandedPanels.color && (
@@ -306,7 +399,6 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                 ТЕКУЩАЯ ПАЛИТРА
               </h4>
               
-              {/* Текущая палитра с возможностью редактирования */}
               <div className={styles.sidebar__currentPaletteDisplay}>
                 {(['primary', 'secondary', 'background', 'text'] as ColorRole[]).map(
                   (role) => (
@@ -330,10 +422,9 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                 )}
               </div>
               
-              {/* Custom Color Picker */}
               {editingColorRole && pickerPosition && (
                 <div
-                  className={styles.colorPickerPopover} // New class for positioning
+                  className={styles.colorPickerPopover}
                   style={{ top: pickerPosition.top, left: pickerPosition.left }}
                 >
                   <div className={styles.colorPickerPopoverContent}>
@@ -348,14 +439,14 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                     </div>
                     <HexColorPicker
                       color={tempColor}
-                      onChange={setTempColor} // Update temp color directly
+                      onChange={setTempColor}
                       className={styles.hexColorPicker}
                     />
                     <div className={styles.colorCodeSection}>
                       Цветовой код
                       <HexColorInput
                         color={tempColor}
-                        onChange={setTempColor} // Update temp color directly
+                        onChange={setTempColor}
                         className={styles.hexColorInput}
                       />
                     </div>
@@ -364,7 +455,6 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                 </div>
               )}
               
-              {/* Предустановленные цветовые схемы */}
               <h4
                 className={styles.sidebar__colorSchemeTitle}
                 style={{ marginTop: '24px' }}
@@ -408,7 +498,6 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
             <button
               className={styles.sidebar__button}
               onClick={() => {
-                /* Implement apply styles logic */
               }}
             >
               Применить стили

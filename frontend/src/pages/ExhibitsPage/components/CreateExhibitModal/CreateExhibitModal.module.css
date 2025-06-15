@@ -45,7 +45,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: hidden; /* Ensure image doesn't overflow */
+  overflow: hidden;
 }
 
 .imagePreview {
@@ -66,7 +66,7 @@
   cursor: pointer;
   font-family: Cormorant SC, serif;
   font-weight: 600;
-  z-index: 1; /* Ensure label is above the preview when no image */
+  z-index: 1;
   font-size: 24px;
   line-height: 120%;
 }
@@ -111,11 +111,11 @@
 .formTextarea,
 .formSelect {
   width: 100%;
-  padding: 8px 0; /* Adjust vertical padding */
+  padding: 8px 0;
   font-size: 16px;
-  border: none; /* Remove the border */
-  border-bottom: 1px solid #D3D3D3; /* Add bottom border for the underline */
-  background-color: transparent; /* Make background transparent */
+  border: none;
+  border-bottom: 1px solid #D3D3D3;
+  background-color: transparent;
   color: #1A2620;
   resize: none;
 }
@@ -127,8 +127,8 @@
 .formInput:focus,
 .formTextarea:focus,
 .formSelect:focus {
-  outline: none; /* Remove focus outline */
-  border-bottom-color: #1A2620; /* Change underline color on focus */
+  outline: none;
+  border-bottom-color: #1A2620;
 }
 
 .formSelect {
@@ -137,7 +137,7 @@
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%231A2620' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0 center; /* Adjust position of the arrow */
+  background-position: right 0 center;
 }
 
 .submitButtonWrapper {

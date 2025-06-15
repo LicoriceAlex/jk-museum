@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import styles from './SliderBlock.module.scss';
-import ImageBlock from '../ImageBlock/ImageBlock.tsx'; // Для отображения и управления изображениями
+import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import { BlockItem, ExhibitionBlock } from '../../../types';
 
 interface SliderBlockProps {
   blockId: string;
   items: BlockItem[];
-  style?: React.CSSProperties; // Для стилей текста/подписей
+  style?: React.CSSProperties;
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
-  // Добавьте сюда другие пропсы для слайдера, например:
-  // autoplay?: boolean;
-  // speed?: number;
 }
 
 const SliderBlock: React.FC<SliderBlockProps> = ({
@@ -36,18 +33,17 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
   const handleAddSlide = () => {
     const newItems = [...items, { image_url: undefined, text: '' }];
     updateBlock(blockId, { items: newItems });
-    setCurrentSlideIndex(newItems.length - 1); // Переключиться на новый слайд
+    setCurrentSlideIndex(newItems.length - 1);
   };
   
   const handleRemoveSlide = (itemIndexToRemove: number) => {
     const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
     updateBlock(blockId, { items: updatedItems });
     
-    // Adjust currentSlideIndex if the removed slide was before it or was the last one
     if (currentSlideIndex >= updatedItems.length && updatedItems.length > 0) {
       setCurrentSlideIndex(updatedItems.length - 1);
     } else if (updatedItems.length === 0) {
-      setCurrentSlideIndex(0); // Reset if no slides left
+      setCurrentSlideIndex(0);
     }
   };
   
@@ -61,7 +57,7 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
             <button
               className={`${styles.navButton} ${styles.prev}`}
               onClick={handlePrevSlide}
-              disabled={items.length <= 1} // Отключить кнопки, если слайд один или нет слайдов
+              disabled={items.length <= 1}
             >
               &lt;
             </button>
@@ -75,7 +71,7 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
             <button
               className={`${styles.navButton} ${styles.next}`}
               onClick={handleNextSlide}
-              disabled={items.length <= 1} // Отключить кнопки, если слайд один или нет слайдов
+              disabled={items.length <= 1}
             >
               &gt;
             </button>

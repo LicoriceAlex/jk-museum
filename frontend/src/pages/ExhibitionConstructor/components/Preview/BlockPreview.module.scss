@@ -1,13 +1,75 @@
-// components/Preview/BlockPreview.module.scss
-.blockContainer {
-  margin-bottom: 2rem;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.blockPreviewWrapper {
+  position: relative;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease-in-out;
+  cursor: grab;
+
+  &:hover {
+    border-color: #a0a0a0;
+  }
 }
 
-// Общие стили
+.controls {
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  .blockPreviewWrapper:hover & {
+    opacity: 1;
+  }
+}
+
+.controlButton {
+  background: none;
+  border: none;
+  color: #a0a0a0;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+
+  &:hover {
+    color: #606060;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+
+.removeButton {
+  color: #d9534f;
+  &:hover {
+    color: #c9302c;
+    background-color: rgba(#d9534f, 0.1);
+  }
+  &:active {
+    color: #ac2925;
+    background-color: rgba(#d9534f, 0.2);
+  }
+}
+
+.blockPreviewContent {
+  padding-right: 40px;
+}
+
+
+
 .textInput {
   width: 100%;
   padding: 0.75rem;
@@ -53,7 +115,6 @@
   }
 }
 
-// Стили для конкретных блоков
 .header {
   display: flex;
   gap: 1rem;
@@ -231,3 +292,4 @@
     color: #1F3B2C;
   }
 }
+

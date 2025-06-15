@@ -1,4 +1,3 @@
-// Типы данных для работы с экспонатами
 import { ChangeEvent, FormEvent } from 'react';
 
 export interface Exhibit {
@@ -11,7 +10,6 @@ export interface Exhibit {
   description?: string;
 }
 
-// Переименовали FormData в ExhibitFormData, чтобы избежать конфликта
 export interface ExhibitFormData {
   title: string;
   author: string;
@@ -37,5 +35,5 @@ export interface EditExhibitModalProps {
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleImageUpload: (e: ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: FormEvent) => void;
-  formData: ExhibitFormData; // Добавили formData в основной интерфейс
+  formData: ExhibitFormData;
 }

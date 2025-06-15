@@ -18,7 +18,7 @@ export const LoginForm: React.FC = () => {
     if (result?.error) {
       setError("Неверный логин или пароль");
     } else {
-      navigate("/profile"); // или другая страница после успешного входа
+      navigate("/profile");
     }
   };
   

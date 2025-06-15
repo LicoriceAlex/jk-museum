@@ -22,10 +22,8 @@ export const apiRequest = async (
     
     if (body) {
       if (body instanceof FormData) {
-        // For FormData, don't set Content-Type header (browser will set it)
         options.body = body;
       } else if (["POST", "PUT", "PATCH"].includes(method)) {
-        // For JSON data
         headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(body);
       }

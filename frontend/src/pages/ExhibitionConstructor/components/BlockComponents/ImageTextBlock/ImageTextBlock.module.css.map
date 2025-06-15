@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":[],"names":[],"mappings":"","file":"ImageTextBlock.module.css"}
+{"version":3,"sourceRoot":"","sources":["ImageTextBlock.module.scss"],"names":[],"mappings":"AAAA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;;AAKF;EApCF;IAqCI;IACA;IACA;IACA;;EAEA;AAAA;IAEE;IACA;IACA;IACA;IACA;;EAGF;IACE;IACA;IACA","file":"ImageTextBlock.module.css"}

@@ -5,16 +5,14 @@ import {ExhibitionBlock} from '../../../types.ts';
 import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import TextBlock from '../TextBlock/TextBlock.tsx';
 
-// Add these props to its interface
 interface PhotoBlockProps {
-  blockId: string; // ADDED
+  blockId: string;
   imageUrl?: string;
-  onUpload: (file: File) => void; // This will likely be passed the specific item index
-  onRemove: () => void; // This will likely be passed the specific item index
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void; // ADDED, if it has editable parts
+  onUpload: (file: File) => void;
+  onRemove: () => void;
+  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
   style?: React.CSSProperties;
-  // If PhotoBlock has captions or other content:
-  content?: string; // ADDED if PhotoBlock has editable text
+  content?: string;
 }
 
 const PhotoBlock: React.FC<PhotoBlockProps> = ({ blockId, imageUrl, onUpload, onRemove, updateBlock, style, content }) => {
@@ -26,10 +24,9 @@ const PhotoBlock: React.FC<PhotoBlockProps> = ({ blockId, imageUrl, onUpload, on
     <div className={styles.photoBlock}>
       <ImageBlock
         imageUrl={imageUrl}
-        onUpload={(file) => onUpload(file)} // This onUpload should match PhotoBlock's own prop signature
-        onRemove={onRemove} // This onRemove should match PhotoBlock's own prop signature
+        onUpload={(file) => onUpload(file)}
+        onRemove={onRemove}
       />
-      {/* If PhotoBlock has editable caption */}
       {content !== undefined && (
         <TextBlock
           initialContent={content}

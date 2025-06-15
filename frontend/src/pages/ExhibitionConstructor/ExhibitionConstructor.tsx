@@ -41,22 +41,16 @@ const ExhibitionConstructor: React.FC = () => {
   const updateExhibitionData = (newData: Partial<ExhibitionData>) => {
     setExhibitionData(prev => ({ ...prev, ...newData }));
   };
-  
-  // ИЗМЕНЕНИЕ 1: Добавляем initialData в сигнатуру функции addBlock
   const addBlock = useCallback((type: BlockType, initialData?: { items?: BlockItem[]; content?: string; }) => {
     console.log('ExhibitionConstructor: addBlock received type:', type, 'and initialData.items:', initialData?.items);
     
     let itemsForNewBlock: BlockItem[];
-    
-    // ЭТОТ БЛОК КОДА ДОЛЖЕН БЫТЬ ПРАВИЛЬНЫМ:
     if (initialData && initialData.items && initialData.items.length > 0) {
-      itemsForNewBlock = initialData.items; // ИСПОЛЬЗУЕМ ПЕРЕДАННЫЕ ДАННЫЕ
+      itemsForNewBlock = initialData.items;
     } else if (type.includes('IMAGE') || type === 'CAROUSEL' || type === 'SLIDER' || type.includes('LAYOUT_IMG')) {
-      // Если initialData.items нет или они пустые, но это блок с изображениями, создаем пустые слоты
       const numImageSlots = type === 'IMAGES_4' ? 4 : type === 'IMAGES_3' ? 3 : type === 'IMAGES_2' ? 2 : 1;
-      itemsForNewBlock = Array(numImageSlots).fill({} as BlockItem); // Создаем пустые объекты {}
+      itemsForNewBlock = Array(numImageSlots).fill({} as BlockItem);
     } else {
-      // Для других типов блоков, которые не используют items
       itemsForNewBlock = [];
     }
     
@@ -65,11 +59,11 @@ const ExhibitionConstructor: React.FC = () => {
       type,
       position: exhibitionData.blocks.length,
       content: initialData?.content || '',
-      items: itemsForNewBlock, // <-- Используем правильные itemsForNewBlock
+      items: itemsForNewBlock,
       settings: {}
     };
     
-    console.log('ExhibitionConstructor: Created newBlock.items:', newBlock.items); // <-- ЭТОТ ЛОГ ВЫ СЕЙЧАС ВИДИТЕ ПУСТЫМ
+    console.log('ExhibitionConstructor: Created newBlock.items:', newBlock.items);
     
     setExhibitionData(prev => ({
       ...prev,
@@ -114,7 +108,6 @@ const ExhibitionConstructor: React.FC = () => {
     console.log(`[ExhibitionConstructor] Attempting to upload image for block ${blockId}, item ${itemIndex}, file:`, file);
     
     try {
-      // Simulate File Upload
       const reader = new FileReader();
       reader.readAsDataURL(file);
       
@@ -128,7 +121,7 @@ const ExhibitionConstructor: React.FC = () => {
             if (block.id === blockId) {
               const updatedItems = block.items ? [...block.items] : [];
               if (!updatedItems[itemIndex]) {
-                updatedItems[itemIndex] = { id: Math.random().toString(36).substring(2, 11), type: 'image' }; // Убедитесь, что объект BlockItem существует
+                updatedItems[itemIndex] = { id: Math.random().toString(36).substring(2, 11), type: 'image' };
               }
               updatedItems[itemIndex] = { ...updatedItems[itemIndex], image_url: uploadedImageUrl };
               return { ...block, items: updatedItems };
@@ -146,7 +139,7 @@ const ExhibitionConstructor: React.FC = () => {
       console.error('[ExhibitionConstructor] Error during image upload:', error);
       alert('Ошибка загрузки изображения. Проверьте консоль для деталей.');
     }
-  }, []); // Добавил [ ], так как зависимостей нет, чтобы useCallback кэшировал функцию
+  }, []);
   
   const handleImageRemove = useCallback((blockId: string, itemIndex: number) => {
     console.log(`[ExhibitionConstructor] Removing image for block ${blockId}, item ${itemIndex}`);
@@ -156,7 +149,6 @@ const ExhibitionConstructor: React.FC = () => {
         if (block.id === blockId) {
           const updatedItems = block.items ? [...block.items] : [];
           if (updatedItems[itemIndex]) {
-            // Удаляем URL, но сохраняем другие свойства item, если они есть
             updatedItems[itemIndex] = { ...updatedItems[itemIndex], image_url: undefined };
           }
           return { ...block, items: updatedItems };
@@ -164,10 +156,7 @@ const ExhibitionConstructor: React.FC = () => {
         return block;
       }),
     }));
-  }, []); // Добавил [ ], так как зависимостей нет, чтобы useCallback кэшировал функцию
-  
-  // Эта функция будет передана в BlocksPanel через Sidebar
-  // и вернет URL для использования во временном состоянии BlocksPanel
+  }, []);
   const onFileUploadForBlocksPanel = useCallback(async (file: File): Promise<{ url: string }> => {
     console.log('[ExhibitionConstructor] onFileUploadForBlocksPanel called with file:', file);
     
@@ -186,7 +175,7 @@ const ExhibitionConstructor: React.FC = () => {
         reject(new Error('Failed to read file'));
       };
     });
-  }, []); // Пустой массив зависимостей, так как не зависит от изменяемых внешних значений
+  }, []);
   
   return (
     <div className={styles.constructorWrapper}>
@@ -203,7 +192,7 @@ const ExhibitionConstructor: React.FC = () => {
           colorSettings={colorSettings}
           setColorSettings={setColorSettings}
           addBlock={addBlock}
-          onFileUpload={onFileUploadForBlocksPanel} // Передаем функцию для загрузки
+          onFileUpload={onFileUploadForBlocksPanel}
         />
         
         <ExhibitionPreview

@@ -4,19 +4,9 @@ import ExhibitsList from './components/ExhibitsList/ExhibitsList.tsx';
 import CreateExhibitModal from './components/CreateExhibitModal/CreateExhibitModal.tsx';
 import styles from './ExhibitsPage.module.scss';
 
-interface Exhibit {
-  id: string;
-  title: string;
-  image_key: string;
-  author?: string;
-  creation_date?: string;
-  exhibit_type?: string;
-  description?: string;
-}
 
 const ExhibitsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  // Создаем ref для ExhibitsList
   const exhibitsListRef = useRef<{ fetchExhibits: () => Promise<void> } | null>(null);
   
   const handleOpenCreateModal = () => {
@@ -29,8 +19,6 @@ const ExhibitsPage: React.FC = () => {
   
   const handleSaveExhibit = (newExhibit: any) => {
     console.log('New exhibit saved:', newExhibit);
-    
-    // Обновляем список экспонатов через ref
     if (exhibitsListRef.current) {
       exhibitsListRef.current.fetchExhibits();
     }

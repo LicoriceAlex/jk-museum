@@ -1,34 +1,33 @@
-/* StylesPanel.module.scss */
+$primary-color: #1F3B2C;
+$secondary-color: #E8E5DE;
+$background-light: #f7f5f2;
+$text-color-dark: #333333;
+$border-color: #d1d1d1;
+$button-hover-bg: #E8E5DE;
+$button-accent-bg: #1F3B2C;
+$button-accent-text: #ffffff;
 
-// Основные переменные
-$primary-color: #1F3B2C; // Темно-зеленый (основной)
-$secondary-color: #E8E5DE; // Светло-бежевый (вторичный)
-$background-light: #f7f5f2; // Фон контента сайдбара (светлый беж)
-$text-color-dark: #333333; // Цвет текста
-$border-color: #d1d1d1; // Цвет разделителей
-$button-hover-bg: #E8E5DE; // Фон кнопок при наведении
-$button-accent-bg: #1F3B2C; // Фон акцентных кнопок
-$button-accent-text: #ffffff; // Цвет текста акцентных кнопок
 
-// Стили для всего компонента
 .sidebar__styles {
   padding: 0;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  font-family: 'Cormorant Infant', serif;
 }
 
-// Группа настроек (шрифт, цвет и т.д.)
+
 .sidebar__stylesGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-// Заголовок панели
+
 .sidebar__stylesTitle {
-  font-size: 1.2rem;
+  font-size: 40px;
   font-weight: 500;
   margin-bottom: 16px;
   color: $text-color-dark;
@@ -36,22 +35,30 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  .arrow {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
 }
 
-// Метка настройки
+.arrowIcon {
+  transition: transform 0.3s ease-in-out;
+  color: #555;
+}
+
+.arrowIconActive {
+  transform: rotate(180deg);
+}
+
+
+.sidebar__stylesTitle > span.arrow {
+  display: none;
+}
+
+
 .sidebar__label {
-  font-size: 0.9rem;
+  font-size: 24px;
   color: $text-color-dark;
   margin-bottom: 4px;
 }
 
-// Селект (выпадающий список)
+
 .sidebar__select {
   width: 100%;
   padding: 12px;
@@ -74,7 +81,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Пример выбранных шрифтов
 .sidebar__fontExample {
   background-color: $secondary-color;
   padding: 16px;
@@ -94,7 +100,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Кнопка "Редактировать шрифт"
 .sidebar__editButton {
   display: flex;
   align-items: center;
@@ -117,7 +122,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Детальные настройки шрифта (после нажатия "Редактировать шрифт")
 .sidebar__fontDetails {
   display: flex;
   flex-direction: column;
@@ -131,7 +135,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Слайдер для размера шрифта
 .sidebar__range {
   width: 100%;
   height: 6px;
@@ -207,7 +210,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Кнопка "Добавить цвет"
 .sidebar__addColor {
   display: flex;
   align-items: center;
@@ -226,7 +228,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Настройки фона страницы
 .sidebar__backgroundOptions {
   display: flex;
   flex-direction: column;
@@ -234,7 +235,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   margin-top: 8px;
 }
 
-// Опция фона страницы (с иконкой)
 .sidebar__backgroundOption {
   display: flex;
   align-items: center;
@@ -261,12 +261,10 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Выбранная опция
 .selected {
   background-color: darken($secondary-color, 10%);
 }
 
-// Кнопка "Применить стили"
 .sidebar__button {
   background-color: $button-accent-bg;
   color: $button-accent-text;
@@ -282,7 +280,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   }
 }
 
-// Выпадающий список шрифта с детальными настройками
 .sidebar__fontDetailSelect {
   width: 100%;
   padding: 12px;
@@ -300,7 +297,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   cursor: pointer;
 }
 
-// Предустановленные цветовые схемы
 .sidebar__presetPalettes {
   display: flex;
   flex-direction: column;
@@ -330,19 +326,16 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   font-weight: 500;
 }
 
-// ==============================================================
-// Стили для ТЕКУЩЕЙ ПАЛИТРЫ (редактируемой)
-// ==============================================================
 .sidebar__currentPaletteDisplay {
-  display: flex; // Используем flex для горизонтального расположения
-  gap: 12px; // Отступы между элементами
+  display: flex;
+  gap: 12px;
   margin-bottom: 20px;
-  justify-content: space-between; // Распределяем элементы по ширине
+  justify-content: space-between;
 }
 
 .sidebar__currentPaletteItem {
   position: relative;
-  flex: 1; // Чтобы каждый элемент занимал равную долю пространства
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -350,9 +343,9 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 8px; // Уменьшим padding, чтобы было больше похоже на пресеты
+  padding: 8px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden; // Важно для скругления углов у дочерних элементов
+  overflow: hidden;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -362,89 +355,85 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
 
 .currentPaletteColor {
   width: 100%;
-  height: 40px; // Высота, похожая на высоту полосок в предустановленных палитрах
-  border-radius: 4px; // Меньше скругление для полосок
+  height: 40px;
+  border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 8px;
-  transition: border-color 0.2s ease; /* Для плавности при наведении */
+  transition: border-color 0.2s ease;
 }
 
 .sidebar__currentPaletteItem:hover .currentPaletteColor {
-  border-color: darken($primary-color, 10%); /* Подсвечиваем рамку при наведении */
+  border-color: darken($primary-color, 10%);
 }
 
 .colorRoleLabel {
-  font-size: 11px; // Меньше шрифт
-  font-weight: 500; // Немного менее жирный
-  color: #666; // Более светлый цвет
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
   text-align: center;
   text-transform: uppercase;
 }
 
-// Меню редактирования цвета (иконка кисточки)
 .colorEditMenu {
   position: absolute;
   top: 50%;
-  left: 50%; /* Центрируем по горизонтали */
-  transform: translate(-50%, -50%); /* Точное центрирование */
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  justify-content: center; /* Центрируем содержимое */
+  justify-content: center;
   background: white;
-  padding: 8px; /* Увеличим padding для круглой формы */
-  border-radius: 50%; /* Круглая форма */
+  padding: 8px;
+  border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 10;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-  pointer-events: none; /* Позволяет кликам проходить сквозь меню, если оно не активно */
+  pointer-events: none;
 }
 
 .sidebar__currentPaletteItem:hover .colorEditMenu {
   opacity: 1;
   visibility: visible;
-  pointer-events: all; /* Включаем события мыши при наведении */
+  pointer-events: all;
 }
 
 .colorPicker {
-  position: absolute; /* Позиционируем абсолютно, чтобы перекрыть svg */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0; /* Делаем невидимым */
+  opacity: 0;
   cursor: pointer;
-  z-index: 2; /* Поверх SVG */
+  z-index: 2;
 }
 
 .colorValue {
-  display: none; /* Скрываем текстовое значение цвета, если оно не нужно рядом с пикером */
+  display: none;
 }
 
 .editButton {
-  background: none; /* Убираем фон */
+  background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px; /* Размер кнопки для кисточки */
+  width: 24px;
   height: 24px;
-  position: relative; /* Для позиционирования colorPicker */
-  z-index: 1; /* Под colorPicker */
+  position: relative;
+  z-index: 1;
 
   svg {
-    width: 20px; /* Размер иконки */
+    width: 20px;
     height: 20px;
-    stroke: $primary-color; /* Цвет кисточки, можно изменить */
+    stroke: $primary-color;
   }
 }
 
-// ==============================================================
-// Стили для ПРЕДУСТАНОВЛЕННЫХ ПАЛИТР (без изменений)
-// ==============================================================
 .sidebar__presetPalettesGrid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -467,7 +456,6 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
   color: #444;
 }
 
-/* Custom Color Picker Styles */
 .customColorPickerOverlay {
   position: relative;
   top: 0;
@@ -546,7 +534,7 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
 
 .colorPickerPopover {
   position: absolute;
-  z-index: 1000; // Ensure it's above other elements
+  z-index: 1000;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -582,12 +570,11 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
 }
 
 .hexColorPicker {
-  // Adjust styles for the react-colorful picker itself if needed
-  width: 100%; // Ensure it fits the popover
+  width: 100%;
   .react-colorful__saturation,
   .react-colorful__hue,
   .react-colorful__alpha {
-    border-radius: 4px; // Example styling
+    border-radius: 4px;
   }
 }
 
@@ -608,13 +595,13 @@ $button-accent-text: #ffffff; // Цвет текста акцентных кно
 }
 
 .confirmColorButton {
-  background-color: #007bff; /* Example blue color */
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
-  align-self: flex-end; // Align button to the right
+  align-self: flex-end;
   &:hover {
     background-color: #0056b3;
   }

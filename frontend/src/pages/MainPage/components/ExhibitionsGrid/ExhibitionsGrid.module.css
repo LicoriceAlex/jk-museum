@@ -1,0 +1,224 @@
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 40px 0;
+  width: 1530px;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+
+.searchBar {
+  width: 100%;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #5d5d5d;
+  font-family: "Cormorant SC", serif;
+  font-size: 24px;
+}
+
+.searchInput {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 24px;
+  color: #344E41;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+.searchInput::placeholder {
+  color: #344E41;
+}
+
+.searchIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+.searchIcon svg {
+  color: #5d5d5d;
+  width: 20px;
+  height: 20px;
+}
+
+.filterBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+
+.categories {
+  display: flex;
+  gap: 20px;
+}
+
+.categoryItem {
+  font-size: 24px;
+  color: rgba(52, 78, 65, 0.6);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.categoryItem:hover {
+  color: #333;
+}
+.categoryItem.active {
+  color: #344E41;
+}
+
+.sortOptions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Cormorant SC", serif;
+}
+.sortOptions span {
+  font-size: 24px;
+  color: #5d5d5d;
+}
+
+.sortSelect {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 24px;
+  color: #333;
+  appearance: none;
+  padding-right: 20px;
+  cursor: pointer;
+  font-family: "Cormorant SC", serif;
+}
+
+.sortArrow {
+  color: #5d5d5d;
+  pointer-events: none;
+  margin-left: -20px;
+}
+
+.compactHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #5d5d5d; /* Line similar to full search bar */
+}
+
+.compactTitle {
+  font-family: "Cormorant SC", serif;
+  font-size: 32px; /* Smaller title for compact view */
+  font-weight: 600;
+  color: #344E41;
+  margin: 0; /* Remove default margin */
+}
+
+.searchBarCompact {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Small gap between input and icon */
+  width: 250px; /* Smaller width for compact search */
+}
+
+.searchInputCompact {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 18px; /* Smaller font size for compact search */
+  color: #344E41;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+.searchInputCompact::placeholder {
+  color: rgba(52, 78, 65, 0.6);
+}
+
+.searchIconCompact {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* No padding needed */
+}
+.searchIconCompact svg {
+  color: #5d5d5d;
+  width: 18px; /* Smaller icon */
+  height: 18px;
+}
+
+/* --- MODIFIED GRID STYLES START --- */
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 93px;
+  /* Responsive adjustments */
+}
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 15px;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+}
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 93px;
+  }
+}
+
+/* --- MODIFIED GRID STYLES END --- */
+/* --- MODIFIED SHOW MORE BUTTON STYLES START --- */
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.showMoreButton {
+  border: 1px solid #253A30;
+  color: #253A30;
+  padding: 16px 24px;
+  border-radius: 4px;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  font-family: "Cormorant SC", serif;
+}
+.showMoreButton:hover {
+  transform: translateY(-1px);
+}
+.showMoreButton:active {
+  transform: translateY(0);
+}
+
+/* --- MODIFIED SHOW MORE BUTTON STYLES END --- */
+
+/*# sourceMappingURL=ExhibitionsGrid.module.css.map */

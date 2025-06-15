@@ -11,6 +11,13 @@ import InfoPanel from './InfoPanel';
 import StylesPanel from './StylesPanel';
 import BlocksPanel from './BlocksPanel';
 
+import infoIcon from '../../../../assets/icons/info.svg';
+import infoActiveIcon from '../../../../assets/icons/info-active.svg';
+import styleIcon from '../../../../assets/icons/style.svg';
+import styleActiveIcon from '../../../../assets/icons/style-active.svg';
+import blocksIcon from '../../../../assets/icons/blocks.svg';
+import blocksActiveIcon from '../../../../assets/icons/blocks-active.svg';
+
 interface SidebarProps {
   activeTab: PanelTab;
   setActiveTab: (tab: PanelTab) => void;
@@ -43,24 +50,33 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => setActiveTab('info')}
           title="Информация о выставке"
         >
-          {/* Использовать styles['sidebar__tab-icon'] для надежности */}
-          <img src={'./info.svg'} alt={''}/>
+          <img
+            src={activeTab === 'info' ? infoActiveIcon : infoIcon}
+            alt="Info Icon"
+            className={styles.sidebar__tab__icon}
+          />
         </button>
         <button
           className={`${styles.sidebar__tab} ${activeTab === 'styles' ? styles['sidebar__tab--active'] : ''}`}
           onClick={() => setActiveTab('styles')}
           title="Настройки стилей"
         >
-          {/* Использовать styles['sidebar__tab-icon'] для надежности */}
-          <img src={'./style.svg'} alt={''}/>
+          <img
+            src={activeTab === 'styles' ? styleActiveIcon : styleIcon}
+            alt="Styles Icon"
+            className={styles.sidebar__tab__icon}
+          />
         </button>
         <button
           className={`${styles.sidebar__tab} ${activeTab === 'blocks' ? styles['sidebar__tab--active'] : ''}`}
           onClick={() => setActiveTab('blocks')}
           title="Блоки выставки"
         >
-          {/* Использовать styles['sidebar__tab-icon'] для надежности */}
-          <img src={'./blocks.svg'} alt={''}/>
+          <img
+            src={activeTab === 'blocks' ? blocksActiveIcon : blocksIcon}
+            alt="Blocks Icon"
+            className={styles.sidebar__tab__icon}
+          />
         </button>
       </div>
       
@@ -82,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
         
         {activeTab === 'blocks' && (
-          <BlocksPanel addBlock={addBlock} onFileUpload={onFileUpload} /> // ДОБАВИТЬ ЭТО
+          <BlocksPanel addBlock={addBlock} onFileUpload={onFileUpload} />
         )}
       </div>
     </aside>

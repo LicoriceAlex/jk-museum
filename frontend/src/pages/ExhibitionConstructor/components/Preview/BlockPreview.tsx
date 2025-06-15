@@ -2,8 +2,8 @@
 import React from 'react';
 import { ExhibitionBlock, FontSettings, ColorSettings} from '../../types';
 import HeaderBlock from '../BlockComponents/HeaderBlock/HeaderBlock.tsx';
-import TextBlock from '../BlockComponents/TextBlock/TextBlock.tsx'; // This should now be EditableText or similar
-import QuoteBlock from '../BlockComponents/QuoteBlock/QuoteBlock.tsx'; // This should also be editable
+import TextBlock from '../BlockComponents/TextBlock/TextBlock.tsx';
+import QuoteBlock from '../BlockComponents/QuoteBlock/QuoteBlock.tsx';
 import ImageBlock from '../BlockComponents/ImageBlock/ImageBlock.tsx';
 import ImageGridBlock from '../BlockComponents/ImagesGridBlock/ImagesGridBlock.tsx';
 import CarouselBlock from '../BlockComponents/CarouselBlock/CarouselBlock.tsx';
@@ -12,8 +12,7 @@ import LayoutImgTextImgBlock from '../BlockComponents/LayoutImgTextImgBlock/Layo
 import LayoutTextImgTextBlock from '../BlockComponents/LayoutTextImgTextBlock/LayoutTextImgTextBlock.tsx';
 import PhotoBlock from '../BlockComponents/PhotoBlock/PhotoBlock.tsx';
 import SliderBlock from '../BlockComponents/SliderBlock/SliderBlock.tsx';
-
-// Import EditableText for TEXT and HEADER blocks if they are editable
+import styles from './BlockPreview.module.scss'
 
 interface BlockPreviewProps {
   block: ExhibitionBlock;
@@ -21,9 +20,9 @@ interface BlockPreviewProps {
   colorSettings: ColorSettings;
   onImageUpload: (blockId: string, index: number, file: File) => void;
   onImageRemove: (blockId: string, index: number) => void;
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void; // ADDED
-  removeBlock: (blockId: string) => void; // ADDED
-  moveBlock: (blockId: string, direction: 'up' | 'down') => void; // ADDED
+  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  removeBlock: (blockId: string) => void;
+  moveBlock: (blockId: string, direction: 'up' | 'down') => void;
 }
 
 const BlockPreview: React.FC<BlockPreviewProps> = ({
@@ -32,15 +31,33 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
                                                      colorSettings,
                                                      onImageUpload,
                                                      onImageRemove,
-                                                     updateBlock, // DESTRUCTURED
-                                                     removeBlock, // DESTRUCTURED
-                                                     moveBlock // DESTRUCTURED
+                                                     updateBlock,
+                                                     removeBlock,
+                                                     moveBlock
                                                    }) => {
+  
   const textStyle = {
-    fontFamily: fontSettings.bodyFont,
+    fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+    fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
+      fontSettings.bodyWeight === 'Bold' ? 'bold' :
+        fontSettings.bodyWeight === 'Light' ? 300 :
+          'normal',
+    fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
     color: colorSettings.text,
     fontSize: `${fontSettings.fontSize}px`
   };
+  
+  const headerStyle = {
+    fontFamily: fontSettings.titleFont,
+    fontWeight: fontSettings.titleWeight === 'Normal' ? 'normal' :
+      fontSettings.titleWeight === 'Bold' ? 'bold' :
+        fontSettings.titleWeight === 'Light' ? 300 :
+          'normal',
+    fontStyle: fontSettings.titleWeight === 'Italic' ? 'italic' : 'normal',
+    fontSize: `${fontSettings.fontSize * 1.5}px`,
+    color: colorSettings.primary
+  };
+  
   
   const renderBlockContent = () => {
     const getImageUrl = (itemIndex: number): string | undefined => {
@@ -49,13 +66,14 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
     
     switch (block.type) {
       case 'HEADER':
-        // Use EditableText for HEADER
         return (
-          <HeaderBlock content={block.content || ''}/>
+          <HeaderBlock
+            content={block.content || ''}
+            style={headerStyle}
+          />
         );
       
       case 'TEXT':
-        // Use EditableText for TEXT
         return (
           <TextBlock
             initialContent={block.content || ''}
@@ -66,16 +84,12 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
         );
       
       case 'QUOTE':
-        // Assuming QuoteBlock also uses an internal editable component or needs an update prop
-        // If QuoteBlock has its own internal EditableText, it will need to pass onContentChange itself.
-        // If it's a display block, ensure QuoteBlockProps makes onUpdate optional or removes it.
-        // For now, I'm assuming it needs an update handler for content.
         return (
           <QuoteBlock
             content={block.content || ''}
             settings={block.settings}
-            onUpdate={(updatedData: Partial<ExhibitionBlock>) => updateBlock(block.id, updatedData)} // Pass updateBlock
-            style={textStyle} // Assuming QuoteBlock can take style
+            onUpdate={(updatedData: Partial<ExhibitionBlock>) => updateBlock(block.id, updatedData)}
+            style={textStyle}
           />
         );
       
@@ -102,7 +116,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
       case 'IMAGES_2':
         return (
           <ImageGridBlock
-            images={(block.items || []).slice(0, 2).map(item => ({ url: item.image_url }))}
+            images={(block.items || []).slice(0, 2)}
             onUpload={(index, file) => onImageUpload(block.id, index, file)}
             onRemove={(index) => onImageRemove(block.id, index)}
             style={textStyle}
@@ -113,7 +127,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
       case 'IMAGES_3':
         return (
           <ImageGridBlock
-            images={(block.items || []).slice(0, 3).map(item => ({ url: item.image_url }))}
+            images={(block.items || []).slice(0, 3)}
             onUpload={(index, file) => onImageUpload(block.id, index, file)}
             onRemove={(index) => onImageRemove(block.id, index)}
             style={textStyle}
@@ -124,7 +138,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
       case 'IMAGES_4':
         return (
           <ImageGridBlock
-            images={(block.items || []).slice(0, 4).map(item => ({ url: item.image_url }))}
+            images={(block.items || []).slice(0, 4)}
             onUpload={(index, file) => onImageUpload(block.id, index, file)}
             onRemove={(index) => onImageRemove(block.id, index)}
             style={textStyle}
@@ -133,52 +147,44 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
         );
       
       case 'CAROUSEL':
-        // Assuming CarouselBlock also needs updateBlock, onImageUpload, onImageRemove if it's editable
-        // And it needs blockId
         return (
           <CarouselBlock
             blockId={block.id}
             items={block.items || []}
             style={textStyle}
-            onImageUpload={onImageUpload} // Pass upload handlers
+            onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock} // Pass updateBlock
+            updateBlock={updateBlock}
           />
         );
       
       case 'IMAGE_TEXT_RIGHT':
       case 'IMAGE_TEXT_LEFT':
-        // Passing blockId, onImageUpload, onImageRemove, updateBlock to ImageTextBlock
         return (
           <ImageTextBlock
             blockId={block.id}
             content={block.content || ''}
-            imageUrl={getImageUrl(0)} // Pass imageUrl directly
+            imageUrl={getImageUrl(0)}
             imagePosition={block.type === 'IMAGE_TEXT_RIGHT' ? 'right' : 'left'}
             style={textStyle}
-            onImageUpload={onImageUpload} // Pass upload handlers
+            onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock} // Pass updateBlock
+            updateBlock={updateBlock}
           />
         );
       
       case 'LAYOUT_IMG_TEXT_IMG':
-        // Passing blockId, onImageUpload, onImageRemove, updateBlock to LayoutImgTextImgBlock
         return (
           <LayoutImgTextImgBlock
             blockId={block.id}
             content={block.content || ''}
-            leftImageUrl={getImageUrl(0)}
-            rightImageUrl={getImageUrl(1)}
-            onImageUpload={onImageUpload}
-            onImageRemove={onImageRemove}
+            items={block.items || []}
             updateBlock={updateBlock}
             style={textStyle}
           />
         );
       
       case 'LAYOUT_TEXT_IMG_TEXT':
-        // Passing blockId, onImageUpload, onImageRemove, updateBlock to LayoutTextImgTextBlock
         return (
           <LayoutTextImgTextBlock
             blockId={block.id}
@@ -192,29 +198,26 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
         );
       
       case 'PHOTO':
-        // Assuming PhotoBlock also needs blockId, onImageUpload, onImageRemove if it's editable
-        // And it needs updateBlock if it has editable content or settings
         return (
           <PhotoBlock
             blockId={block.id}
             imageUrl={getImageUrl(0)}
             onUpload={(file: File) => onImageUpload(block.id, 0, file)}
             onRemove={() => onImageRemove(block.id, 0)}
-            updateBlock={updateBlock} // If PhotoBlock can update its own content/settings
+            updateBlock={updateBlock}
             style={textStyle}
           />
         );
       
       case 'SLIDER':
-        // Assuming SliderBlock also needs blockId, onImageUpload, onImageRemove, updateBlock if it's editable
         return (
           <SliderBlock
-            blockId={block.id} // Pass blockId
+            blockId={block.id}
             items={block.items || []}
             style={textStyle}
-            onImageUpload={onImageUpload} // Pass upload handlers
+            onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock} // Pass updateBlock
+            updateBlock={updateBlock}
           />
         );
       
@@ -225,15 +228,19 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
   };
   
   return (
-    <div className="block-preview-wrapper" style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '10px' }}>
-      <div style={{ textAlign: 'right', marginBottom: '5px' }}>
-        <button onClick={() => moveBlock(block.id, 'up')} style={{ marginRight: '5px' }}>↑</button>
-        <button onClick={() => moveBlock(block.id, 'down')} style={{ marginRight: '5px' }}>↓</button>
-        <button onClick={() => removeBlock(block.id)} style={{ color: 'red' }}>X</button>
+    <div className={styles.blockPreviewWrapper}>
+      <div className={styles.controls}>
+        <button onClick={() => moveBlock(block.id, 'up')}
+                className={styles.controlButton}>↑
+        </button>
+        <button onClick={() => moveBlock(block.id, 'down')}
+                className={styles.controlButton}>↓
+        </button>
+        <button onClick={() => removeBlock(block.id)}
+                className={styles.controlButton}>✕
+        </button>
       </div>
-      <div className="block-preview-content">
-        {renderBlockContent()}
-      </div>
+      {renderBlockContent()}
     </div>
   );
 };

@@ -1,11 +1,10 @@
-@charset "UTF-8";
-/* StylesPanel.module.scss */
 .sidebar__styles {
   padding: 0;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  font-family: "Cormorant Infant", serif;
 }
 
 .sidebar__stylesGroup {
@@ -15,7 +14,7 @@
 }
 
 .sidebar__stylesTitle {
-  font-size: 1.2rem;
+  font-size: 40px;
   font-weight: 500;
   margin-bottom: 16px;
   color: #333333;
@@ -24,14 +23,22 @@
   justify-content: space-between;
   align-items: center;
 }
-.sidebar__stylesTitle .arrow {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
+
+.arrowIcon {
+  transition: transform 0.3s ease-in-out;
+  color: #555;
+}
+
+.arrowIconActive {
+  transform: rotate(180deg);
+}
+
+.sidebar__stylesTitle > span.arrow {
+  display: none;
 }
 
 .sidebar__label {
-  font-size: 0.9rem;
+  font-size: 24px;
   color: #333333;
   margin-bottom: 4px;
 }
@@ -312,11 +319,11 @@
   border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 8px;
-  transition: border-color 0.2s ease; /* Для плавности при наведении */
+  transition: border-color 0.2s ease;
 }
 
 .sidebar__currentPaletteItem:hover .currentPaletteColor {
-  border-color: rgb(13.4333333333, 25.5666666667, 19.0666666667); /* Подсвечиваем рамку при наведении */
+  border-color: rgb(13.4333333333, 25.5666666667, 19.0666666667);
 }
 
 .colorRoleLabel {
@@ -330,60 +337,60 @@
 .colorEditMenu {
   position: absolute;
   top: 50%;
-  left: 50%; /* Центрируем по горизонтали */
-  transform: translate(-50%, -50%); /* Точное центрирование */
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  justify-content: center; /* Центрируем содержимое */
+  justify-content: center;
   background: white;
-  padding: 8px; /* Увеличим padding для круглой формы */
-  border-radius: 50%; /* Круглая форма */
+  padding: 8px;
+  border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 10;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-  pointer-events: none; /* Позволяет кликам проходить сквозь меню, если оно не активно */
+  pointer-events: none;
 }
 
 .sidebar__currentPaletteItem:hover .colorEditMenu {
   opacity: 1;
   visibility: visible;
-  pointer-events: all; /* Включаем события мыши при наведении */
+  pointer-events: all;
 }
 
 .colorPicker {
-  position: absolute; /* Позиционируем абсолютно, чтобы перекрыть svg */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0; /* Делаем невидимым */
+  opacity: 0;
   cursor: pointer;
-  z-index: 2; /* Поверх SVG */
+  z-index: 2;
 }
 
 .colorValue {
-  display: none; /* Скрываем текстовое значение цвета, если оно не нужно рядом с пикером */
+  display: none;
 }
 
 .editButton {
-  background: none; /* Убираем фон */
+  background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px; /* Размер кнопки для кисточки */
+  width: 24px;
   height: 24px;
-  position: relative; /* Для позиционирования colorPicker */
-  z-index: 1; /* Под colorPicker */
+  position: relative;
+  z-index: 1;
 }
 .editButton svg {
-  width: 20px; /* Размер иконки */
+  width: 20px;
   height: 20px;
-  stroke: #1F3B2C; /* Цвет кисточки, можно изменить */
+  stroke: #1F3B2C;
 }
 
 .sidebar__presetPalettesGrid {
@@ -407,7 +414,6 @@
   color: #444;
 }
 
-/* Custom Color Picker Styles */
 .customColorPickerOverlay {
   position: relative;
   top: 0;
@@ -543,7 +549,7 @@
 }
 
 .confirmColorButton {
-  background-color: #007bff; /* Example blue color */
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 8px 15px;

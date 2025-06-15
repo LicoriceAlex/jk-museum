@@ -1,0 +1,97 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.card {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: none;
+  height: 382px;
+  width: 448px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  font-weight: 600;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  padding-bottom: 60%;
+  height: 320px;
+  overflow: hidden;
+  background: #2b3b36;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: none;
+}
+
+.content {
+  margin-top: -80px;
+
+  padding: 16px 16px 16px 0;
+  display: flex;
+  width: 400px;
+  height: 142px;
+  flex-direction: column;
+  background-color: #dcd7ce;
+  color: #333;
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
+}
+
+.date {
+  font-size: 16px;
+  color: #5d5d5d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+
+.title {
+  font-size: 24px;
+  color: #333;
+  line-height: 1.2;
+  flex-grow: 1;
+  font-family: "Cormorant SC", serif;
+  vertical-align: middle;
+  font-weight: 600;
+}
+
+.lineAndViewButton {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.line {
+  width: 36px;
+  height: 2px;
+  background-color: #8a8a8a;
+}
+
+.viewButton {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  text-decoration: none;
+  transition: none;
+  font-family: "Cormorant SC", serif;
+}

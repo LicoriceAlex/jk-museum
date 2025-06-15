@@ -1,14 +1,13 @@
-// components/BlockComponents/QuoteBlock/QuoteBlock.tsx
 import React from 'react';
-import { ExhibitionBlock } from '../../../types'; // Assuming ExhibitionBlock is needed for settings
-import TextBlock from '../TextBlock/TextBlock'; // Assuming you want quotes to be editable
+import { ExhibitionBlock } from '../../../types';
+import TextBlock from '../TextBlock/TextBlock';
 import styles from './QuoteBlock.module.scss';
 
 interface QuoteBlockProps {
   content: string;
-  settings?: ExhibitionBlock['settings']; // Settings might contain author, source, etc.
-  onUpdate: (updatedData: Partial<ExhibitionBlock>) => void; // ADDED: Prop for updating content/settings
-  style?: React.CSSProperties; // Optional: for applying text styles
+  settings?: ExhibitionBlock['settings'];
+  onUpdate: (updatedData: Partial<ExhibitionBlock>) => void;
+  style?: React.CSSProperties;
 }
 
 const QuoteBlock: React.FC<QuoteBlockProps> = ({ content, settings, onUpdate, style }) => {
@@ -21,34 +20,28 @@ const QuoteBlock: React.FC<QuoteBlockProps> = ({ content, settings, onUpdate, st
     onUpdate({ settings: { ...settings, author: newAuthor } });
   };
   
-  const handleSourceChange = (newSource: string) => {
-    onUpdate({ settings: { ...settings, source: newSource } });
-  };
-  
   return (
     <div className={styles.quoteBlock}>
-      <TextBlock
-        initialContent={content}
-        onContentChange={handleQuoteChange}
-        style={style}
-        placeholder="Введите цитату"
-      />
-      {settings?.author && (
+      <span className={styles.quoteMarkTopLeft}>&#8220;</span>
+      
+      <div className={styles.quoteContentWrapper}>
         <TextBlock
-          initialContent={settings.author}
+          initialContent={content}
+          onContentChange={handleQuoteChange}
+          className={styles.quoteText}
+          placeholder="Введите цитату"
+        />
+        <hr className={styles.quoteSeparator} />
+        
+        <TextBlock
+          initialContent={settings?.author || ''}
           onContentChange={handleAuthorChange}
-          style={{ ...style, fontStyle: 'italic', fontSize: '0.9em' }}
-          placeholder="Автор"
+          className={styles.quoteAuthor}
+          placeholder="Введите автора цитаты"
         />
-      )}
-      {settings?.source && (
-        <TextBlock
-          initialContent={settings.source}
-          onContentChange={handleSourceChange}
-          style={{ ...style, fontSize: '0.8em' }}
-          placeholder="Источник"
-        />
-      )}
+      </div>
+      
+      <span className={styles.quoteMarkBottomRight}>&#8221;</span>
     </div>
   );
 };

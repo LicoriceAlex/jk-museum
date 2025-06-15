@@ -2,55 +2,57 @@
   display: grid;
   gap: 15px;
   width: 100%;
+  height: 280px;
   margin-bottom: 20px;
 }
 
 .gridItem {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 5px;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
 }
-.gridItem :global(.image-block-container) {
+
+.gridItem :global(.imageBlock) {
   width: 100%;
-  height: auto;
-  max-width: 100%;
+  height: 100%;
+}
+
+.gridItem :global(.imageContainer) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.gridItem :global(.image) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gridItem :global(.uploadContainer) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gridItem :global(.uploadPrompt) {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.gridItem :global(.image-block-image) {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  border-radius: 4px;
-}
-.gridItem :global(.image-block-placeholder) {
-  width: 100%;
-  padding-bottom: 75%;
-  position: relative;
-  display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
   border: 1px dashed #ccc;
-  color: #888;
-  cursor: pointer;
   border-radius: 4px;
-  text-align: center;
-  font-size: 14px;
-}
-.gridItem :global(.image-block-placeholder):hover {
-  background-color: #e9e9e9;
-  border-color: #aaa;
-}
-.gridItem :global(.image-block-placeholder) span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  background-color: #f8f8f8;
 }
 
 /*# sourceMappingURL=ImagesGridBlock.module.css.map */

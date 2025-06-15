@@ -5,16 +5,15 @@ import {ExhibitionBlock} from '../../../types.ts';
 import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import TextBlock from '../TextBlock/TextBlock.tsx';
 
-// Add these props to its interface
 interface ImageTextBlockProps {
-  blockId: string; // ADDED
+  blockId: string;
   content: string;
   imageUrl?: string;
   imagePosition: 'left' | 'right';
   style?: React.CSSProperties;
-  onImageUpload: (blockId: string, itemIndex: number, file: File) => void; // ADDED
-  onImageRemove: (blockId: string, itemIndex: number) => void; // ADDED
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void; // ADDED
+  onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
+  onImageRemove: (blockId: string, itemIndex: number) => void;
+  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
 }
 
 const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
@@ -31,7 +30,7 @@ const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
         <div className={styles.imageContainer}>
           <ImageBlock
             imageUrl={imageUrl}
-            onUpload={(file) => onImageUpload(blockId, 0, file)} // Assuming image is item 0
+            onUpload={(file) => onImageUpload(blockId, 0, file)}
             onRemove={() => onImageRemove(blockId, 0)}
           />
         </div>
@@ -48,7 +47,7 @@ const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
         <div className={styles.imageContainer}>
           <ImageBlock
             imageUrl={imageUrl}
-            onUpload={(file) => onImageUpload(blockId, 0, file)} // Assuming image is item 0
+            onUpload={(file) => onImageUpload(blockId, 0, file)}
             onRemove={() => onImageRemove(blockId, 0)}
           />
         </div>

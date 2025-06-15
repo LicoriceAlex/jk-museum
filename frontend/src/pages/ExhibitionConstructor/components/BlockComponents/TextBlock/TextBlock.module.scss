@@ -1,21 +1,27 @@
 .Text {
-  outline: none; // Remove default focus outline
+  outline: none;
   cursor: text;
-  min-height: 1.2em; // Ensure it's visible even when empty
-  padding: 5px; // Add some padding for easier clicking/editing
-  border: 1px dashed transparent; // Default transparent border
+  min-height: 1.2em;
+  padding: 5px;
+  border: 1px dashed transparent;
   transition: border-color 0.2s ease-in-out;
-  white-space: pre-wrap; // Preserve whitespace and line breaks
+  white-space: pre-wrap;
+  font-family: 'Cormorant Infant', serif;
+  font-weight: 600;
+  font-size: 52px;
+  line-height: 110%;
+  letter-spacing: 0;
+
 
   &:empty:before {
     content: attr(data-placeholder);
     color: #888;
     cursor: text;
-    pointer-events: none; // Allow clicks to pass through to the actual contenteditable div
+    pointer-events: none;
   }
 
   &:focus {
-    border-color: #ccc; // Show border on focus
-    background-color: #f9f9f9; // Slight background change on focus
+    border-color: #ccc;
+    background-color: #f9f9f9;
   }
 }

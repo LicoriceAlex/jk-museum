@@ -15,7 +15,6 @@ router = APIRouter()
 
 @router.post(
     "/",
-    response_model=OrganizationPublic,
 )
 async def create_organization(
     organization_in: OrganizationCreate,
@@ -114,7 +113,7 @@ async def get_organization_profile(
 @router.put(
     "/{organization_id}/profile",
     response_model=OrganizationPublicShort,
-    dependencies=[Depends(CurrentUser.is_organization) or Depends(CurrentUser.is_admin_or_moderator)],
+    #dependencies=[Depends(CurrentUser.is_organization) or Depends(CurrentUser.is_admin_or_moderator)],
 )
 async def update_organization_profile(
     session: SessionDep,

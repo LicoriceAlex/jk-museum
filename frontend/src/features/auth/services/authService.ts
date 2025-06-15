@@ -3,8 +3,6 @@ import { apiRequest } from "../../../utils/apiRequest.ts";
 import {LoginPayload, RegisterPayload, TokenResponse} from '../types/types.ts';
 
 
-
-// Авторизация
 export const login = async (payload: LoginPayload) => {
   const formData = new URLSearchParams();
   formData.append("grant_type", "password");
@@ -35,11 +33,10 @@ export const login = async (payload: LoginPayload) => {
   return { success: true };
 };
 
-// Регистрация
 export const register = async (payload: RegisterPayload) => {
   const fullPayload = {
     ...payload,
-    role: "user", // Явно указываем роль
+    role: "user",
   };
   
   const response = await apiRequest("users/signup", "POST", fullPayload);
@@ -47,7 +44,6 @@ export const register = async (payload: RegisterPayload) => {
   return response;
 };
 
-// Выход из системы
 export const logout = () => {
   saveToken("");
   setAuthHeader("");

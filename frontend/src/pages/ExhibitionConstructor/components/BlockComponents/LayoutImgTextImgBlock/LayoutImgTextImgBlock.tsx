@@ -1,30 +1,38 @@
-// components/BlockComponents/LayoutImgTextImgImgBlock.tsx
 import React from 'react';
-import ImageBlock from '../ImageBlock/ImageBlock'; // Assuming path to your ImageBlock
-import TextBlock from '../TextBlock/TextBlock'; // Path to the new EditableText component
+import TextBlock from '../TextBlock/TextBlock';
 import styles from './LayoutImgTextImgBlock.module.scss';
-import {ExhibitionBlock} from '../../../types.ts';
+import { ExhibitionBlock, BlockItem } from '../../../types.ts';
+
+interface StaticImageDisplayProps {
+  imageUrl?: string;
+}
+
+const StaticImageDisplay: React.FC<StaticImageDisplayProps> = ({ imageUrl }) => {
+  return (
+    <div className={styles.imageWrapper}>
+      {imageUrl ? (
+        <img src={imageUrl} alt="Блок изображения" className={styles.staticImage} />
+      ) : (
+        <div className={styles.placeholderImage}>
+          <p>Нет изображения</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface LayoutImgTextImgBlockProps {
-  // block.items will contain objects like { image_url?: string }
-  // block.content will contain the text
-  blockId: string; // Needed for onImageUpload/onImageRemove and updateBlock
+  blockId: string;
   content: string;
-  leftImageUrl?: string;  // Now optional as ImageBlock handles initial state
-  rightImageUrl?: string; // Now optional
-  onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
-  onImageRemove: (blockId: string, itemIndex: number) => void;
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void; // Add updateBlock
-  style?: React.CSSProperties; // Style for the text content
+  items: BlockItem[];
+  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  style?: React.CSSProperties;
 }
 
 const LayoutImgTextImgBlock: React.FC<LayoutImgTextImgBlockProps> = ({
                                                                        blockId,
                                                                        content,
-                                                                       leftImageUrl,
-                                                                       rightImageUrl,
-                                                                       onImageUpload,
-                                                                       onImageRemove,
+                                                                       items = [],
                                                                        updateBlock,
                                                                        style,
                                                                      }) => {
@@ -32,17 +40,13 @@ const LayoutImgTextImgBlock: React.FC<LayoutImgTextImgBlockProps> = ({
   const handleTextChange = (newContent: string) => {
     updateBlock(blockId, { content: newContent });
   };
+  const leftImageUrl = items[0]?.image_url;
+  const rightImageUrl = items[1]?.image_url;
   
   return (
     <div className={styles.block}>
       <div className={styles.layout}>
-        <div className={styles.imageWrapper}> {/* Using imageWrapper for consistent styling */}
-          <ImageBlock
-            imageUrl={leftImageUrl}
-            onUpload={(file: File) => onImageUpload(blockId, 0, file)} // Left image is item 0
-            onRemove={() => onImageRemove(blockId, 0)}
-          />
-        </div>
+        <StaticImageDisplay imageUrl={leftImageUrl} />
         
         <div className={styles.contentWrapper}>
           <TextBlock
@@ -52,14 +56,7 @@ const LayoutImgTextImgBlock: React.FC<LayoutImgTextImgBlockProps> = ({
             placeholder="Нажмите, чтобы добавить описание"
           />
         </div>
-        
-        <div className={styles.imageWrapper}> {/* Using imageWrapper for consistent styling */}
-          <ImageBlock
-            imageUrl={rightImageUrl}
-            onUpload={(file: File) => onImageUpload(blockId, 1, file)} // Right image is item 1
-            onRemove={() => onImageRemove(blockId, 1)}
-          />
-        </div>
+        <StaticImageDisplay imageUrl={rightImageUrl} />
       </div>
     </div>
   );

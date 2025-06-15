@@ -1,0 +1,232 @@
+// src/components/ExhibitionsGrid/ExhibitionsGrid.module.scss
+
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Renamed .container to .pageContainer to encapsulate the whole page layout
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Center content horizontally
+  margin: 0 auto;
+  padding: 40px 0; // Padding for the entire page, matching your provided .container padding
+  width: 1530px; // Take full width of its parent
+
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+
+.searchBar {
+  width: 100%; // Limit width for aesthetic purposes, similar to the image
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #5d5d5d; // Darker line at the bottom
+  font-family: "Cormorant SC", serif;
+  font-size: 24px;
+}
+
+.searchInput {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 24px;
+  color: #344E41;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+
+  &::placeholder {
+    color: #344E41;
+  }
+}
+
+.searchIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  svg {
+    color: #5d5d5d; // Color for the search icon
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.filterBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; // Align items to the bottom
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+}
+
+.categories {
+  display: flex;
+  gap: 20px; // Space between categories
+}
+
+.categoryItem {
+  font-size: 24px;
+  color: #344E4199; // Default color for categories
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #333;
+  }
+
+  &.active {
+    color: #344E41; // Darker for active
+  }
+}
+
+.sortOptions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Cormorant SC", serif;
+
+  span {
+    font-size: 24px;
+    color: #5d5d5d;
+  }
+}
+
+.sortSelect {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 24px;
+  color: #333;
+  appearance: none; // Remove default select arrow
+  padding-right: 20px; // Space for custom arrow
+  cursor: pointer;
+  font-family: "Cormorant SC", serif;
+}
+
+.sortArrow {
+  color: #5d5d5d;
+  pointer-events: none; // Make sure clicks go through to the select
+  margin-left: -20px; // Position arrow over select's padding
+}
+
+.compactHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #5d5d5d; /* Line similar to full search bar */
+}
+
+.compactTitle {
+  font-family: "Cormorant SC", serif;
+  font-size: 32px; /* Smaller title for compact view */
+  font-weight: 600;
+  color: #344E41;
+  margin: 0; /* Remove default margin */
+}
+
+.searchBarCompact {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Small gap between input and icon */
+  width: 250px; /* Smaller width for compact search */
+}
+
+.searchInputCompact {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 18px; /* Smaller font size for compact search */
+  color: #344E41;
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+
+  &::placeholder {
+    color: #344E4199;
+  }
+}
+
+.searchIconCompact {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* No padding needed */
+  svg {
+    color: #5d5d5d;
+    width: 18px; /* Smaller icon */
+    height: 18px;
+  }
+}
+
+
+/* --- MODIFIED GRID STYLES START --- */
+.grid {
+  width: 100%; // Ensure grid uses full available width within its container
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 93px; // Kept from your input
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr; // Single column on small screens
+    gap: 16px; // Reduced gap for mobile
+    padding: 0 15px; // Slightly less padding on mobile
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr); // Two columns on medium screens
+    gap: 40px; // Adjust gap for 2 columns
+  }
+
+  @media (min-width: 1025px) {
+    grid-template-columns: repeat(3, 1fr); // Three columns on large screens
+    gap: 93px; // Original gap for 3 columns
+  }
+}
+/* --- MODIFIED GRID STYLES END --- */
+
+
+/* --- MODIFIED SHOW MORE BUTTON STYLES START --- */
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px; // Kept from your input
+  width: 100%; // Ensure it spans the width
+  max-width: 900px; // Align with other main content elements if desired, or remove for full width
+}
+
+.showMoreButton {
+  border: 1px solid #253A30; // Kept from your input
+  color: #253A30; // Kept from your input
+  padding: 16px 24px; // Kept from your input
+  border-radius: 4px; // Kept from your input
+  font-size: 24px; // Kept from your input
+  font-weight: 600; // Kept from your input
+  cursor: pointer; // Kept from your input
+  transition: all 0.2s ease; // Kept from your input
+  background-color: transparent;
+  font-family: "Cormorant SC", serif;
+
+  &:hover {
+    transform: translateY(-1px); // Kept from your input
+  }
+
+  &:active {
+    transform: translateY(0); // Kept from your input
+  }
+}
+/* --- MODIFIED SHOW MORE BUTTON STYLES END --- */

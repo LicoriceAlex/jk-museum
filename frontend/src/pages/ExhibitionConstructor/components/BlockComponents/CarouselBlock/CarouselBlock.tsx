@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './CarouselBlock.module.scss';
 import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import { BlockItem, ExhibitionBlock } from '../../../types';
@@ -7,10 +7,10 @@ interface CarouselBlockProps {
   blockId: string;
   title?: string;
   items: BlockItem[];
-  variant?: string; // Например, 'center-view'
+  variant?: string;
   autoplay?: boolean;
-  speed?: number; // Скорость для автовоспроизведения
-  style?: React.CSSProperties; // Для стилей текста/подписей
+  speed?: number;
+  style?: React.CSSProperties;
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
@@ -20,7 +20,7 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
                                                        blockId,
                                                        title,
                                                        items = [],
-                                                       variant = 'center-view', // Установим по умолчанию 'center-view' для этого вида
+                                                       variant = 'center-view',
                                                        autoplay,
                                                        speed = 3000,
                                                        style,
@@ -29,16 +29,16 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
                                                        updateBlock,
                                                      }) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const slidesRef = useRef<HTMLDivElement>(null);
   
-  // Для обработки автоматического переключения слайдов (если autoplay включен)
-  // React.useEffect(() => {
-  //   if (autoplay && items.length > 1) {
-  //     const timer = setInterval(() => {
-  //       setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % items.length);
-  //     }, speed);
-  //     return () => clearInterval(timer);
-  //   }
-  // }, [autoplay, items.length, speed]);
+  useEffect(() => {
+    if (autoplay && items.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % items.length);
+      }, speed);
+      return () => clearInterval(timer);
+    }
+  }, [autoplay, items.length, speed]);
   
   const handleNextSlide = () => {
     setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % items.length);
@@ -46,12 +46,6 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
   
   const handlePrevSlide = () => {
     setCurrentSlideIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length);
-  };
-  
-  const handleAddSlide = () => {
-    const newItems = [...items, { image_url: undefined, text: '' }];
-    updateBlock(blockId, { items: newItems });
-    setCurrentSlideIndex(newItems.length - 1);
   };
   
   const handleRemoveSlide = (itemIndexToRemove: number) => {
@@ -65,18 +59,16 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
     }
   };
   
-  // Вычисляем индексы для отображения: текущий, предыдущий и следующий
   const displayItems = [];
   if (items.length > 0) {
     const prevIndex = (currentSlideIndex - 1 + items.length) % items.length;
     const nextIndex = (currentSlideIndex + 1) % items.length;
     
-    // Добавляем предыдущий, текущий и следующий слайды для рендера
-    if (items.length > 1) { // Если больше одного слайда, показываем превью
+    if (items.length > 1) {
       displayItems.push({ item: items[prevIndex], index: prevIndex, type: 'prev' });
     }
     displayItems.push({ item: items[currentSlideIndex], index: currentSlideIndex, type: 'current' });
-    if (items.length > 1) { // Если больше одного слайда, показываем превью
+    if (items.length > 1) {
       displayItems.push({ item: items[nextIndex], index: nextIndex, type: 'next' });
     }
   }
@@ -97,9 +89,12 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
         )}
         <div className={styles.carouselContainer}>
           {items.length > 0 ? (
-            <div className={styles.slides}>
+            <div
+              className={styles.slides}
+              ref={slidesRef}
+            >
               {displayItems.map(({ item, index, type }) => (
-                <div key={index} className={`${styles.slide} ${styles[type]}`}>
+                <div key={`${blockId}-${index}-${type}`} className={`${styles.slide} ${styles[type]}`}>
                   <div className={styles.imageWrapper}>
                     <ImageBlock
                       imageUrl={item.image_url}
@@ -107,6 +102,17 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
                       onRemove={() => handleRemoveSlide(index)}
                     />
                   </div>
+                  {/* {type === 'current' && item.text && (
+                      <div className={styles.captionWrapper}>
+                          <EditableText
+                              value={item.text}
+                              onChange={(newText) => updateBlock(blockId, {
+                                  items: items.map((i, idx) => idx === index ? { ...i, text: newText } : i)
+                              })}
+                              placeholder="Введите подпись..."
+                          />
+                      </div>
+                  )} */}
                 </div>
               ))}
             </div>
@@ -125,9 +131,6 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
           </button>
         )}
       </div>
-      <button onClick={handleAddSlide} className={styles.addSlideButton}>
-        + Добавить слайд
-      </button>
     </div>
   );
 };

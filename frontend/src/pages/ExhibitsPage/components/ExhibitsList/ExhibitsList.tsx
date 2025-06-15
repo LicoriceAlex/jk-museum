@@ -20,9 +20,7 @@ interface Exhibit {
 interface ExhibitsListProps {
   onSaveExhibit?: (newExhibit: any) => void;
 }
-
-// Используем forwardRef для передачи ссылки
-const ExhibitsList = forwardRef<
+const ExhibitsList:React.FC = forwardRef<
   { fetchExhibits: () => Promise<void> },
   ExhibitsListProps
 >(({ onSaveExhibit }, ref) => {
@@ -32,8 +30,6 @@ const ExhibitsList = forwardRef<
   const [selectedExhibit, setSelectedExhibit] = useState<Exhibit | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-  
-  // Экспортируем функцию fetchExhibits через ref
   useImperativeHandle(ref, () => ({
     fetchExhibits
   }));
@@ -83,12 +79,9 @@ const ExhibitsList = forwardRef<
   
   const handleSaveExhibit = async (newExhibit: any) => {
     try {
-      // Добавляем новый экспонат в локальное состояние
       setExhibits(prevExhibits => [...prevExhibits, newExhibit]);
       
       onSaveExhibit?.(newExhibit);
-      
-      // Обновляем список с сервера
       await fetchExhibits();
     } catch (err) {
       console.error('Error updating exhibits list:', err);
@@ -97,17 +90,12 @@ const ExhibitsList = forwardRef<
   
   const handleUpdateExhibit = async (updatedExhibit: Exhibit) => {
     try {
-      // Обновляем экспонат в локальном состоянии
       setExhibits(prevExhibits =>
         prevExhibits.map(exhibit =>
           exhibit.id === updatedExhibit.id ? updatedExhibit : exhibit
         )
       );
-      
-      // Вызываем колбэк если есть
       onSaveExhibit?.(updatedExhibit);
-      
-      // Обновляем список с сервера
       await fetchExhibits();
     } catch (err) {
       console.error('Error after updating exhibit:', err);

@@ -1,0 +1,385 @@
+@charset "UTF-8";
+.wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #dad7cd;
+  font-family: "Cormorant SC", serif;
+  gap: 64px;
+}
+
+.container {
+  width: 1530px;
+  margin: 0 auto;
+  padding: 176px 0 40px;
+}
+
+.profileCard {
+  backdrop-filter: blur(10px);
+  border-radius: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 768px) {
+  .profileCard {
+    padding: 30px 20px;
+  }
+}
+
+.title {
+  font-family: "Cormorant Infant", serif;
+  font-size: 52px;
+  font-weight: 600;
+  color: #344E41;
+  margin-bottom: 40px;
+  text-align: left;
+  letter-spacing: 1px;
+}
+@media (max-width: 768px) {
+  .title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  gap: 170.5px;
+  margin-bottom: 40px;
+}
+@media (max-width: 1200px) {
+  .content {
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+}
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.column:first-child {
+  align-items: flex-start;
+  flex-grow: 1;
+}
+.column:first-child .userNameSection {
+  order: 1;
+  margin-bottom: 30px;
+}
+.column:first-child .avatarSection {
+  order: 2;
+  align-self: flex-start;
+}
+.column:nth-child(2), .column:nth-child(3) {
+  align-items: flex-start;
+  flex-grow: 1;
+}
+@media (max-width: 1200px) {
+  .column {
+    flex-basis: calc(50% - 20px);
+  }
+}
+@media (max-width: 768px) {
+  .column {
+    flex-basis: 100%;
+    align-items: center;
+  }
+  .column:first-child .userNameSection {
+    align-self: center;
+  }
+  .column:first-child .avatarSection {
+    align-self: center;
+  }
+}
+
+.userNameSection {
+  width: 100%;
+  min-width: 448px;
+  text-align: left;
+}
+@media (max-width: 768px) {
+  .userNameSection {
+    text-align: center;
+  }
+}
+
+.avatarSection {
+  margin-bottom: 30px;
+  width: 448px;
+  height: 311px;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .avatarSection {
+    width: 150px;
+    height: 150px;
+    align-self: center;
+    margin-top: 20px;
+  }
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  filter: grayscale(20%);
+  transition: filter 0.3s ease;
+}
+.avatar:hover {
+  filter: grayscale(0%);
+}
+
+.avatarEdit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.avatarEdit:hover .avatarOverlay {
+  opacity: 1;
+}
+
+.avatarOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.avatarUpload {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  gap: 16px;
+}
+
+.uploadText {
+  font-family: "Cormorant SC", serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.userName {
+  font-family: "Cormorant Infant", serif;
+  font-size: 40px;
+  font-weight: 600;
+  color: #253A30;
+  margin: 0;
+  line-height: 120%;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .userName {
+    font-size: 20px;
+    text-align: center;
+  }
+}
+
+.nameInput {
+  font-size: 40px;
+  font-weight: 600;
+  color: #344E41;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  width: 100%;
+  font-family: "Cormorant Infant", serif;
+  border-bottom: 1px solid #344E41;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 448px;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-family: "Cormorant SC", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #344E41;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.aboutText {
+  font-family: "Cormorant SC", serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 120%;
+  color: #253A30;
+  margin: 0;
+  text-align: justify;
+  padding: 8px 16px;
+}
+
+.emailText {
+  font-family: "Cormorant SC", serif;
+  padding: 8px 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #253A30;
+  margin: 0;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-size: 14px;
+  color: #7a7a7a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.aboutTextarea {
+  font-size: 18px;
+  resize: vertical;
+  min-height: 100px;
+  padding: 15px;
+  background-color: transparent;
+  border: none;
+  font-family: "Cormorant SC", serif;
+  line-height: 1.5;
+  color: #3a3a3a;
+  width: 100%;
+  border-bottom: 1px solid #344E41;
+}
+
+.emailInput {
+  padding: 12px 15px;
+  background-color: transparent;
+  border: none;
+  font-family: "Cormorant SC", serif;
+  font-size: 16px;
+  color: #3a3a3a;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.actions > *:first-child:nth-last-child(2) {
+  margin-right: auto;
+}
+.actions__edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (max-width: 768px) {
+  .actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .actions > *:first-child:nth-last-child(2) {
+    margin-right: unset;
+  }
+}
+
+.editButton, .saveButton {
+  background-color: #344E41;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 16px 24px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cormorant SC", serif;
+}
+.editButton:hover, .saveButton:hover {
+  background: #4a5c47;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(90, 108, 87, 0.3);
+}
+.editButton:active, .saveButton:active {
+  transform: translateY(0);
+}
+
+.backButton, .changePasswordButton {
+  background: transparent;
+  color: #344E41;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-family: "Cormorant SC", serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.backButton:hover, .changePasswordButton:hover {
+  color: #4a5c47;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.profileCard {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.aboutTextarea,
+.emailInput,
+.nameInput {
+  transition: all 0.3s ease;
+}
+
+.section {
+  transition: all 0.3s ease;
+}
+
+.avatar[src*=placeholder] {
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar[src*=placeholder]::before {
+  content: "👤";
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+/*# sourceMappingURL=Profile.module.css.map */

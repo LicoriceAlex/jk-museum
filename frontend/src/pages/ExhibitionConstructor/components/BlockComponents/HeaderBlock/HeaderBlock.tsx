@@ -3,7 +3,7 @@ import React, {JSX} from 'react';
 import styles from './HeaderBlock.module.scss';
 
 interface HeaderBlockProps {
-  content: string; // Correctly expects string
+  content: string;
   level?: string;
   style?: React.CSSProperties;
 }

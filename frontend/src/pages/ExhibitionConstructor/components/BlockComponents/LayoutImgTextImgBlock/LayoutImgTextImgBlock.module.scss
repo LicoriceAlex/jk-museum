@@ -1,75 +1,61 @@
-// components/BlockComponents/LayoutImgTextImgBlock.module.scss
-
 .block {
-  margin-bottom: 30px; // Spacing below the entire block
-  padding: 40px 20px; // Increased padding for more breathing room
-  background-color: #E8E5DE; // Matches background from your designs
+  margin-bottom: 30px;
+  padding: 40px 20px;
+  background-color: #E8E5DE;
   border-radius: 8px;
-  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); // Removed for a flatter, minimalist look, like in your designs
 }
 
 .layout {
   display: flex;
-  align-items: center; // Vertically align items in the middle
-  gap: 30px; // Space between image, text, and image components
+  align-items: center;
+  gap: 30px;
 
   @media (max-width: 768px) {
-    flex-direction: column; // Stack elements vertically on smaller screens
+    flex-direction: column;
     gap: 20px;
   }
 }
 
 .imageWrapper {
-  flex: 1; // Allows images to take equal space
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center; // Center image placeholder vertically too
-
-  // Global styles for ImageBlock components inside this wrapper
-  // These should match the look of the placeholder in your design images
+  align-items: center;
   :global(.image-block-container) {
     width: 100%;
-    // Match the aspect ratio of your design's placeholders
-    // The placeholders in your image look roughly square or slightly wider than tall.
-    // Let's use 100% for square aspect ratio, or 75% for 4:3 if preferred.
-    padding-bottom: 100%; // Creates a square aspect ratio container
-    position: relative; // Needed for absolute positioning of contents
-    display: flex; // For centering placeholder content
+    padding-bottom: 100%;
+    position: relative;
+    display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; // Hide anything outside the container
+    overflow: hidden;
 
-    background-color: #DCD9D3; // Slightly darker background for placeholders, matching your design
-    // border: 1px solid #ccc; // Removed border for cleaner look, like in your designs
-    border-radius: 4px; // Slight border-radius
+    background-color: #DCD9D3;
+    border-radius: 4px;
   }
 
   :global(.image-block-image) {
-    position: absolute; // Position image within its container
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; // Crop image to fill space
+    object-fit: cover;
     border-radius: 4px;
   }
 
   :global(.image-block-placeholder) {
-    // These styles are applied to the placeholder content itself, not the container
-    position: absolute; // Position content within its container
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #888; // Placeholder text color
+    color: #888;
     font-size: 14px;
     text-align: center;
     cursor: pointer;
-    z-index: 1; // Ensure it's above input type file if that's there
-
-    // No need for padding-bottom here if the container already sets aspect ratio
+    z-index: 1;
   }
 
-  // Hide the file input element visually
   :global(.image-block-placeholder input[type="file"]) {
     display: none;
   }

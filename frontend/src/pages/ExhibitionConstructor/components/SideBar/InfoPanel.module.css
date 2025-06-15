@@ -1,51 +1,50 @@
-@charset "UTF-8";
-/* InfoPanel.module.scss */
 .infoPanel {
-  padding: 24px;
-  background-color: #F7F5F0; /* Цвет фона из скриншотов */
-  color: #1F3B2C; /* Основной цвет текста/заголовков */
-  font-family: "PT Serif", serif; /* Пример шрифта, соответствует дизайн-системе */
-  box-sizing: border-box; /* Убедимся, что padding не расширяет элемент */
-  min-height: 100vh; /* Занимает всю высоту, если нужно */
+  background-color: #DAD7CD;
+  color: #1F3B2C;
+  font-family: "Cormorant SC", serif;
+  box-sizing: border-box;
+  max-height: 100vh;
   width: 100%;
 }
 
 .formGroup {
-  margin-bottom: 24px; /* Отступ между группами полей */
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
 }
 
 .label {
-  font-size: 14px;
-  font-weight: 500; /* Medium weight */
-  color: #1F3B2C; /* Цвет текста лейбла */
-  margin-bottom: 8px; /* Отступ под лейблом */
-  text-transform: uppercase; /* Текст в верхнем регистре */
+  font-size: 24px;
+  line-height: 120%;
+  font-weight: 600;
+  color: #1F3B2C;
+  text-transform: capitalize;
 }
 
 .input {
   width: 100%;
-  padding: 10px 0px; /* Отступ только по вертикали */
+  padding: 8px 0;
   border: none;
-  border-bottom: 1px solid #A67F5D; /* Цвет нижней границы */
-  background-color: transparent; /* Прозрачный фон */
-  color: #333333; /* Цвет вводимого текста */
+  border-bottom: 1px solid #A67F5D;
+  background-color: transparent;
+  color: #333333;
   font-size: 16px;
-  font-family: "Open Sans", sans-serif; /* Шрифт для ввода */
-  outline: none; /* Убираем стандартную обводку при фокусе */
-  box-sizing: border-box; /* Убедимся, что padding не расширяет input */
-  /* Стили для textarea */
+  font-family: "Open Sans", sans-serif;
+  outline: none;
+  box-sizing: border-box;
 }
 .input::placeholder {
-  color: #A67F5D; /* Цвет плейсхолдера */
+  color: #A67F5D;
 }
 .input:focus {
-  border-bottom-color: #1F3B2C; /* Цвет границы при фокусе */
+  border-bottom-color: #1F3B2C;
 }
-.input[id=exhibitionDescription] {
-  min-height: 60px; /* Минимальная высота для textarea */
-  resize: vertical; /* Разрешаем изменение размера только по вертикали */
+
+.autoResizeTextarea {
+  min-height: 38px;
+  resize: none;
+  overflow-y: hidden;
+  line-height: 1.5;
 }
 
 .selectWrapper {
@@ -56,7 +55,7 @@
 .selectInput {
   width: 100%;
   padding: 10px 0px;
-  padding-right: 30px; /* Отступ справа для стрелки */
+  padding-right: 30px;
   border: none;
   border-bottom: 1px solid #A67F5D;
   background-color: transparent;
@@ -64,12 +63,11 @@
   font-size: 16px;
   font-family: "Open Sans", sans-serif;
   outline: none;
-  appearance: none; /* Убираем стандартную стрелку браузера */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
   box-sizing: border-box;
-  /* Стили для опций, если нужно */
 }
 .selectInput:focus {
   border-bottom-color: #1F3B2C;
@@ -79,31 +77,31 @@
   background-color: #F7F5F0;
 }
 .selectInput option[disabled] {
-  color: #888; /* Цвет для отключенных (уже выбранных) тегов */
+  color: #888;
 }
 
 .selectArrow {
   position: absolute;
-  right: 0px; /* Выравнивание по правому краю */
+  right: 0px;
   top: 50%;
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  color: #A67F5D; /* Цвет стрелки */
-  pointer-events: none; /* Чтобы клик проходил на select */
+  color: #A67F5D;
+  pointer-events: none;
 }
 
 .tagsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Отступ между тегами */
-  margin-top: 10px; /* Отступ сверху от select'а */
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .tag {
   display: flex;
   align-items: center;
-  background-color: #E0E0E0; /* Светлый фон для тега */
+  background-color: #E0E0E0;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 14px;
@@ -124,17 +122,17 @@
 }
 
 .coverUploadArea {
-  width: 100%;
-  height: 180px; /* Фиксированная высота для области обложки */
-  background-color: #FAEBEF; /* Цвет фона из скриншота */
+  width: 180px;
+  height: 80px;
+  background-color: #FAEBEF;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  overflow: hidden; /* Обрезаем содержимое, если изображение больше */
-  position: relative; /* Для позиционирования img */
+  overflow: hidden;
+  position: relative;
 }
 
 .coverPlaceholder {
@@ -147,27 +145,27 @@
 }
 
 .coverIcon {
-  width: 48px; /* Размер иконки */
+  width: 48px;
   height: 48px;
-  color: #A67F5D; /* Цвет иконки */
+  color: #A67F5D;
   margin-bottom: 10px;
 }
 
 .coverImage {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Изображение будет покрывать всю область, обрезая лишнее */
-  border-radius: 8px; /* Сохраняем скругленные углы */
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .uploadButton {
   background: none;
   border: none;
-  color: #1F3B2C; /* Цвет текста кнопки "Загрузить обложку" */
+  color: #1F3B2C;
   font-size: 16px;
   cursor: pointer;
-  text-decoration: underline; /* Подчеркивание как на макете */
-  font-family: "Open Sans", sans-serif; /* Шрифт для кнопки */
+  text-decoration: underline;
+  font-family: "Open Sans", sans-serif;
 }
 .uploadButton:hover {
   opacity: 0.8;
@@ -176,14 +174,14 @@
 .saveButton {
   width: 100%;
   padding: 12px 20px;
-  background-color: #1F3B2C; /* Цвет кнопки "Сохранить" */
+  background-color: #1F3B2C;
   color: #FFFFFF;
   border: none;
-  border-radius: 8px; /* Скругленные углы */
+  border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 30px; /* Отступ сверху */
+  margin-top: 30px;
 }
 .saveButton:hover {
   background-color: rgb(13.4333333333, 25.5666666667, 19.0666666667);

@@ -30,7 +30,6 @@ const ImageBlock: React.FC<ImageBlockProps> = ({
             >
               ×
             </button>
-            {/* Убрали ImageUploadBlock отсюда */}
           </div>
         </div>
       ) : (

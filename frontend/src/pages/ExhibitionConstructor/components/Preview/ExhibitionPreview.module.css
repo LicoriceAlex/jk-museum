@@ -1,46 +1,95 @@
 @charset "UTF-8";
+html, body, #root { /* Или ваш корневой div приложения */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .previewArea {
-  padding: 40px; /* Внутренние отступы для контента */
+  padding: 79px 40px 46px 171px;
   box-sizing: border-box;
-  overflow-y: auto; /* Если контента много, будет прокрутка */
-  /* Общие стили для текста внутри превью, чтобы использовать fontSettings */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 .previewArea h1, .previewArea h2, .previewArea h3, .previewArea h4, .previewArea h5, .previewArea h6, .previewArea p, .previewArea span, .previewArea div {
-  margin-bottom: 1em; /* Стандартный отступ между текстовыми элементами */
+  margin-bottom: 1em;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .headerContent {
   display: flex;
-  gap: 20px; /* Расстояние между обложкой и текстом */
-  align-items: flex-start; /* Выравнивает элементы по верху */
-  margin-bottom: 40px; /* Отступ после шапки перед блоками */
+  gap: 80px;
+  align-items: flex-start;
+  margin-bottom: 40px;
 }
 @media (max-width: 768px) {
   .headerContent {
-    flex-direction: column; /* На маленьких экранах обложка и текст будут друг под другом */
-    align-items: center; /* Центрируем элементы при колонке */
-    text-align: center; /* Центрируем текст */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 0 20px;
   }
 }
 
 .coverImage {
-  width: 200px; /* Фиксированная ширина обложки */
-  height: auto; /* Автоматическая высота для сохранения пропорций */
-  object-fit: cover; /* Обрезка изображения, чтобы оно заполнило контейнер */
-  border-radius: 8px; /* Немного скругляем углы */
-  flex-shrink: 0; /* Запрещает изображению сжиматься */
+  width: 384px;
+  height: 256px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 @media (max-width: 768px) {
   .coverImage {
-    width: 80%; /* На маленьких экранах обложка будет занимать больше места */
-    max-width: 300px; /* Но не будет слишком большой */
-    margin-bottom: 20px; /* Отступ между обложкой и текстом в колонке */
+    width: 80%;
+    max-width: 300px;
+    margin-bottom: 0px;
   }
 }
 
 .textContent {
-  flex-grow: 1; /* Позволяет текстовому содержимому занимать доступное пространство */
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  max-width: 757px;
+  font-family: "Cormorant SC", serif;
+}
+.textContent h1 {
+  margin-bottom: 0.5em;
+  font-family: "Cormorant Infant", serif;
+  color: var(--color-primary);
+}
+.textContent p {
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+.textContent p:last-of-type, .textContent h1:last-of-type {
+  margin-bottom: 0;
+}
+@media (max-width: 768px) {
+  .textContent {
+    align-items: center;
+  }
+  .textContent h1, .textContent p {
+    text-align: center;
+  }
+}
+
+.otherInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /*# sourceMappingURL=ExhibitionPreview.module.css.map */

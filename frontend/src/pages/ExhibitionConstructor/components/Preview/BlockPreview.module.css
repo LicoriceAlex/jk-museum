@@ -1,9 +1,66 @@
-.blockContainer {
-  margin-bottom: 2rem;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.blockPreviewWrapper {
+  position: relative;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease-in-out;
+  cursor: grab;
+}
+.blockPreviewWrapper:hover {
+  border-color: #a0a0a0;
+}
+
+.controls {
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+.blockPreviewWrapper:hover .controls {
+  opacity: 1;
+}
+
+.controlButton {
+  background: none;
+  border: none;
+  color: #a0a0a0;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+.controlButton:hover {
+  color: #606060;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.controlButton:active {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.removeButton {
+  color: #d9534f;
+}
+.removeButton:hover {
+  color: #c9302c;
+  background-color: rgba(217, 83, 79, 0.1);
+}
+.removeButton:active {
+  color: #ac2925;
+  background-color: rgba(217, 83, 79, 0.2);
+}
+
+.blockPreviewContent {
+  padding-right: 40px;
 }
 
 .textInput {
