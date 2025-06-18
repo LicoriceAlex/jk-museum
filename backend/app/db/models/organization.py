@@ -31,6 +31,7 @@ class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
+    hashed_password: Optional[str] = Field(default=None, nullable=True)
 
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -46,7 +47,7 @@ class Organization(OrganizationBase, table=True):
 
 
 class OrganizationCreate(OrganizationBase):
-    pass
+    password: str
 
 
 class OrganizationUpdate(SQLModel):

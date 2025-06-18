@@ -1,4 +1,8 @@
+from typing import Optional
 from sqlmodel import Field, SQLModel
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Form
+from enum import Enum
 
 
 class Message(SQLModel):
@@ -31,3 +35,28 @@ class FilePath(SQLModel):
 class FileUploadResponse(SQLModel):
     object_key: str
     file_url: str
+
+
+class LoginType(str, Enum):
+    user = "user"
+    organization = "organization"
+
+class OAuth2PasswordRequestFormWithLoginType:
+    def __init__(
+        self,
+        username: str = Form(...),
+        password: str = Form(...),
+        grant_type: Optional[str] = Form(None),
+        scope: str = Form(""),
+        client_id: Optional[str] = Form(None),
+        client_secret: Optional[str] = Form(None),
+        login_type: LoginType = Form(default=LoginType.user),
+    ):
+        self.username = username
+        self.password = password
+        self.grant_type = grant_type
+        self.scopes = scope.split()
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.login_type = login_type
+        

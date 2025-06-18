@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.organizations import OrgnizationOr404
@@ -23,11 +23,18 @@ async def create_organization(
     """
     Create a new organization.
     """
-    organization = await organization_crud.create_organization(
-        organization_in=organization_in,
-        session=session
-    )
-    return organization
+    try:
+        organization_create = OrganizationCreate.model_validate(organization_in)
+        organization = await organization_crud.create_organization(
+            session=session,
+            organization_in=organization_create
+        )
+        return organization
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 @router.patch(

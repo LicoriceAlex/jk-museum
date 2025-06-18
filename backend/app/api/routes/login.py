@@ -1,7 +1,6 @@
 from datetime import timedelta
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlalchemy import select
 
@@ -11,8 +10,9 @@ from backend.app.core.config import settings
 from backend.app.utils.emails import generate_reset_password_email, send_email
 from backend.app.utils.security import generate_password_reset_token, verify_password_reset_token
 import backend.app.crud.user as user_crud
+from backend.app.crud import organization as organization_crud
 from backend.app.db.models.user import User
-from backend.app.db.schemas import Token, Message, NewPassword
+from backend.app.db.schemas import OAuth2PasswordRequestFormWithLoginType, Token, Message, NewPassword
 
 
 router = APIRouter(tags=["login"])
@@ -20,20 +20,34 @@ router = APIRouter(tags=["login"])
 
 @router.post("/access-token")
 async def login_access_token(
-    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestFormWithLoginType, Depends()]
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = await user_crud.authenticate(
-        session=session, email=form_data.username, password=form_data.password
-    )
-    if not user:
+    if form_data.login_type == "user":
+        entity = await user_crud.authenticate(
+            session=session,
+            email=form_data.username,
+            password=form_data.password
+        )
+    elif form_data.login_type == "organization":
+        entity = await organization_crud.authenticate(
+            session=session,
+            email=form_data.username,
+            password=form_data.password
+        )
+    else:
+        raise HTTPException(status_code=400, detail="Invalid login type")
+
+    if not entity:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=security.create_access_token(
-            user.id, expires_delta=access_token_expires
+            entity.id,
+            expires_delta=access_token_expires
         )
     )
 

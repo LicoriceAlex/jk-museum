@@ -1,10 +1,12 @@
 from typing import Optional
 from uuid import UUID
+from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
 from backend.app.core.config import settings
+from backend.app.core.security import get_password_hash, verify_password
 from backend.app.crud.exhibition import get_exhibitions
 from backend.app.db.models.organization import (
     OrgStatusEnum, Organization, OrganizationCreate,
@@ -31,8 +33,27 @@ async def create_organization(
     session: AsyncSession,
     organization_in: OrganizationCreate
 ) -> Organization:
+    if await get_organization(
+        session=session,
+        email=organization_in.email
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="An organization with this email already exists."
+        )
+    if await get_organization(
+        session=session,
+        name=organization_in.name
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="An organization with this name already exists."
+        )
+    
+    hashed_password = get_password_hash(organization_in.password)
     organization = Organization(
-        **organization_in.model_dump()
+        **organization_in.model_dump(),
+        hashed_password=hashed_password,
     )
     session.add(organization)
     await session.commit()
@@ -155,3 +176,17 @@ async def get_organization_profile_with_exhibitions(
         **org.model_dump(),
         exhibitions=exhibitions_paginated
     )
+    
+async def authenticate(
+    session: AsyncSession,
+    email: str, password: str
+) -> Organization | None:
+    db_organization = await get_organization(session=session, email=email)
+
+    if not db_organization:
+        return None
+    if not verify_password(
+        password, db_organization.hashed_password
+    ):
+        return None
+    return db_organization
