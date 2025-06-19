@@ -111,9 +111,10 @@ async def delete_exhibition(
     """
     Delete an exhibition.
     """
+    exhibition_to_delete = await session.get(Exhibition, exhibition.id)
     await exhibition_crud.delete_exhibition(
         session=session,
-        exhibition=exhibition
+        exhibition=exhibition_to_delete
     )
     return Message(message="Exhibition deleted successfully")
 
