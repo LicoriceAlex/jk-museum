@@ -7,7 +7,7 @@ from backend.app.api.dependencies.exhibition.exhibition import ExhibitionOr404
 from backend.app.api.dependencies.exhibition.filters import FilterDep, SortDep
 from backend.app.api.dependencies.exhibits import ExhibitOr404
 from backend.app.api.dependencies.pagination import PaginationDep
-from backend.app.api.dependencies.users import CurrentUser, get_current_admin_or_moderator
+from backend.app.api.dependencies.users import CurrentUser, OptionalCurrentUser, get_current_admin_or_moderator
 from backend.app.core.config import settings
 from backend.app.crud import exhibition as exhibition_crud
 from backend.app.crud import exhibition_exhibit as exhibition_exhibit_crud
@@ -35,7 +35,7 @@ async def read_exhibitions(
     pagination: PaginationDep,
     filters: FilterDep,
     sort: SortDep,
-    current_user: CurrentUser
+    current_user: OptionalCurrentUser
 ) -> Any:
     """
     Retrieve a list of exhibitions with pagination.
@@ -46,7 +46,7 @@ async def read_exhibitions(
         limit=pagination.limit,
         filters=filters,
         sort=sort,
-        current_user_id=current_user.id
+        current_user_id=current_user.id if current_user else None
     )
     return exhibitions
 

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
-from backend.app.api.dependencies.organizations import OrgnizationOr404
+from backend.app.api.dependencies.organizations import CurrentOrganization, OrgnizationOr404
 from backend.app.api.dependencies.pagination import PaginationDep
-from backend.app.api.dependencies.users import CurrentUser
+from backend.app.api.dependencies.users import CurrentUser, OptionalCurrentUser
 from backend.app.core.config import settings
 from backend.app.crud import organization as organization_crud
 from backend.app.db.models.organization import (
@@ -89,6 +89,26 @@ async def get_organizations(
         limit=pagination.limit
     )
     return organizations
+
+
+@router.get(
+    "/me",
+)
+async def get_current_organization(
+    current_organization: CurrentOrganization,
+    session: SessionDep,
+):
+    """
+    Get current organization.
+    """
+    organization = await organization_crud.get_organization(
+        session=session,
+        id=current_organization.id
+    )
+    if not organization:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return organization
+    
 
 
 @router.get(

@@ -6,14 +6,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column
 from typing import TYPE_CHECKING, List, Optional
 
-from backend.app.db.models.tag import TagPublic
-from .exhibition_participant import ExhibitionParticipant
 from .tag import TagPublic
 from .exhibition_tag import ExhibitionTag
+from backend.app.db.models.exhibition_block import ExhibitionBlockPublic, ExhibitionBlocksPublic
+from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 
 
 if TYPE_CHECKING:
-    from backend.app.db.models.exhibition_participant import ExhibitionParticipant
+    from backend.app.db.models.tag import TagPublic
     from backend.app.db.models.exhibition_tag import ExhibitionTag
 
 
@@ -35,7 +35,7 @@ class ExhibitionBase(SQLModel):
     cover_type: Optional[CoverTypeEnum] = Field(default=CoverTypeEnum.outside)
     status: ExhibitionStatusEnum = Field(
         default=ExhibitionStatusEnum.draft, nullable=False)
-    rating: float = Field(default=0.0, nullable=False)  # ?
+    rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 
 
@@ -78,8 +78,9 @@ class ExhibitionPublic(ExhibitionBase):
     updated_at: datetime
     participants: list["ExhibitionParticipant"]
     tags: list["TagPublic"]
-    is_liked_by_current_user: Optional[bool] = None  # Новое поле
+    is_liked_by_current_user: Optional[bool] = None
     likes_count: Optional[int] = Field(default=0)
+    blocks: Optional[list[ExhibitionBlockPublic]]
 
 
 class ExhibitionsPublic(SQLModel):

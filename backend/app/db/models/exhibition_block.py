@@ -5,13 +5,12 @@ from datetime import datetime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column
 from typing import TYPE_CHECKING, Optional
-
 from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
+
 
 
 if TYPE_CHECKING:
     pass
-
 
 class ExhibitionBlockTypeEnum(str, Enum):
     HEADER = "HEADER"
@@ -58,3 +57,16 @@ class ExhibitionBlockUpdateBase(ExhibitionBlockBase):
 
 class ExhibitionBlockUpdate(ExhibitionBlockUpdateBase):
     items: Optional[list[ExhibitionBlockItemCreate]]
+    
+    
+class ExhibitionBlockPublic(ExhibitionBlockBase):
+    id: UUID
+    # exhibition_id: UUID
+    created_at: datetime
+    updated_at: datetime
+    items: Optional[list[ExhibitionBlockItemCreate]] = None
+    
+    
+class ExhibitionBlocksPublic(SQLModel):
+    data: list[ExhibitionBlockPublic]
+    count: int

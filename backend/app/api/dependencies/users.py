@@ -1,6 +1,7 @@
-from typing import Annotated
+from typing import Annotated, Optional
 import uuid
 from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 import jwt
 from pydantic import ValidationError
@@ -38,6 +39,24 @@ async def get_current_user(
     return user
 
 
+async def get_optional_user(
+    session: SessionDep,
+    token: Optional[str] = Depends(OAuth2PasswordBearer(tokenUrl="login", auto_error=False))
+) -> Optional[User]:
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[security.ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+    except (ValidationError):
+        return None
+    return await session.get(User, token_data.sub)
+
+
 async def get_user_or_404(
     session: SessionDep,
     user_id: uuid.UUID
@@ -56,6 +75,7 @@ async def get_user_or_404(
 
 UserOr404 = Annotated[User, Depends(get_user_or_404)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
+OptionalCurrentUser = Annotated[Optional[User], Depends(get_optional_user)]
 
 
 async def get_current_admin(

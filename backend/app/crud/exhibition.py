@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from fastapi import HTTPException
-from sqlalchemy import Select, func, select, text, literal_column
+from sqlalchemy import JSON, Integer, Select, func, literal, select, text, literal_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
@@ -15,6 +15,8 @@ from backend.app.crud.exhibition_tag import (
     delete_exhibition_tags
 )
 from backend.app.crud.tag import create_or_exist_tags
+from backend.app.db.models.exhibition_block import ExhibitionBlock, ExhibitionBlockPublic, ExhibitionBlocksPublic
+from backend.app.db.models.exhibition_block_item import ExhibitionBlockItem
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 from backend.app.db.models.tag import Tag, TagPublic
 from backend.app.db.models.exhibition_tag import ExhibitionTag
@@ -37,27 +39,43 @@ async def get_exhibition(
     exhibition = result.scalar_one_or_none()
     if not exhibition:
         return None
-    # Получаем likes_count
+
     likes_stmt = select(func.count(UserExhibitionLike.user_id)).where(
         UserExhibitionLike.exhibition_id == exhibition.id)
     likes_result = await session.execute(likes_stmt)
     likes_count = likes_result.scalar_one() or 0
-    # Получаем участников
+
     participants_stmt = select(ExhibitionParticipant).where(
         ExhibitionParticipant.exhibition_id == exhibition.id)
     participants_result = await session.execute(participants_stmt)
     participants = [p.model_dump()
                     for p in participants_result.scalars().all()]
-    # Получаем теги
+
     tags_stmt = select(Tag).join(ExhibitionTag, Tag.id == ExhibitionTag.tag_id).where(
         ExhibitionTag.exhibition_id == exhibition.id)
     tags_result = await session.execute(tags_stmt)
     tags = [t.model_dump() for t in tags_result.scalars().all()]
+
+    blocks_stmt = select(ExhibitionBlock).where(
+        ExhibitionBlock.exhibition_id == exhibition.id)
+    blocks_result = await session.execute(blocks_stmt)
+    blocks = []
+    for block in blocks_result.scalars().all():
+        items_stmt = select(ExhibitionBlockItem).where(
+            ExhibitionBlockItem.block_id == block.id)
+        items_result = await session.execute(items_stmt)
+        items = [item.model_dump() for item in items_result.scalars().all()]
+        blocks.append({
+            **block.model_dump(),
+            "items": items
+        })
+
     return ExhibitionPublic(
         **exhibition.model_dump(),
         participants=participants,
         tags=tags,
-        likes_count=likes_count
+        likes_count=likes_count,
+        blocks=blocks
     )
 
 
@@ -164,7 +182,7 @@ async def get_exhibitions(
     filters: FilterParams = FilterParams(),
     skip: int = 0,
     limit: int = settings.DEFAULT_QUERY_LIMIT,
-    current_user_id: Optional[UUID] = None,  # добавлено
+    current_user_id: Optional[UUID] = None,
 ) -> ExhibitionsPublic:
     """
     Retrieve a paginated list of exhibitions with filtering, sorting, and related data.
@@ -185,8 +203,8 @@ class ExhibitionQueryBuilder:
         self.limit = limit
         self.statement = None
         self.count_statement = select(func.count(Exhibition.id))
-        self._needs_likes = True  # Флаг, нужны ли лайки в запросе
-        self.current_user_id = current_user_id  # добавлено
+        self._needs_likes = True 
+        self.current_user_id = current_user_id
 
     async def execute(self) -> ExhibitionsPublic:
         """Builds and executes the query, returning paginated results."""
@@ -199,21 +217,18 @@ class ExhibitionQueryBuilder:
         """Constructs the main query with subqueries, filters, and sorting."""
         tags_subquery = self._build_tags_subquery()
         participants_subquery = self._build_participants_subquery()
+        blocks_subquery = self._build_blocks_subquery()
 
-        # Всегда создаем подзапрос для лайков, но соединяем только если нужно
+
         likes_subquery = self._build_likes_subquery()
 
-        # Базовый SELECT
-        # Создаем подзапрос для лайков, если нужно сортировать по likes_count
-
-        # Базовый SELECT
         select_columns = [
             Exhibition,
             tags_subquery.c.tags,
-            participants_subquery.c.participants
+            participants_subquery.c.participants,
+            blocks_subquery.c.blocks
         ]
 
-        # Добавляем лайки только если подзапрос существует
         if likes_subquery is not None:
             select_columns.append(
                 func.coalesce(likes_subquery.c.likes_count,
@@ -221,15 +236,17 @@ class ExhibitionQueryBuilder:
             )
 
         self.statement = select(*select_columns)
-
-        # Обязательные JOIN
+        
         self.statement = self.statement.outerjoin(
             tags_subquery, Exhibition.id == tags_subquery.c.exhibition_id
         ).outerjoin(
             participants_subquery, Exhibition.id == participants_subquery.c.exhibition_id
         )
 
-        # JOIN для лайков если нужно
+        self.statement = self.statement.outerjoin(
+            blocks_subquery, Exhibition.id == blocks_subquery.c.exhibition_id
+        )
+        
         if likes_subquery is not None:
             self.statement = self.statement.outerjoin(
                 likes_subquery, Exhibition.id == likes_subquery.c.exhibition_id
@@ -238,7 +255,6 @@ class ExhibitionQueryBuilder:
         self._apply_filters()
         self._apply_sorting()
         self._apply_pagination()
-        # Создаем подзапрос только если нужна сортировка по лайкам или фильтрация
         if self.sort.sortBy == "likes_count" or hasattr(self.filters, 'likes_min') or hasattr(self.filters, 'likes_max'):
             return (
                 select(
@@ -263,13 +279,54 @@ class ExhibitionQueryBuilder:
                             'created_at', Tag.created_at
                         )
                     ),
-                    list([])  # Return empty array if no tags
+                    list([])
                 ).label('tags')
             )
             .join(Tag, ExhibitionTag.tag_id == Tag.id)
             .group_by(ExhibitionTag.exhibition_id)
             .subquery()
         )
+        
+        
+    def _build_blocks_subquery(self):
+        """Builds subquery for exhibition blocks and their items using raw SQL."""
+        raw_sql = """
+            SELECT
+                exhibition_blocks.exhibition_id,
+                ARRAY_AGG(
+                    JSON_BUILD_OBJECT(
+                        'id', exhibition_blocks.id,
+                        'type', exhibition_blocks.type,
+                        'content', exhibition_blocks.content,
+                        'settings', exhibition_blocks.settings,
+                        'position', exhibition_blocks.position,
+                        'created_at', exhibition_blocks.created_at,
+                        'updated_at', exhibition_blocks.updated_at,
+                        'items', COALESCE(items_subquery.items, ARRAY[]::json[])
+                    )
+                ) AS blocks
+            FROM exhibition_blocks
+            LEFT OUTER JOIN (
+                SELECT
+                    exhibition_block_items.block_id,
+                    ARRAY_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', exhibition_block_items.id,
+                            'text', exhibition_block_items.text,
+                            'image_key', exhibition_block_items.image_key,
+                            'position', exhibition_block_items.position,
+                            'created_at', exhibition_block_items.created_at,
+                            'updated_at', exhibition_block_items.updated_at
+                        ) ORDER BY exhibition_block_items.position
+                    ) AS items
+                FROM exhibition_block_items
+                GROUP BY exhibition_block_items.block_id
+            ) AS items_subquery
+            ON exhibition_blocks.id = items_subquery.block_id
+            GROUP BY exhibition_blocks.exhibition_id
+        """
+        # Явно указываем столбцы подзапроса
+        return text(raw_sql).columns(exhibition_id=Integer, blocks=JSON).subquery()
 
     def _build_participants_subquery(self) -> Select:
         """Builds subquery for exhibition participants."""
@@ -301,10 +358,8 @@ class ExhibitionQueryBuilder:
 
     def _apply_pagination(self) -> None:
         """Applies pagination to the query."""
-        # Важно применять после всех фильтров и сортировки!
+
         self.statement = self.statement.offset(self.skip).limit(self.limit)
-        # Для count запроса пагинацию не применяем!
-        # self.count_statement остаётся без изменений
 
     def _apply_sorting(self) -> None:
         """Applies sorting to the query."""
@@ -315,7 +370,7 @@ class ExhibitionQueryBuilder:
             if not self._needs_likes:
                 raise ValueError(
                     "Likes subquery required for sorting by likes_count")
-            # Исправлено для поддержки .desc()/.asc()
+
             order_column = literal_column("likes_count")
         else:
             order_column = getattr(Exhibition, self.sort.sortBy, None)
@@ -333,14 +388,14 @@ class ExhibitionQueryBuilder:
         if self.filters.organization_id:
             self.statement = self.statement.where(
                 Exhibition.organization_id == self.filters.organization_id)
-        # Добавьте другие фильтры по необходимости
 
     async def _fetch_results(self) -> List[ExhibitionPublic]:
         result = await self.session.execute(self.statement)
         rows = list(result.mappings())
         exhibition_ids = [row["Exhibition"].id for row in rows]
         liked_ids = set()
-        print(self.current_user_id, exhibition_ids)
+
+        # Проверяем лайки текущего пользователя, если он авторизован
         if self.current_user_id and exhibition_ids:
             like_rows = await self.session.execute(
                 select(UserExhibitionLike.exhibition_id)
@@ -349,29 +404,30 @@ class ExhibitionQueryBuilder:
                     UserExhibitionLike.user_id == self.current_user_id
                 )
             )
-            # Явно приводим к строкам для сравнения, если id-шники в rows строковые
             liked_ids = set(str(lid) for lid in like_rows.scalars().all())
-        print(liked_ids)
+
         exhibitions = []
         for row in rows:
             exhibition_id = str(row["Exhibition"].id)
+            blocks_data = row.get("blocks", [])  # Переносим получение blocks_data внутрь цикла
             data = {
                 **row["Exhibition"].model_dump(),
                 "tags": [TagPublic(**tag) for tag in (row["tags"] or [])],
                 "participants": [ExhibitionParticipant(**p) for p in (row["participants"] or [])],
                 "likes_count": row.get("likes_count", 0),
-                "is_liked_by_current_user": exhibition_id in liked_ids if self.current_user_id else None
+                "is_liked_by_current_user": exhibition_id in liked_ids if self.current_user_id else None,
+                "blocks": [ExhibitionBlockPublic(**block) for block in blocks_data] if blocks_data else [],
             }
             exhibitions.append(ExhibitionPublic(**data))
+        
         return exhibitions
 
     async def _fetch_count(self) -> int:
         """Fetches the total count of exhibitions with applied filters."""
         count_stmt = self.count_statement
-        # Применяем фильтры к count_statement (аналогично _apply_filters)
         if self.filters.organization_id:
             count_stmt = count_stmt.where(
                 Exhibition.organization_id == self.filters.organization_id)
-        # Добавьте другие фильтры по необходимости
+
         result = await self.session.execute(count_stmt)
         return result.scalar_one() if result else 0
