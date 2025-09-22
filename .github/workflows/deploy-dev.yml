@@ -11,22 +11,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy-with-key:
-    name: Deploy (SSH key)
-    # Запускаем, если:
-    # - ручной запуск ИЛИ
-    # - PR в main закрыт с merge И
-    # - НЕ указан пароль (используем ключ)
+  deploy:
+    # ТОЛЬКО при ручном запуске или при merge PR в main
     if: >-
-      (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'pull_request' &&
-        github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'main'))
-      && !contains(fromJson('[""]'), secrets.DEV_SSH_PASSWORD || '')
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.merged == true &&
+       github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy over SSH (build on server, key auth)
+      # === Вариант 1: вход по SSH-ключу (если пароль НЕ задан) ===
+      - name: Deploy over SSH (key auth)
+        if: ${{ secrets.DEV_SSH_PASSWORD == '' }}
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEV_SSH_HOST }}
@@ -37,7 +34,6 @@ jobs:
           command_timeout: 30m
           script: |
             set -euo pipefail
-
             DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
             echo "[info] deploy dir: ${DEPLOY_DIR}"
             cd "${DEPLOY_DIR}"
@@ -62,12 +58,10 @@ jobs:
 
             echo "[5/6] Up services…"
             docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
-
-            echo "[6/6] Post-deploy info…"
             docker compose -f docker-compose.dev.yml ps
             docker image prune -f || true
 
-            echo "[health] Wait for API to respond…"
+            echo "[health] API…"
             for i in {1..30}; do
               if curl -fsS "http://127.0.0.1:8000${API_V1_STR:-/api/v1}/health" >/dev/null; then
                 echo "API health OK"; break
@@ -80,26 +74,16 @@ jobs:
               fi
             done
 
-            echo "[health] Check frontend…"
-            if ! curl -fsSI "http://127.0.0.1:3000/" >/dev/null; then
+            echo "[health] Frontend…"
+            curl -fsSI "http://127.0.0.1:3000/" >/dev/null || {
               echo "Frontend check failed" >&2
               docker compose -f docker-compose.dev.yml logs --tail=120 frontend || true
               exit 1
-            fi
+            }
 
-  deploy-with-password:
-    name: Deploy (SSH password)
-    # Тот же триггер, но только если задан пароль (альтернатива ключу)
-    if: >-
-      (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'pull_request' &&
-        github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'main'))
-      && (secrets.DEV_SSH_PASSWORD != '')
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy over SSH (build on server, password auth)
+      # === Вариант 2: вход по паролю (если пароль задан) ===
+      - name: Deploy over SSH (password auth)
+        if: ${{ secrets.DEV_SSH_PASSWORD != '' }}
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEV_SSH_HOST }}
@@ -110,7 +94,6 @@ jobs:
           command_timeout: 30m
           script: |
             set -euo pipefail
-
             DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
             echo "[info] deploy dir: ${DEPLOY_DIR}"
             cd "${DEPLOY_DIR}"
@@ -135,12 +118,10 @@ jobs:
 
             echo "[5/6] Up services…"
             docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
-
-            echo "[6/6] Post-deploy info…"
             docker compose -f docker-compose.dev.yml ps
             docker image prune -f || true
 
-            echo "[health] Wait for API to respond…"
+            echo "[health] API…"
             for i in {1..30}; do
               if curl -fsS "http://127.0.0.1:8000${API_V1_STR:-/api/v1}/health" >/dev/null; then
                 echo "API health OK"; break
@@ -153,9 +134,9 @@ jobs:
               fi
             done
 
-            echo "[health] Check frontend…"
-            if ! curl -fsSI "http://127.0.0.1:3000/" >/dev/null; then
+            echo "[health] Frontend…"
+            curl -fsSI "http://127.0.0.1:3000/" >/dev/null || {
               echo "Frontend check failed" >&2
               docker compose -f docker-compose.dev.yml logs --tail=120 frontend || true
               exit 1
-            fi
+            }
