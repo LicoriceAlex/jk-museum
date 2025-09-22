@@ -12,7 +12,6 @@ concurrency:
 
 jobs:
   deploy:
-    # Запуск только при MERGE PR в main или ручном запуске
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
@@ -26,7 +25,6 @@ jobs:
         with:
           host: ${{ secrets.DEV_SSH_HOST }}
           username: ${{ secrets.DEV_SSH_USER }}
-          # передаём оба, экшен сам выберет key > password
           key: ${{ secrets.DEV_SSH_KEY }}
           password: ${{ secrets.DEV_SSH_PASSWORD }}
           port: ${{ secrets.DEV_SSH_PORT || 22 }}
@@ -51,13 +49,10 @@ jobs:
             echo "[2/8] Check .env.dev presence…"
             test -f .env.dev || { echo "Missing .env.dev in ${DEPLOY_DIR}"; exit 1; }
 
-            echo "[2.1/8] Load .env.dev for dynamic ports (safe for this session)…"
-            # Подтянем переменные (API_V1_STR, MINIO_*_PORT и т.д.) в окружение текущего шелла
+            echo "[2.1/8] Load .env.dev for dynamic ports…"
             set -a
             source .env.dev || true
             set +a
-
-            # Значения по умолчанию на случай отсутствия в .env.dev
             : "${API_V1_STR:=/api/v1}"
             : "${MINIO_API_PORT:=9000}"
             : "${MINIO_CONSOLE_PORT:=9001}"
@@ -68,8 +63,6 @@ jobs:
 
             echo "[3/8] Cleanup previous stack and conflicting containers…"
             docker compose -f docker-compose.dev.yml --env-file .env.dev down --remove-orphans || true
-
-            # Приберём любые контейнеры, публикующие нужные нам порты (если кто-то запускал вручную)
             for p in "${POSTGRES_PORT}" "${PGADMIN_HTTP_PORT}" "${BACKEND_HTTP_PORT}" "${FRONTEND_HTTP_PORT}" "${MINIO_API_PORT}" "${MINIO_CONSOLE_PORT}"; do
               echo " - stopping containers publishing :$p (if any)…"
               docker ps -q --filter "publish=${p}" | xargs -r docker stop || true
@@ -86,30 +79,30 @@ jobs:
             docker compose -f docker-compose.dev.yml ps
 
             echo "[7/8] Smoke checks…"
-            # Backend health
+            # Backend
             for i in {1..45}; do
               if curl -fsS "http://127.0.0.1:${BACKEND_HTTP_PORT}${API_V1_STR}/health" >/dev/null; then
                 echo " - API health OK"
                 break
               fi
               sleep 2
-              [ $i -eq 45 ] && {
+              if [ $i -eq 45 ]; then
                 echo "API health check failed" >&2
                 docker compose -f docker-compose.dev.yml logs --tail=150 backend || true
                 exit 1
-              }
+              fi
             done
 
-            # Frontend reachable
+            # Frontend
             if curl -fsSI "http://127.0.0.1:${FRONTEND_HTTP_PORT}/" >/dev/null; then
               echo " - Frontend reachable OK"
             else
               echo "Frontend check failed" >&2
               docker compose -f docker-compose.dev.yml logs --tail=150 frontend || true
               exit 1
-            end
+            fi
 
-            # MinIO live (API)
+            # MinIO
             if curl -fsS "http://127.0.0.1:${MINIO_API_PORT}/minio/health/live" >/dev/null; then
               echo " - MinIO live OK"
             else
@@ -118,7 +111,7 @@ jobs:
               exit 1
             fi
 
-            # PgAdmin reachable (HTTP 200/302/401 — нам важно, что порт отвечает)
+            # PgAdmin
             if curl -fsSI "http://127.0.0.1:${PGADMIN_HTTP_PORT}/" >/dev/null; then
               echo " - PgAdmin reachable OK"
             else
