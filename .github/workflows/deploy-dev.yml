@@ -1,0 +1,161 @@
+name: deploy-dev-on-merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy-with-key:
+    name: Deploy (SSH key)
+    # Запускаем, если:
+    # - ручной запуск ИЛИ
+    # - PR в main закрыт с merge И
+    # - НЕ указан пароль (используем ключ)
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'))
+      && !contains(fromJson('[""]'), secrets.DEV_SSH_PASSWORD || '')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH (build on server, key auth)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT || 22 }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+
+            DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
+            echo "[info] deploy dir: ${DEPLOY_DIR}"
+            cd "${DEPLOY_DIR}"
+
+            echo "[1/6] Fetch/reset to origin/main…"
+            if [ -d .git ]; then
+              git fetch --all --prune
+              git reset --hard origin/main
+            else
+              echo "Repo not found in ${DEPLOY_DIR}. Clone it there once manually." >&2
+              exit 1
+            fi
+
+            echo "[2/6] Check .env.dev exists…"
+            test -f .env.dev || { echo "Missing .env.dev in ${DEPLOY_DIR}"; exit 1; }
+
+            echo "[3/6] Build images…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev build
+
+            echo "[4/6] Run migrations (one-off)…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev run --rm migrations
+
+            echo "[5/6] Up services…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+
+            echo "[6/6] Post-deploy info…"
+            docker compose -f docker-compose.dev.yml ps
+            docker image prune -f || true
+
+            echo "[health] Wait for API to respond…"
+            for i in {1..30}; do
+              if curl -fsS "http://127.0.0.1:8000${API_V1_STR:-/api/v1}/health" >/dev/null; then
+                echo "API health OK"; break
+              fi
+              sleep 2
+              if [ $i -eq 30 ]; then
+                echo "API health check failed" >&2
+                docker compose -f docker-compose.dev.yml logs --tail=120 backend || true
+                exit 1
+              fi
+            done
+
+            echo "[health] Check frontend…"
+            if ! curl -fsSI "http://127.0.0.1:3000/" >/dev/null; then
+              echo "Frontend check failed" >&2
+              docker compose -f docker-compose.dev.yml logs --tail=120 frontend || true
+              exit 1
+            fi
+
+  deploy-with-password:
+    name: Deploy (SSH password)
+    # Тот же триггер, но только если задан пароль (альтернатива ключу)
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'))
+      && (secrets.DEV_SSH_PASSWORD != '')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH (build on server, password auth)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT || 22 }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+
+            DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
+            echo "[info] deploy dir: ${DEPLOY_DIR}"
+            cd "${DEPLOY_DIR}"
+
+            echo "[1/6] Fetch/reset to origin/main…"
+            if [ -d .git ]; then
+              git fetch --all --prune
+              git reset --hard origin/main
+            else
+              echo "Repo not found in ${DEPLOY_DIR}. Clone it there once manually." >&2
+              exit 1
+            fi
+
+            echo "[2/6] Check .env.dev exists…"
+            test -f .env.dev || { echo "Missing .env.dev in ${DEPLOY_DIR}"; exit 1; }
+
+            echo "[3/6] Build images…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev build
+
+            echo "[4/6] Run migrations (one-off)…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev run --rm migrations
+
+            echo "[5/6] Up services…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+
+            echo "[6/6] Post-deploy info…"
+            docker compose -f docker-compose.dev.yml ps
+            docker image prune -f || true
+
+            echo "[health] Wait for API to respond…"
+            for i in {1..30}; do
+              if curl -fsS "http://127.0.0.1:8000${API_V1_STR:-/api/v1}/health" >/dev/null; then
+                echo "API health OK"; break
+              fi
+              sleep 2
+              if [ $i -eq 30 ]; then
+                echo "API health check failed" >&2
+                docker compose -f docker-compose.dev.yml logs --tail=120 backend || true
+                exit 1
+              fi
+            done
+
+            echo "[health] Check frontend…"
+            if ! curl -fsSI "http://127.0.0.1:3000/" >/dev/null; then
+              echo "Frontend check failed" >&2
+              docker compose -f docker-compose.dev.yml logs --tail=120 frontend || true
+              exit 1
+            fi
