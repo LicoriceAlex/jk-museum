@@ -13,7 +13,7 @@ concurrency:
 jobs:
   deploy:
     # ТОЛЬКО при ручном запуске или при merge PR в main
-    if: >-
+    if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
        github.event.pull_request.merged == true &&
@@ -21,79 +21,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # === Вариант 1: вход по SSH-ключу (если пароль НЕ задан) ===
-      - name: Deploy over SSH (key auth)
-        if: ${{ secrets.DEV_SSH_PASSWORD == '' }}
+      - name: Deploy over SSH (build on server)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEV_SSH_HOST }}
           username: ${{ secrets.DEV_SSH_USER }}
+          # Передаём оба: экшен сам выберет key > password
           key: ${{ secrets.DEV_SSH_KEY }}
-          port: ${{ secrets.DEV_SSH_PORT || 22 }}
-          script_stop: true
-          command_timeout: 30m
-          script: |
-            set -euo pipefail
-            DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
-            echo "[info] deploy dir: ${DEPLOY_DIR}"
-            cd "${DEPLOY_DIR}"
-
-            echo "[1/6] Fetch/reset to origin/main…"
-            if [ -d .git ]; then
-              git fetch --all --prune
-              git reset --hard origin/main
-            else
-              echo "Repo not found in ${DEPLOY_DIR}. Clone it there once manually." >&2
-              exit 1
-            fi
-
-            echo "[2/6] Check .env.dev exists…"
-            test -f .env.dev || { echo "Missing .env.dev in ${DEPLOY_DIR}"; exit 1; }
-
-            echo "[3/6] Build images…"
-            docker compose -f docker-compose.dev.yml --env-file .env.dev build
-
-            echo "[4/6] Run migrations (one-off)…"
-            docker compose -f docker-compose.dev.yml --env-file .env.dev run --rm migrations
-
-            echo "[5/6] Up services…"
-            docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
-            docker compose -f docker-compose.dev.yml ps
-            docker image prune -f || true
-
-            echo "[health] API…"
-            for i in {1..30}; do
-              if curl -fsS "http://127.0.0.1:8000${API_V1_STR:-/api/v1}/health" >/dev/null; then
-                echo "API health OK"; break
-              fi
-              sleep 2
-              if [ $i -eq 30 ]; then
-                echo "API health check failed" >&2
-                docker compose -f docker-compose.dev.yml logs --tail=120 backend || true
-                exit 1
-              fi
-            done
-
-            echo "[health] Frontend…"
-            curl -fsSI "http://127.0.0.1:3000/" >/dev/null || {
-              echo "Frontend check failed" >&2
-              docker compose -f docker-compose.dev.yml logs --tail=120 frontend || true
-              exit 1
-            }
-
-      # === Вариант 2: вход по паролю (если пароль задан) ===
-      - name: Deploy over SSH (password auth)
-        if: ${{ secrets.DEV_SSH_PASSWORD != '' }}
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.DEV_SSH_HOST }}
-          username: ${{ secrets.DEV_SSH_USER }}
           password: ${{ secrets.DEV_SSH_PASSWORD }}
           port: ${{ secrets.DEV_SSH_PORT || 22 }}
           script_stop: true
           command_timeout: 30m
           script: |
             set -euo pipefail
+
             DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
             echo "[info] deploy dir: ${DEPLOY_DIR}"
             cd "${DEPLOY_DIR}"
