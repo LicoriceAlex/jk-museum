@@ -6,49 +6,50 @@
 
 .page {
   min-height: 100vh;
-  background-color: #E9E8DF;
+  background-color: var(--color-exhibitspage2);
 }
 
 .main {
-  padding-top: 112px;
+  padding-top: 5.83vw;
 }
 
 .container {
-  min-height: 354px;
-  width:100vw;
+  min-height: 18.43vw;
+  width: 100vw;
   margin: 0 auto;
-  padding: 40px 195px;
+  padding: 2.08vw 10.15vw;
 }
 
 .titleRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 40px;
+  margin-bottom: 2.08vw;
 }
 
 .pageTitle {
   font-weight: 600;
   font-size: 52px;
   line-height: 110%;
-  color: #344E41;
+  color: var(--color-text2);
 }
 
 .searchContainer {
   position: relative;
-  width: 448px;
+  width: 23.33vw;
 }
 
 .searchInput {
   width: 100%;
-  padding: 10px 0 10px 66px;
+  padding: 0.8vw 1vw 0.8vw 3vw;
   border: none;
-  border-bottom: 1px solid #1A2620;
+  border-bottom: 1px solid var(--color-exibitcard6);
   background-color: transparent;
-  color: #1A2620;
+  color: var(--color-exibitcard6);
   outline: none;
   font-weight: 600;
   font-size: 24px;
+  font-family: var(--font-main);
   line-height: 120%;
   letter-spacing: 0px;
 
@@ -63,36 +64,36 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #1A2620;
+  color: var(--color-exibitcard6);
   opacity: 0.5;
-  width: 26px;
-  height: 26px;
+  width: 1.35vw;
+  height: 1.35vw;
 }
 
 .addButtonContainer {
   position: fixed;
-  right: 195px;
-  bottom: 50px;
+  right: 10.15vw;
+  bottom: 2.60vw;
   z-index: 100;
 }
 
 .addButton {
-  width: 283px;
-  height: 61px;
+  width: 14.73vw;
+  height: 3.17vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 16px 24px;
+  gap: 0.83vw;
+  padding: 0.83vw 1.25vw;
   border-radius: 4px;
-  background-color: #344E41;
-  color: #ffffff;
+  background-color: var(--color-text2);
+  color: var(--color-text4);
   border: none;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: #344E41;
+    background-color: var(--color-text2);
   }
 }
 
@@ -102,7 +103,7 @@
 }
 
 .addText {
-  font-family: Cormorant SC, serif;
+  font-family: var(--font-main);
   font-weight: 600;
   font-size: 24px;
   line-height: 120%;
@@ -114,7 +115,7 @@
   .titleRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 0.83vw;
   }
 
   .searchContainer {

@@ -13,21 +13,21 @@
   flex-direction: column;
   align-items: center; // Center content horizontally
   margin: 0 auto;
-  padding: 40px 0; // Padding for the entire page, matching your provided .container padding
-  width: 1530px; // Take full width of its parent
+  padding: 2.08vw 0; // Padding for the entire page, matching your provided .container padding
+  width: 79.68vw; // Take full width of its parent
 
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
   font-weight: 600;
 }
 
 .searchBar {
   width: 100%; // Limit width for aesthetic purposes, similar to the image
-  padding: 10px 15px;
+  padding: 0.52vw 0.78vw;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #5d5d5d; // Darker line at the bottom
-  font-family: "Cormorant SC", serif;
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--color-exibitcard3); // Darker line at the bottom
+  font-family: var(--font-main);
   font-size: 24px;
 }
 
@@ -37,12 +37,14 @@
   background: transparent;
   outline: none;
   font-size: 24px;
-  color: #344E41;
-  font-family: "Cormorant SC", serif;
+  color: var(--color-text2);
+  order: 2;
+  padding-left: 0.52vw;
+  font-family: var(--font-main);
   font-weight: 600;
 
   &::placeholder {
-    color: #344E41;
+    color: var(--color-text2);
   }
 }
 
@@ -50,11 +52,12 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 0.26vw;
+  order: 1;
   svg {
-    color: #5d5d5d; // Color for the search icon
-    width: 20px;
-    height: 20px;
+    color: var(--color-exibitcard3); // Color for the search icon
+    width: 1.04vw;
+    height: 1.04vw;
   }
 }
 
@@ -63,41 +66,41 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end; // Align items to the bottom
-  margin-bottom: 30px;
-  padding-bottom: 10px;
-  font-family: "Cormorant SC", serif;
+  margin-bottom: 1.56vw;
+  padding-bottom: 0.52vw;
+  font-family: var(--font-main);
   font-weight: 600;
 }
 
 .categories {
   display: flex;
-  gap: 20px; // Space between categories
+  gap: 1.04vw; // Space between categories
 }
 
 .categoryItem {
   font-size: 24px;
-  color: #344E4199; // Default color for categories
+  color: var(--color-text1); // Default color for categories
   cursor: pointer;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #333;
+    color: var(--color-exibitcard2);
   }
 
   &.active {
-    color: #344E41; // Darker for active
+    color: var(--color-text2); // Darker for active
   }
 }
 
 .sortOptions {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-family: "Cormorant SC", serif;
+  gap: 0.26vw;
+  font-family: var(--font-main);
 
   span {
     font-size: 24px;
-    color: #5d5d5d;
+    color: var(--color-exibitcard3);
   }
 }
 
@@ -106,42 +109,43 @@
   border: none;
   outline: none;
   font-size: 24px;
-  color: #333;
+  color: var(--color-exibitcard2);
   appearance: none; // Remove default select arrow
-  padding-right: 20px; // Space for custom arrow
+  padding-right: 1.04vw; // Space for custom arrow
   cursor: pointer;
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
 }
 
 .sortArrow {
-  color: #5d5d5d;
+  color: var(--color-exibitcard3);
   pointer-events: none; // Make sure clicks go through to the select
-  margin-left: -20px; // Position arrow over select's padding
+  margin-left: -1.04vw; // Position arrow over select's padding
 }
 
 .compactHeader {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #5d5d5d; /* Line similar to full search bar */
+  align-items: flex-end; // Измените на flex-end для выравнивания по низу
+  margin-bottom: 1.56vw;
+  padding-bottom: 10px; // Увеличьте отступ для линии
 }
 
 .compactTitle {
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
   font-size: 32px; /* Smaller title for compact view */
   font-weight: 600;
-  color: #344E41;
+  color: var(--color-text2);
   margin: 0; /* Remove default margin */
 }
 
 .searchBarCompact {
   display: flex;
   align-items: center;
-  gap: 10px; /* Small gap between input and icon */
-  width: 250px; /* Smaller width for compact search */
+  gap: 0.52vw;
+  width: 23.32vw;
+  border-bottom: 1px solid var(--color-exibitcard3); // Тонкая линия
+  padding-bottom: 5px; // Отступ для линии
 }
 
 .searchInputCompact {
@@ -149,13 +153,16 @@
   border: none;
   background: transparent;
   outline: none;
-  font-size: 18px; /* Smaller font size for compact search */
-  color: #344E41;
-  font-family: "Cormorant SC", serif;
+  font-size: 24px;
+  color: var(--color-text2);
+  font-family: var(--font-main);
   font-weight: 600;
+  order: 2;
+  text-align: left;
+  padding: 0;
 
   &::placeholder {
-    color: #344E4199;
+    color: var(--color-text1);
   }
 }
 
@@ -164,10 +171,13 @@
   border: none;
   cursor: pointer;
   padding: 0; /* No padding needed */
+  order: 1;
   svg {
-    color: #5d5d5d;
-    width: 18px; /* Smaller icon */
+    color: var(--color-exibitcard3);
+    width: 18px; // Фиксированный размер вместо vw
     height: 18px;
+    position: relative;
+    top: 1px; // Выравнивание по вертикали
   }
 }
 
@@ -178,23 +188,23 @@
 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 93px; // Kept from your input
+  gap: 4.84vw; // Kept from your input
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
     grid-template-columns: 1fr; // Single column on small screens
-    gap: 16px; // Reduced gap for mobile
-    padding: 0 15px; // Slightly less padding on mobile
+    gap: 0.83vw; // Reduced gap for mobile
+    padding: 0 0.78vw; // Slightly less padding on mobile
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr); // Two columns on medium screens
-    gap: 40px; // Adjust gap for 2 columns
+    gap: 2.08vw; // Adjust gap for 2 columns
   }
 
   @media (min-width: 1025px) {
     grid-template-columns: repeat(3, 1fr); // Three columns on large screens
-    gap: 93px; // Original gap for 3 columns
+    gap: 4.84vw; // Original gap for 3 columns
   }
 }
 /* --- MODIFIED GRID STYLES END --- */
@@ -204,22 +214,22 @@
 .showMoreContainer {
   display: flex;
   justify-content: center;
-  margin-top: 32px; // Kept from your input
+  margin-top: 1.66vw; // Kept from your input
   width: 100%; // Ensure it spans the width
-  max-width: 900px; // Align with other main content elements if desired, or remove for full width
+  max-width: 46.87vw; // Align with other main content elements if desired, or remove for full width
 }
 
 .showMoreButton {
-  border: 1px solid #253A30; // Kept from your input
-  color: #253A30; // Kept from your input
-  padding: 16px 24px; // Kept from your input
+  border: 1px solid var(--color-text3); // Kept from your input
+  color: var(--color-text3); // Kept from your input
+  padding: 0.83vw 1.25vw; // Kept from your input
   border-radius: 4px; // Kept from your input
-  font-size: 24px; // Kept from your input
+  font-size: 1.25vw; // Kept from your input
   font-weight: 600; // Kept from your input
   cursor: pointer; // Kept from your input
   transition: all 0.2s ease; // Kept from your input
   background-color: transparent;
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
 
   &:hover {
     transform: translateY(-1px); // Kept from your input

@@ -3,56 +3,55 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background-color: #dad7cd;
-  font-family: 'Cormorant SC', serif;
-  gap: 64px;
+  background-color: var(--color-mainpage);
+  font-family: var(--font-main);
+  gap: 3.33vw;
 }
 
 .container {
-  width: 1530px;
+  width: 79.68vw;
   margin: 0 auto;
-  padding: 176px 0 40px;
+  padding: 9.16vw 0 2.08vw;
 }
 
 .profileCard {
   backdrop-filter: blur(10px);
   border-radius: 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    padding: 30px 20px;
+    padding: 1.56vw 1.04vw;
   }
 }
 
 .title {
-  font-family: "Cormorant Infant", serif;
+  font-family: var(--font-secondary);
   font-size: 52px;
   font-weight: 600;
-  color: #344E41;
-  margin-bottom: 40px;
+  color: var(--color-text2);
+  margin-bottom: 2.08vw;
   text-align: left;
   letter-spacing: 1px;
 
   @media (max-width: 768px) {
     font-size: 28px;
-    margin-bottom: 30px;
+    margin-bottom: 1.56vw;
   }
 }
 
 .content {
   display: flex;
   justify-content: space-between;
-  gap: 170.5px;
-  margin-bottom: 40px;
+  gap: 8.88vw;
+  margin-bottom: 2.08vw;
 
   @media (max-width: 1200px) {
     flex-wrap: wrap;
-    gap: 40px;
+    gap: 2.08vw;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 30px;
+    gap: 1.56vw;
   }
 }
 
@@ -65,7 +64,7 @@
     flex-grow: 1;
     .userNameSection {
       order: 1;
-      margin-bottom: 30px;
+      margin-bottom: 1.04vw;
     }
     .avatarSection {
       order: 2;
@@ -80,7 +79,7 @@
   }
 
   @media (max-width: 1200px) {
-    flex-basis: calc(50% - 20px);
+    flex-basis: calc(50% - 1.04vw);
   }
 
   @media (max-width: 768px) {
@@ -100,7 +99,7 @@
 
 .userNameSection {
   width: 100%;
-  min-width: 448px;
+  min-width: 23.33vw;
   text-align: left;
   @media (max-width: 768px) {
     text-align: center;
@@ -108,16 +107,16 @@
 }
 
 .avatarSection {
-  margin-bottom: 30px;
-  width: 448px;
-  height: 311px;
+  margin-bottom: 1.56vw;
+  width: 23.33vw;
+  height: 16.19vw;
   position: relative;
 
   @media (max-width: 768px) {
-    width: 150px;
-    height: 150px;
+    width: 7.81vw;
+    height: 7.81vw;
     align-self: center;
-    margin-top: 20px;
+    margin-top: 1.04vw;
   }
 }
 
@@ -164,12 +163,12 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: white;
-  gap: 16px;
+  color: var(--color-text4);
+  gap: 0.83vw;
 }
 
 .uploadText {
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
   font-weight: 600;
   font-size: 24px;
   line-height: 120%;
@@ -181,10 +180,10 @@
 }
 
 .userName {
-  font-family: "Cormorant Infant", serif;
+  font-family: var(--font-secondary);
   font-size: 40px;
   font-weight: 600;
-  color: #253A30;
+  color: var(--color-text3);
   margin: 0;
   line-height: 120%;
   width: 100%;
@@ -198,61 +197,60 @@
 .nameInput {
   font-size: 40px;
   font-weight: 600;
-  color: #344E41;
+  color: var(--color-text2);
   border: none;
   background: transparent;
-  padding: 8px 0;
+  padding: 0.41vw 0;
   width: 100%;
-  font-family: 'Cormorant Infant', serif;
-  border-bottom: 1px solid #344E41;
+  font-family: var(--font-secondary);
+  border-bottom: 0.05vw solid var(--color-text2);
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-width: 448px;
+  gap: 0.78vw;
+  max-width: 23.33vw;
   width: 100%;
 }
 
 .sectionTitle {
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
   font-size: 24px;
   font-weight: 600;
-  color: #344E41;
+  color: var(--color-text2);
   margin: 0;
   letter-spacing: 0.5px;
 }
 
 .aboutText {
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
   font-size: 18px;
   font-weight: 600;
   line-height: 120%;
-  color: #253A30;
+  color: var(--color-text3);
   margin: 0;
-  text-align: justify;
-  padding: 8px 16px;
+  padding: 0.41vw 0.83vw;
 }
 
 .emailText {
-  font-family: "Cormorant SC", serif;
-  padding: 8px 16px;
+  font-family: var(--font-main);
+  padding: 0.41vw 0.83vw;
   font-size: 18px;
   font-weight: 600;
-  color: #253A30;
+  color: var(--color-text3);
   margin: 0;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.41vw;
 }
 
 .inputLabel {
   font-size: 14px;
-  color: #7a7a7a;
+  color: var(--color-text5);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -260,24 +258,24 @@
 .aboutTextarea {
   font-size: 18px;
   resize: vertical;
-  min-height: 100px;
-  padding: 15px;
+  min-height: 5.20vw;
+  padding: 0.78vw;
   background-color: transparent;
   border: none;
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
   line-height: 1.5;
-  color: #3a3a3a;
+  color: var(--color-text5);
   width: 100%;
-  border-bottom: 1px solid #344E41;
+  border-bottom: 0.05vw solid var(--color-text2);
 }
 
 .emailInput {
-  padding: 12px 15px;
+  padding: 0.62vw 0.78vw;
   background-color: transparent;
   border: none;
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
   font-size: 16px;
-  color: #3a3a3a;
+  color: var(--color-text6);
   width: 100%;
 }
 
@@ -293,7 +291,7 @@
   &__edit {
     display: flex;
     flex-direction: column;
-    gap:8px;
+    gap: 0.41vw;
   }
 
   @media (max-width: 768px) {
@@ -306,20 +304,20 @@
 }
 
 .editButton, .saveButton {
-  background-color: #344E41;
-  color: white;
+  background-color: var(--color-text2);
+  color: var(--color-text4);
   border: none;
-  border-radius: 4px;
-  padding: 16px 24px;
+  border-radius: 0.20vw;
+  padding: 0.83vw 1.25vw;
   font-size: 24px;
   font-weight: 600;
   letter-spacing: 0;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
 
   &:hover {
-    background: #4a5c47;
+    background: var(--color-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(90, 108, 87, 0.3);
   }
@@ -331,19 +329,19 @@
 
 .backButton, .changePasswordButton {
   background: transparent;
-  color: #344E41;
+  color: var(--color-text2);
   border: none;
   font-size: 24px;
   cursor: pointer;
   transition: color 0.3s ease;
-  font-family: 'Cormorant SC', serif;
+  font-family: var(--font-main);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.41vw;
   font-weight: 600;
 
   &:hover {
-    color: #4a5c47;
+    color: var(--color-hover);
   }
 }
 

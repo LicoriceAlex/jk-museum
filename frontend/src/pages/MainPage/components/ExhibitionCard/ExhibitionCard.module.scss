@@ -9,8 +9,8 @@
   border-radius: 0;
   box-shadow: none;
   transition: none;
-  height: 382px;
-  width: 448px;
+  height: 19.89vw;
+  width: 23.33vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -22,9 +22,9 @@
   position: relative;
   width: 100%;
   padding-bottom: 60%;
-  height: 320px;
+  height: 16.66vw;
   overflow: hidden;
-  background: #2b3b36;
+  background: var(--color-exibitcard5);
 }
 
 .image {
@@ -38,15 +38,14 @@
 }
 
 .content {
-  margin-top: -80px;
-
-  padding: 16px 16px 16px 0;
+  margin-top: -4.17vw;
+  padding: 0.83vw 0.83vw 0.83vw 0;
   display: flex;
-  width: 400px;
-  height: 142px;
+  width: 20.83vw;
+  height: 7.39vw;
   flex-direction: column;
-  background-color: #dcd7ce;
-  color: #333;
+  background-color: var(--color-exibitcard);
+  color: var(--color-exibitcard2);
   font-weight: 600;
   position: relative;
   z-index: 2;
@@ -54,19 +53,20 @@
 
 .date {
   font-size: 16px;
-  color: #5d5d5d;
+  color: var(--color-exibitcard3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
   font-weight: 600;
+  margin-bottom: 0.5vw;
 }
 
 .title {
   font-size: 24px;
-  color: #333;
+  color: var(--color-exibitcard2);
   line-height: 1.2;
   flex-grow: 1;
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
   vertical-align: middle;
   font-weight: 600;
 }
@@ -74,24 +74,25 @@
 .lineAndViewButton {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 0.57vw;
+  margin-top: auto;
 }
 
 .line {
-  width: 36px;
-  height: 2px;
-  background-color: #8a8a8a;
+  width: 1.82vw;
+  height: 0.10vw;
+  background-color: var(--color-exibitcard4);
 }
 
 .viewButton {
   background: none;
   border: none;
-  color: #333;
+  color: var(--color-exibitcard2);
   font-size: 18px;
   cursor: pointer;
   padding: 0;
   text-align: left;
   text-decoration: none;
   transition: none;
-  font-family: "Cormorant SC", serif;
+  font-family: var(--font-main);
 }

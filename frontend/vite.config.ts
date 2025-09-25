@@ -7,13 +7,13 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/variables";`
+        additionalData: '@import "./src/styles/variables.css";'
       }
     }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      "@": path.resolve(__dirname, './src/styles')
     }
   },
   server: {

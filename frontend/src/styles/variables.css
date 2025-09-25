@@ -1,3 +1,38 @@
+:root {
+  --color-mainpage: #DAD7CD;
+  --color-text1: #344E4199;
+  --color-text2: #344E41;
+  --color-text3: #253A30;
+  --color-text4: #FFFFFF;
+  --color-text5: #7a7a7a;
+  --color-text6: #3a3a3a;
+  --color-regpage: #DAD7CDE5;
+  --color-regpage2: #34493a;
+  --color-personalpage: #344E41B2;
+  --color-exhibits: #DAD7CDCC;
+  --color-exhibitspage: #1E1E1E80;
+  --color-desfont: #F5EBE0;
+  --color-desfont2: #DAD7CDCC;
+  --color-desfont3: #F5EBE080;
+  --color-downpage: #DAD7CD80;
+  --color-downpage2: #DAD7CD00;
+  --color-pagedown: #D3D3D3;
+  --color-exhibitspage2: #E9E8DF;
+  --color-hover: #4a5c47;
+
+  --color-exibitcard: #dcd7ce;
+  --color-exibitcard2: #333;
+  --color-exibitcard3: #5d5d5d;
+  --color-exibitcard4: #8a8a8a;
+  --color-exibitcard5: #2b3b36;
+  --color-exibitcard6: #1A2620;
+  --color-exibitmodal: #2e403a;   /* то же самое что и ниже */
+  --color-placeholder: #888888;   /* exhibitmodal.module */
+  
+  /* Шрифты и размеры */
+  --font-main: 'Cormorant SC', serif;
+  --font-secondary: 'Cormorant Infant', serif;
+}
 
 
 /*# sourceMappingURL=variables.css.map */

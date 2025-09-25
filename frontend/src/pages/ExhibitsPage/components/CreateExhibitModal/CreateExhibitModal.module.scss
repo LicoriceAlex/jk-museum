@@ -12,9 +12,9 @@
 }
 
 .modal {
-  background-color: #E9E8DF;
-  width: 602px;
-  border-radius: 8px;
+  background-color: var(--color-exhibitspage2);
+  width: 31,35vw;
+  border-radius: 0.41vw;
   overflow: hidden;
   position: relative;
   max-height: 90vh;
@@ -24,24 +24,25 @@
 
 .closeButton {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 0.62vw;
+  right: 0.62vw; 
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 0.5vw;
   z-index: 10;
 
   svg {
-    stroke: #1A2620;
-    width: 24px;
-    height: 24px;
+    stroke: var(--color-exibitcard6);
+    width: 1.25vw;
+    height: 1.25vw;
   }
 }
 
 .imageUploadArea {
-  background-color: #344E41;
-  height: 200px;
+  background-color: var(--color-text2);
+  height: 20vh;
+  min-height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,46 +65,46 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
-  color: white;
+  gap: 0.41vw;
+  color: var(--color-text4);
   cursor: pointer;
-  font-family: Cormorant SC, serif;
+  font-family: var(--font-main);
   font-weight: 600;
   z-index: 1;
   font-size: 24px;
   line-height: 120%;
 
   svg {
-    margin-right: 8px;
+    margin-right: 0.41vw;
   }
 }
 
 .imageInput {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.05vw;
+  height: 0.05vw;
   padding: 0;
-  margin: -1px;
+  margin: -0.05vw;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
 
 .formContent {
-  padding: 24px 77px;
+  padding: 1.25vw 4.01vw;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0.83vw;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.31vw;
 }
 
 .formLabel {
-  color: #344E41;
+  color: var(--color-text2);
   text-transform: uppercase;
   font-weight: 600;
   font-size: 24px;
@@ -116,27 +117,27 @@
 .formTextarea,
 .formSelect {
   width: 100%;
-  padding: 8px 0;
+  padding: 0.41vw 0;
   font-size: 16px;
   border: none;
-  border-bottom: 1px solid #D3D3D3;
+  border-bottom: 0.05vw solid var(--color-pagedown);
   background-color: transparent;
-  color: #1A2620;
+  color: var(--color-exibitcard6);
   resize: none;
 
   &::placeholder {
-    color: #888888;
+    color: var(--color-placeholder);
   }
 
   &:focus {
     outline: none;
-    border-bottom-color: #1A2620;
+    border-bottom-color: var(--color-exibitcard6);
   }
 }
 
 .formSelect {
   appearance: none;
-  padding-right: 30px;
+  padding-right: 1.56vw;
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%231A2620' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -146,14 +147,14 @@
 .submitButtonWrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: 1.25vw;
 }
 
 .submitButton {
-  background-color: #1A2620;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
+  background-color: var(--color-exibitcard6);
+  color: var(--color-text4);
+  padding: 0.62vw 1.25vw;
+  border-radius: 0.41vw;
   border: none;
   font-size: 16px;
   font-weight: 500;
@@ -161,6 +162,6 @@
   transition: background 0.3s ease;
 
   &:hover {
-    background-color: #344E41;
+    background-color: var(--color-text2);
   }
 }

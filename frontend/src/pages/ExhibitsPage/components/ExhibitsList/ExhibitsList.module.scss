@@ -11,24 +11,24 @@
 }
 
 .empty {
-  font-family: Cormorant Infant, serif;
+  font-family: var(--font-secondary);
   font-weight: 600;
   font-size: 52px;
   line-height: 110%;
   text-align: center;
-  color: #344E41;
+  color: var(--color-text2);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  column-gap: 16.25px;
-  row-gap: 16px;
+  column-gap: 0.84vw;
+  row-gap: 0.83vw;
 }
 //TODO  убрать у последней строки марджин
 
 .gridItem {
-  min-height: 250px;
+  min-height: 13.02vw;
 }
 
 @media (max-width: 1200px) {
