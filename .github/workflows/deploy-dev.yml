@@ -1,0 +1,131 @@
+name: deploy-dev-on-merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.merged == true &&
+       github.event.pull_request.base.ref == 'main')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH (build on server)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT || 22 }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+
+            DEPLOY_DIR="${DEV_DEPLOY_DIR:-/home/${{ secrets.DEV_SSH_USER }}/app/jk-museum}"
+            echo "[info] Using deploy dir: ${DEPLOY_DIR}"
+            cd "${DEPLOY_DIR}"
+
+            echo "[1/8] Sync repo to origin/main…"
+            if [ -d .git ]; then
+              git fetch --all --prune
+              git reset --hard origin/main
+            else
+              echo "Repo not found in ${DEPLOY_DIR}. Clone it there once manually." >&2
+              exit 1
+            fi
+
+            echo "[2/8] Check .env.dev presence…"
+            test -f .env.dev || { echo "Missing .env.dev in ${DEPLOY_DIR}"; exit 1; }
+
+            echo "[2.1/8] Load .env.dev for dynamic ports…"
+            set -a
+            source .env.dev || true
+            set +a
+            : "${API_V1_STR:=/api/v1}"
+            : "${MINIO_API_PORT:=9000}"
+            : "${MINIO_CONSOLE_PORT:=9001}"
+            : "${PGADMIN_HTTP_PORT:=5050}"
+            : "${BACKEND_HTTP_PORT:=8000}"
+            : "${FRONTEND_HTTP_PORT:=3000}"
+            : "${POSTGRES_PORT:=5432}"
+
+            echo "[3/8] Cleanup previous stack and conflicting containers…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev down --remove-orphans || true
+            for p in "${POSTGRES_PORT}" "${PGADMIN_HTTP_PORT}" "${BACKEND_HTTP_PORT}" "${FRONTEND_HTTP_PORT}" "${MINIO_API_PORT}" "${MINIO_CONSOLE_PORT}"; do
+              echo " - stopping containers publishing :$p (if any)…"
+              docker ps -q --filter "publish=${p}" | xargs -r docker stop || true
+            done
+
+            echo "[4/8] Build images…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev build
+
+            echo "[5/8] Run DB migrations (one-off)…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev run --rm migrations
+
+            echo "[6/8] Up services…"
+            docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+            docker compose -f docker-compose.dev.yml ps
+
+            echo "[7/8] Smoke checks…"
+            # Backend
+            for i in {1..45}; do
+              if curl -fsS "http://127.0.0.1:${BACKEND_HTTP_PORT}${API_V1_STR}/health" >/dev/null; then
+                echo " - API health OK"
+                break
+              fi
+              sleep 2
+              if [ $i -eq 45 ]; then
+                echo "API health check failed" >&2
+                docker compose -f docker-compose.dev.yml logs --tail=150 backend || true
+                exit 1
+              fi
+            done
+
+            # Frontend
+            if curl -fsSI "http://127.0.0.1:${FRONTEND_HTTP_PORT}/" >/dev/null; then
+              echo " - Frontend reachable OK"
+            else
+              echo "Frontend check failed" >&2
+              docker compose -f docker-compose.dev.yml logs --tail=150 frontend || true
+              exit 1
+            fi
+
+            # MinIO
+            if curl -fsS "http://127.0.0.1:${MINIO_API_PORT}/minio/health/live" >/dev/null; then
+              echo " - MinIO live OK"
+            else
+              echo "MinIO live check failed (API ${MINIO_API_PORT})" >&2
+              docker compose -f docker-compose.dev.yml logs --tail=150 minio || true
+              exit 1
+            fi
+
+            # PgAdmin (HEAD /, HEAD /login, либо TCP порт)
+            echo " - PgAdmin check…"
+            if curl -fsSI "http://127.0.0.1:${PGADMIN_HTTP_PORT}/" >/dev/null 2>&1; then
+              echo "   * HEAD / OK"
+            elif curl -fsSI "http://127.0.0.1:${PGADMIN_HTTP_PORT}/login" >/dev/null 2>&1; then
+              echo "   * HEAD /login OK"
+            elif (exec 3<>/dev/tcp/127.0.0.1/${PGADMIN_HTTP_PORT}) 2>/dev/null; then
+              exec 3>&- 3<&-
+              echo "   * TCP port ${PGADMIN_HTTP_PORT} open"
+            else
+              echo "PgAdmin check failed (port ${PGADMIN_HTTP_PORT})" >&2
+              docker compose -f docker-compose.dev.yml logs --tail=150 pgadmin || true
+              exit 1
+            fi
+
+            echo "[8/8] Housekeeping…"
+            docker image prune -f || true
+            echo "Deploy complete ✅"
