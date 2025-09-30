@@ -73,7 +73,7 @@ export const useExhibitModal = (
       if (!response.ok) throw new Error('Upload failed');
       
       const data = await response.json();
-      return data.object_key;
+      return data.image_key;
     } catch (error) {
       console.error('Upload error:', error);
       throw error;

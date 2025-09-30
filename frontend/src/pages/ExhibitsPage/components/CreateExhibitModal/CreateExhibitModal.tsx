@@ -65,7 +65,7 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
         throw new Error('Не удалось загрузить изображение');
       }
       const data = await response.json();
-      return data.object_key;
+      return data.image_key;
     } catch (error) {
       console.error('Error uploading image:', error);
       throw new Error('Не удалось загрузить изображение');

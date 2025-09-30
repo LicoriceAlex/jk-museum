@@ -8,6 +8,7 @@ from backend.app.db.schemas import FileUploadResponse
 
 router = APIRouter()
 
+
 @router.post(
     "/upload",
     response_model=FileUploadResponse,
@@ -17,21 +18,22 @@ async def upload_file(
     prefix: str = "general/"
 ) -> Any:
     """Загрузить файл в MinIO и вернуть ключ объекта и подписанный URL."""
-    object_key = await minio_client.upload_file(file, prefix=prefix)
-    file_url = await minio_client.get_file_url(object_key)
-    return FileUploadResponse(object_key=object_key, file_url=file_url)
+    image_key = await minio_client.upload_file(file, prefix=prefix)
+    file_url = await minio_client.get_file_url(image_key)
+    return FileUploadResponse(image_key=image_key, file_url=file_url)
 
 
-@router.get("/{object_key}")
-async def serve_exhibit_file(object_key: str):
+@router.get("/{image_key}")
+async def serve_exhibit_file(image_key: str):
     """Serve a file from MinIO as a streaming response."""
     try:
         return StreamingResponse(
-            content=minio_client.download_file(object_key),
+            content=minio_client.download_file(image_key),
             media_type="image/jpeg",
             headers={"Cache-Control": "no-cache"}
         )
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving file: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving file: {str(e)}")

@@ -30,16 +30,17 @@ class UpdatePassword(SQLModel):
 
 class FilePath(SQLModel):
     file_path: str
-    
-    
+
+
 class FileUploadResponse(SQLModel):
-    object_key: str
+    image_key: str
     file_url: str
 
 
 class LoginType(str, Enum):
     user = "user"
     organization = "organization"
+
 
 class OAuth2PasswordRequestFormWithLoginType:
     def __init__(
@@ -59,4 +60,3 @@ class OAuth2PasswordRequestFormWithLoginType:
         self.client_id = client_id
         self.client_secret = client_secret
         self.login_type = login_type
-        
