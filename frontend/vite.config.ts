@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const API_URL = env.PUBLIC_API_URL || 'http://localhost:8000'
+  const API_URL = env.PUBLIC_API_URL 
 
   return {
     plugins: [react()],
