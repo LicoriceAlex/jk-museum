@@ -6,6 +6,7 @@ from backend.app.api.main import api_router
 from backend.app.core.config import settings
 from backend.app.utils.logger import logger
 from backend.app.utils.minio import minio_client
+from backend.app.utils.middleware import LoggingMiddleware
 
 
 @asynccontextmanager
@@ -29,5 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(LoggingMiddleware)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
