@@ -8,12 +8,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    command:
-      - "postgres"
-      - "-c"; "shared_buffers=256MB"
-      - "-c"; "effective_cache_size=1GB"
-      - "-c"; "work_mem=16MB"
-      - "-c"; "maintenance_work_mem=128MB"
+    command: ["postgres",
+      "-c", "shared_buffers=256MB",
+      "-c", "effective_cache_size=1GB",
+      "-c", "work_mem=16MB",
+      "-c", "maintenance_work_mem=128MB"
+    ]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports: ["5432:5432"]
@@ -57,8 +57,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     volumes:
       - minio_data:/data
-    command: server /data --console-address ":9001"
-    ports: ["9000:9000","9001:9001"]
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports: ["9000:9000", "9001:9001"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -111,7 +111,7 @@ services:
       db:
         condition: service_healthy
     env_file: [.env.dev]
-    command: alembic upgrade head
+    command: ["alembic", "upgrade", "head"]
     restart: "no"
     deploy:
       resources:
