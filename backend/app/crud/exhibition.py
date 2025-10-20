@@ -15,19 +15,22 @@ from backend.app.crud.exhibition_tag import (
     delete_exhibition_tags
 )
 from backend.app.crud.tag import create_or_exist_tags
-from backend.app.db.models.exhibition_block import ExhibitionBlock, ExhibitionBlockPublic, ExhibitionBlocksPublic
-from backend.app.db.models.exhibition_block_item import ExhibitionBlockItem
-from backend.app.db.models.exhibition_participant import ExhibitionParticipant
-from backend.app.db.models.tag import Tag, TagPublic
-from backend.app.db.models.exhibition_tag import ExhibitionTag
-from backend.app.db.models.exhibition import (
+from backend.app.db.models import (
     Exhibition,
     ExhibitionCreate,
     ExhibitionUpdate,
     ExhibitionsPublic,
     ExhibitionPublic,
+    ExhibitionBlock,
+    ExhibitionBlockPublic,
+    ExhibitionBlocksPublic,
+    ExhibitionBlockItem,
+    ExhibitionParticipant,
+    Tag,
+    TagPublic,
+    ExhibitionTag,
+    UserExhibitionLike,
 )
-from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 
 
 async def get_exhibition(

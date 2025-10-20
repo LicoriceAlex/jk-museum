@@ -13,16 +13,20 @@ from backend.app.crud import exhibition as exhibition_crud
 from backend.app.crud import exhibition_exhibit as exhibition_exhibit_crud
 from backend.app.crud.exhibition_participant import get_exhibition_participants
 from backend.app.crud.exhibition_tag import get_exhibition_tags
-from backend.app.db.models.exhibition import (
-    Exhibition, ExhibitionCreate, ExhibitionPublic, ExhibitionsPublic, ExhibitionUpdate
+from backend.app.db.models import (
+    Exhibition,
+    ExhibitionCreate,
+    ExhibitionPublic,
+    ExhibitionsPublic,
+    ExhibitionUpdate,
+    ExhibitionExhibitCreate,
 )
-from backend.app.db.models.exhibition_exhibit import ExhibitionExhibitCreate
 from backend.app.db.schemas import Message
 from fastapi import Body, status
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from sqlalchemy import select, func
-from backend.app.db.models.user_exhibition_like import UserExhibitionLike
+from backend.app.db.models import UserExhibitionLike
 
 router = APIRouter()
 

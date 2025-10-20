@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
     from backend.app.db.models.admin_action import AdminAction
     from backend.app.db.models.exhibit import Exhibit
+    from backend.app.db.models.user_organization import UserOrganization
 
 
 class OrgStatusEnum(str, Enum):
@@ -31,7 +32,6 @@ class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
-    hashed_password: Optional[str] = Field(default=None, nullable=True)
 
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -47,7 +47,7 @@ class Organization(OrganizationBase, table=True):
 
 
 class OrganizationCreate(OrganizationBase):
-    password: str
+    position: Optional[str] = None
 
 
 class OrganizationUpdate(SQLModel):
@@ -69,6 +69,15 @@ class OrganizationPublicShort(OrganizationBase):
     status: OrgStatusEnum
     created_at: datetime
     logo_key: Optional[str] = None
+
+
+class OrganizationResponse(SQLModel):
+    organization: OrganizationPublicShort
+    membership: "UserOrganization"
+
+
+class MyOrganization(SQLModel):
+    items: list[OrganizationResponse]
 
 
 class OrganizationsPublic(SQLModel):

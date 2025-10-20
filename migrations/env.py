@@ -2,9 +2,6 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 from sqlmodel import SQLModel
-from backend.app.db.models.user import User
-from backend.app.db.models.admin_action import AdminAction
-from backend.app.db.models.organization import Organization
 from backend.app.core.config import settings
 
 config = context.config

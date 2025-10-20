@@ -7,7 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 if TYPE_CHECKING:
-    from backend.app.db.models.organization import Organization
+    from backend.app.db.models import Organization
     
     
 class ExhibitType(str, Enum):

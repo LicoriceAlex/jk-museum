@@ -1,7 +1,10 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.db.models.user import (
-    UserCreate, User, StatusEnum, UserUpdate
+from backend.app.db.models import (
+    UserCreate,
+    User,
+    StatusEnum,
+    UserUpdate
 )
 from backend.app.crud import user as user_crud
 from backend.app.core.security import verify_password

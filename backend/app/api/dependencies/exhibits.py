@@ -3,7 +3,7 @@ import uuid
 
 from fastapi import Depends, HTTPException
 from backend.app.api.dependencies.common import SessionDep
-from backend.app.db.models.exhibit import Exhibit
+from backend.app.db.models import Exhibit
 from backend.app.crud import exhibit as exhibit_crud
 
 

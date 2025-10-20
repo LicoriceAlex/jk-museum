@@ -14,13 +14,14 @@ from backend.app.crud import user as user_crud
 from backend.app.api.dependencies.common import (
     SessionDep,
 )
-from backend.app.core.config import settings
 from backend.app.db.models import (
-    User, UserCreate, UserPublic,
-    UserRegister, UsersPublic
+    UserCreate,
+    UserPublic,
+    UserRegister,
+    UsersPublic,
+    UserUpdate,
+    ExhibitionsPublic
 )
-from backend.app.db.models.exhibition import ExhibitionsPublic
-from backend.app.db.models.user import UserUpdate
 from backend.app.db.schemas import (
     Message, UpdatePassword,
 )

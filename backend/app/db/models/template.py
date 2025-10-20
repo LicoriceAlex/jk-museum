@@ -3,7 +3,7 @@ from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 from uuid import UUID, uuid4
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, List
+from typing import TYPE_CHECKING, Optional
 
 
 if TYPE_CHECKING:

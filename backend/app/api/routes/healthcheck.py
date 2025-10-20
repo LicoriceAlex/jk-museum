@@ -14,4 +14,7 @@ async def health_check():
     if all(results.values()):
         return {"status": "healthy", "details": results}
     
-    raise HTTPException(status_code=503, detail={"status": "unhealthy", "details": results})
+    raise HTTPException(
+        status_code=503,
+        detail={"status": "unhealthy", "details": results}
+    )
