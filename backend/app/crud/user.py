@@ -7,12 +7,14 @@ from backend.app.core.security import (
     get_password_hash, verify_password
 )
 from backend.app.crud.exhibition import get_exhibition
-from backend.app.crud.exhibition_tag import get_exhibition_tags
-from backend.app.db.models.exhibition import Exhibition, ExhibitionPublic
-from backend.app.db.models.user import (
-    StatusEnum, User, UserCreate, UsersPublic
+from backend.app.db.models import (
+    StatusEnum,
+    User,
+    UserCreate,
+    UsersPublic,
+    ExhibitionPublic,
+    UserExhibitionLike,
 )
-from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 
 
 async def get_user(

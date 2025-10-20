@@ -5,10 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import settings
 from backend.app.crud.tag import create_tag, get_tag
-from backend.app.db.models.exhibition_tag import (
-    ExhibitionTag, ExhibitionTagCreate
+from backend.app.db.models import (
+    ExhibitionTag,
+    ExhibitionTagCreate,
+    Tag,
+    TagCreate,
+    TagPublic,
 )
-from backend.app.db.models.tag import Tag, TagCreate, TagPublic
 
 
 async def get_exhibition_tag(

@@ -5,16 +5,15 @@ from uuid import UUID
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.db.models.exhibition import Exhibition, ExhibitionStatusEnum
-from backend.app.db.models.exhibition_block import (
+from backend.app.db.models import (
     ExhibitionBlock,
     ExhibitionBlockCreate,
     ExhibitionBlockUpdate,
-    ExhibitionBlockUpdateBase
-)
-from backend.app.db.models.exhibition_block_item import (
+    ExhibitionBlockUpdateBase,
+    Exhibition,
+    ExhibitionStatusEnum,
     ExhibitionBlockItem,
-    ExhibitionBlockItemCreate
+    ExhibitionBlockItemCreate,
 )
 from backend.app.utils.sanitizer import sanitize_html
 

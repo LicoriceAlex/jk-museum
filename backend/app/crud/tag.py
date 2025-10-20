@@ -3,8 +3,9 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import settings
-from backend.app.db.models.tag import (
-    Tag, TagCreate
+from backend.app.db.models import (
+    Tag,
+    TagCreate
 )
 
 

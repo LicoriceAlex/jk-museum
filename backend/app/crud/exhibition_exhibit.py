@@ -3,9 +3,12 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.db.models.exhibit import Exhibit
-from backend.app.db.models.exhibition import Exhibition
-from backend.app.db.models.exhibition_exhibit import ExhibitionExhibit, ExhibitionExhibitCreate
+from backend.app.db.models import (
+    Exhibit,
+    ExhibitionExhibit,
+    ExhibitionExhibitCreate,
+    Exhibition
+)
 
 
 async def get_exhibition_exhibit(

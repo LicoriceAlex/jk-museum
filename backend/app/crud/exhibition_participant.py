@@ -1,12 +1,10 @@
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.config import settings
-from backend.app.db.models.exhibition_participant import (
+from backend.app.db.models import (
     ExhibitionParticipant,
-    ExhibitionParticipantCreate
 )
 
 

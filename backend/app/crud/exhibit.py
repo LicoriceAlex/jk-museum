@@ -3,8 +3,11 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import settings
-from backend.app.db.models.exhibit import (
-    Exhibit, ExhibitCreate, ExhibitUpdate, ExhibitsPublic
+from backend.app.db.models import (
+    Exhibit,
+    ExhibitCreate,
+    ExhibitUpdate,
+    ExhibitsPublic
 )
 
 

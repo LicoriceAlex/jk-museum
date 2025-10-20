@@ -8,7 +8,12 @@ from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.api.dependencies.users import get_current_admin_or_moderator
 from backend.app.core.config import settings
 from backend.app.crud import exhibit as exhibit_crud
-from backend.app.db.models.exhibit import ExhibitCreate, ExhibitPublic, ExhibitsPublic, ExhibitUpdate
+from backend.app.db.models import (
+    ExhibitCreate,
+    ExhibitPublic,
+    ExhibitsPublic,
+    ExhibitUpdate
+)
 from backend.app.db.schemas import Message
 
 router = APIRouter()
