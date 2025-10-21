@@ -1,5 +1,3 @@
-import logging
+from loguru import logger
 
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+all = ["logger"]
