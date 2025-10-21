@@ -2,34 +2,13 @@ from loguru import logger
 import uuid
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import StreamingResponse
 from backend.app.utils.logger import set_trace_id
-
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         trace_id = str(uuid.uuid4())
         request.state.trace_id = trace_id
         set_trace_id(trace_id)
-
-        # Paths to skip logging (healthchecks etc.)
-        SKIP_LOG_PATHS = {"/api/v1/health", "/health", "/healthz"}
-        path = request.url.path
-
-        # If this is a healthcheck, don't read/preview bodies or log; still set trace header
-        if path in SKIP_LOG_PATHS:
-            response = await call_next(request)
-            try:
-                response.headers["X-Trace-Id"] = trace_id
-            except Exception:
-                pass
-            return response
-
-        # safe request body read
-        try:
-            req_body = await request.body()
-        except Exception:
-            req_body = b""
 
         # use a higher depth so loguru shows the original caller (route handler)
         logger.opt(depth=6).bind(trace_id=trace_id).info(
