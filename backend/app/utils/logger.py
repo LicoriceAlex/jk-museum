@@ -1,5 +1,6 @@
 import contextvars
 from loguru import logger
+import sys
 
 trace_id_var = contextvars.ContextVar("trace_id", default=None)
 
