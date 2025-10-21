@@ -9,8 +9,10 @@ from backend.app.db.models import (
     ExhibitionExhibitCreate,
     Exhibition
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_exhibition_exhibit(
     session: AsyncSession,
     exhibition_id: UUID,
@@ -24,6 +26,7 @@ async def get_exhibition_exhibit(
     return result.scalar_one_or_none()
 
 
+@log_method_call
 async def validate_exhibition_exists(
     session: AsyncSession,
     exhibition_id: UUID
@@ -33,6 +36,7 @@ async def validate_exhibition_exists(
         raise ValueError(f"Exhibition {exhibition_id} not found")
 
 
+@log_method_call
 async def validate_exhibit_exists(
     session: AsyncSession,
     exhibit_id: UUID
@@ -42,6 +46,7 @@ async def validate_exhibit_exists(
         raise ValueError(f"Exhibit {exhibit_id} not found")
 
 
+@log_method_call
 async def create_exhibition_exhibit(
     session: AsyncSession,
     exhibition_exhibit_in: ExhibitionExhibitCreate,

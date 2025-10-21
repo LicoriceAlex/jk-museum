@@ -14,8 +14,10 @@ from backend.app.db.models import (
 )
 from backend.app.crud import organization as organization_crud
 from backend.app.crud import user_organization as user_organization_crud
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def create_organization(
     organization_in: OrganizationCreate,
     session: AsyncSession,
@@ -45,6 +47,7 @@ async def create_organization(
     )
 
 
+@log_method_call
 async def add_organization_member(
     session: AsyncSession,
     organization: Organization,
@@ -72,6 +75,7 @@ async def add_organization_member(
     )
 
 
+@log_method_call
 async def update_organization_member(
     session: AsyncSession,
     organization_id: uuid.UUID,

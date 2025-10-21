@@ -14,6 +14,7 @@ from backend.app.crud.exhibition_tag import (
     create_or_exist_exhibition_tags,
     delete_exhibition_tags
 )
+from backend.app.utils.logger import log_method_call
 from backend.app.crud.tag import create_or_exist_tags
 from backend.app.db.models import (
     Exhibition,
@@ -33,6 +34,7 @@ from backend.app.db.models import (
 )
 
 
+@log_method_call
 async def get_exhibition(
     session: AsyncSession,
     **filters
@@ -81,7 +83,7 @@ async def get_exhibition(
         blocks=blocks
     )
 
-
+@log_method_call
 async def create_exhibition(
     session: AsyncSession,
     exhibition_in: ExhibitionCreate
@@ -102,6 +104,7 @@ async def create_exhibition(
     )
 
 
+@log_method_call
 async def _create_base_exhibition(
     session: AsyncSession, exhibition_in: ExhibitionCreate
 ) -> Exhibition:
@@ -114,6 +117,7 @@ async def _create_base_exhibition(
     return exhibition
 
 
+@log_method_call
 async def _add_exhibition_participants(
     session: AsyncSession, participant_names: list[str], exhibition_id: UUID
 ) -> list[dict]:
@@ -125,6 +129,7 @@ async def _add_exhibition_participants(
     return [p.model_dump() for p in participants]
 
 
+@log_method_call
 async def _add_exhibition_tags(
     session: AsyncSession, tags: list[str], exhibition_id: UUID
 ) -> list[dict]:
@@ -136,6 +141,7 @@ async def _add_exhibition_tags(
     return [t.model_dump() for t in tags]
 
 
+@log_method_call
 async def update_exhibition(
     session: AsyncSession,
     exhibition_id: UUID,
@@ -170,6 +176,7 @@ async def update_exhibition(
     )
 
 
+@log_method_call
 async def delete_exhibition(
     session: AsyncSession,
     exhibition: Exhibition
@@ -179,6 +186,7 @@ async def delete_exhibition(
     return exhibition
 
 
+@log_method_call
 async def get_exhibitions(
     session: AsyncSession,
     sort: SortParams = SortParams(),

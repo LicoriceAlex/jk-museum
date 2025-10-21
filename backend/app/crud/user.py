@@ -7,6 +7,7 @@ from backend.app.core.security import (
     get_password_hash, verify_password
 )
 from backend.app.crud.exhibition import get_exhibition
+from backend.app.utils.logger import log_method_call
 from backend.app.db.models import (
     StatusEnum,
     User,
@@ -16,7 +17,7 @@ from backend.app.db.models import (
     UserExhibitionLike,
 )
 
-
+@log_method_call
 async def get_user(
     session: AsyncSession, **filters
 ) -> User | None:
@@ -26,6 +27,7 @@ async def get_user(
     return user
 
 
+@log_method_call
 async def create_user(
     session: AsyncSession,
     user_create: UserCreate
@@ -48,7 +50,7 @@ async def create_user(
     await session.refresh(user)
     return user
 
-
+@log_method_call
 async def get_users(
     session: AsyncSession,
     skip: int = 0,
@@ -64,6 +66,7 @@ async def get_users(
     return UsersPublic(data=users, count=count)
 
 
+@log_method_call
 async def delete_user(
     session: AsyncSession,
     user_in: User
@@ -72,6 +75,7 @@ async def delete_user(
     await session.commit()
 
 
+@log_method_call
 async def authenticate(
     session: AsyncSession,
     email: str, password: str
@@ -87,6 +91,7 @@ async def authenticate(
     return db_user
 
 
+@log_method_call
 async def update_user(
     session: AsyncSession,
     db_user: User,
@@ -106,6 +111,7 @@ async def update_user(
     return db_user
 
 
+@log_method_call
 async def change_password(
     session: AsyncSession, user: User,
     current_password: str, new_password: str
@@ -121,6 +127,7 @@ async def change_password(
     return user
 
 
+@log_method_call
 async def reset_password(
     session: AsyncSession,
     user: User,
@@ -135,6 +142,7 @@ async def reset_password(
     return user
 
 
+@log_method_call
 def validate_password(
     current_password: str,
     new_password: str,
@@ -157,6 +165,7 @@ def validate_password(
         )
 
 
+@log_method_call
 async def ban_user(
     session: AsyncSession,
     user: User
@@ -175,6 +184,7 @@ async def ban_user(
     return user
 
 
+@log_method_call
 async def unban_user(
     session: AsyncSession,
     user: User
@@ -193,6 +203,7 @@ async def unban_user(
     return user
 
 
+@log_method_call
 async def get_liked_exhibitions(
     session: AsyncSession,
     user_id: str,
@@ -215,6 +226,7 @@ async def get_liked_exhibitions(
     return exhibitions
 
 
+@log_method_call
 async def like_exhibition(
     session: AsyncSession,
     exhibition_id: str,
@@ -242,6 +254,7 @@ async def like_exhibition(
     return ExhibitionPublic.model_validate(exhibition)
 
 
+@log_method_call
 async def unlike_exhibition(
     session: AsyncSession,
     exhibition_id: str,
