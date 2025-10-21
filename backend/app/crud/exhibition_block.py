@@ -16,8 +16,10 @@ from backend.app.db.models import (
     ExhibitionBlockItemCreate,
 )
 from backend.app.utils.sanitizer import sanitize_html
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def validate_exhibition(session: AsyncSession, exhibition_id: UUID) -> None:
     exhibition = await session.get(Exhibition, exhibition_id)
     if not exhibition:
@@ -26,6 +28,7 @@ async def validate_exhibition(session: AsyncSession, exhibition_id: UUID) -> Non
         raise ValueError("Exhibition must be in draft or published status")
 
 
+@log_method_call
 async def adjust_block_positions(
     session: AsyncSession,
     exhibition_id: UUID,
@@ -46,10 +49,12 @@ async def adjust_block_positions(
     return requested_position
 
 
+@log_method_call
 def sanitize_block_content(content: Optional[str]) -> Optional[str]:
     return sanitize_html(content) if content else None
 
 
+@log_method_call
 def sanitize_block_items(items: Optional[list[ExhibitionBlockItemCreate]]) -> Optional[list[ExhibitionBlockItemCreate]]:
     if not items:
         return None
@@ -62,6 +67,7 @@ def sanitize_block_items(items: Optional[list[ExhibitionBlockItemCreate]]) -> Op
     ]
 
 
+@log_method_call
 async def persist_exhibition_block(
     session: AsyncSession,
     block_in: ExhibitionBlockCreate,
@@ -77,6 +83,7 @@ async def persist_exhibition_block(
     return block
 
 
+@log_method_call
 async def persist_block_items(
     session: AsyncSession,
     block_id: UUID,
@@ -95,6 +102,7 @@ async def persist_block_items(
         session.add(db_item)
 
 
+@log_method_call
 async def create_exhibition_block(
     session: AsyncSession,
     block_in: ExhibitionBlockCreate,
@@ -109,6 +117,7 @@ async def create_exhibition_block(
     return block
 
 
+@log_method_call
 async def delete_block_items_by_block_id(
     session: AsyncSession,
     block_id: UUID
@@ -117,6 +126,7 @@ async def delete_block_items_by_block_id(
     await session.execute(stmt)
 
 
+@log_method_call
 async def update_exhibition_block(
     session: AsyncSession,
     block_in: ExhibitionBlockUpdate,
@@ -152,8 +162,7 @@ async def update_exhibition_block(
     return block
 
 
-
-
+@log_method_call
 async def delete_exhibition_block(
     session: AsyncSession,
     block_id: UUID

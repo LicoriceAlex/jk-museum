@@ -8,8 +8,10 @@ from backend.app.db.models import (
     UserOrganizationCreate,
     User
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def create_organization_user(
     session: AsyncSession,
     user_organization_in: UserOrganizationCreate
@@ -22,6 +24,7 @@ async def create_organization_user(
     return UserOrganization.model_validate(user_organization)
 
 
+@log_method_call
 async def get_organization_user(
     session: AsyncSession,
     user_id: uuid.UUID,
@@ -36,6 +39,7 @@ async def get_organization_user(
     return organization_user
 
 
+@log_method_call
 async def get_organization_members(
     session: AsyncSession,
     organization_id: uuid.UUID,

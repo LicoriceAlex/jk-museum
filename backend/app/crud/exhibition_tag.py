@@ -12,8 +12,10 @@ from backend.app.db.models import (
     TagCreate,
     TagPublic,
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_exhibition_tag(
     session: AsyncSession,
     **filters
@@ -24,6 +26,7 @@ async def get_exhibition_tag(
     return exhibition_tag
 
 
+@log_method_call
 async def get_exhibition_tags(
     session: AsyncSession,
     exhibition_id: UUID
@@ -42,6 +45,7 @@ async def get_exhibition_tags(
     return tags
 
 
+@log_method_call
 async def create_exhibition_tag(
     session: AsyncSession,
     exhibition_tag_in: ExhibitionTagCreate
@@ -53,6 +57,7 @@ async def create_exhibition_tag(
     return exhibition_tag
 
 
+@log_method_call
 async def create_or_exist_exhibition_tags(
     session: AsyncSession,
     tags: list[str],
@@ -75,6 +80,7 @@ async def create_or_exist_exhibition_tags(
     return tag_list
 
 
+@log_method_call
 async def delete_exhibition_tags(
     session: AsyncSession,
     tags_in: Optional[list[str]],

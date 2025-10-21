@@ -25,8 +25,10 @@ from backend.app.db.models import (
     ExhibitionPublic,
 )
 from sqlalchemy import select
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_organization(
     session: AsyncSession,
     **filters
@@ -37,6 +39,7 @@ async def get_organization(
     return organization
 
 
+@log_method_call
 async def create_organization(
     session: AsyncSession,
     organization_in: OrganizationCreate
@@ -67,6 +70,7 @@ async def create_organization(
     return OrganizationPublicShort(**organization.model_dump())
 
 
+@log_method_call
 async def update_organization(
     session: AsyncSession,
     organization: Organization,
@@ -80,6 +84,7 @@ async def update_organization(
     return organization
 
 
+@log_method_call
 async def update_organization_profile(
     session: AsyncSession,
     organization: Organization,
@@ -93,6 +98,7 @@ async def update_organization_profile(
     return organization
 
 
+@log_method_call
 async def delete_organization(
     session: AsyncSession,
     organization: Organization
@@ -102,6 +108,7 @@ async def delete_organization(
     return organization
 
 
+@log_method_call
 async def get_organizations(
     session: AsyncSession,
     skip: int = 0,
@@ -120,6 +127,7 @@ async def get_organizations(
     return OrganizationsPublic(data=orgs_short, count=count)
 
 
+@log_method_call
 async def confirm_organization(
     session: AsyncSession,
     organization: Organization
@@ -131,6 +139,7 @@ async def confirm_organization(
     return organization
 
 
+@log_method_call
 async def reject_organization(
     session: AsyncSession,
     organization: Organization
@@ -142,6 +151,7 @@ async def reject_organization(
     return organization
 
 
+@log_method_call
 async def get_organization_profile_with_exhibitions(
     session: AsyncSession,
     organization_id: UUID,
@@ -183,6 +193,7 @@ async def get_organization_profile_with_exhibitions(
     )
 
 
+@log_method_call
 async def get_my_organizations(
     session: AsyncSession,
     user_id: UUID,

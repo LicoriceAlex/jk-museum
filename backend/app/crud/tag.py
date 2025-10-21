@@ -7,8 +7,10 @@ from backend.app.db.models import (
     Tag,
     TagCreate
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_tag(
     session: AsyncSession,
     **filters
@@ -19,6 +21,7 @@ async def get_tag(
     return tag
 
 
+@log_method_call
 async def create_or_exist_tags(
     session: AsyncSession,
     tags: list[str]
@@ -33,6 +36,7 @@ async def create_or_exist_tags(
     return tag_list
 
 
+@log_method_call
 async def create_tag(
     session: AsyncSession,
     tag_in: TagCreate

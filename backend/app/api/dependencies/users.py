@@ -19,8 +19,10 @@ from backend.app.db.models import (
     UserOrganization,
 )
 from backend.app.db.schemas import TokenPayload
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_current_user(
     session: SessionDep,
     token: TokenDep
@@ -46,6 +48,7 @@ async def get_current_user(
     return user
 
 
+@log_method_call
 async def get_optional_user(
     session: SessionDep,
     token: Optional[str] = Depends(
@@ -69,6 +72,7 @@ async def get_optional_user(
     return await session.get(User, token_data.sub)
 
 
+@log_method_call
 async def get_user_or_404(
     session: SessionDep,
     user_id: uuid.UUID
@@ -93,6 +97,7 @@ OptionalCurrentUser = Annotated[
 ]
 
 
+@log_method_call
 async def get_current_admin(
     current_user: CurrentUser
 ) -> User:
@@ -104,6 +109,7 @@ async def get_current_admin(
     return current_user
 
 
+@log_method_call
 async def get_current_admin_or_moderator(
     current_user: CurrentUser
 ) -> User:
@@ -115,6 +121,7 @@ async def get_current_admin_or_moderator(
     return current_user
 
 
+@log_method_call
 async def verify_user_ownership(
     current_user: CurrentUser,
     user_id: uuid.UUID
@@ -126,6 +133,8 @@ async def verify_user_ownership(
             detail="Not authorized to access this resource"
         )
 
+
+@log_method_call
 async def verify_role_permission(
     current_user: CurrentUser,
     user: User
@@ -138,6 +147,7 @@ async def verify_role_permission(
         )
 
 
+@log_method_call
 async def get_current_active_organization_member(
     session: SessionDep,
     organization: OrganizationOr404,
