@@ -30,7 +30,9 @@ async def create_organization(
         user_id=current_user_id,
         organization_id=organization.id,
         position=organization_in.position,
-        left_at=organization_in.left_at,
+        left_at=organization_in.left_at if hasattr(
+            organization_in, 'left_at'
+        ) else None,
     )
     organization_user = await user_organization_crud.create_organization_user(
         session=session,
