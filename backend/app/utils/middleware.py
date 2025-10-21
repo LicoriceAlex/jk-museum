@@ -26,6 +26,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             return response
 
         # safe request body read
+        req_body = b""
         try:
             req_body = await request.body()
         except Exception:
