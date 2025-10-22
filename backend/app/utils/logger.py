@@ -53,6 +53,8 @@ NOISY_LOGGERS = [
     "uvicorn.error",
     "sqlalchemy.engine",
     "asyncio",
+    "aiobotocore",
+    "botocore",
 ]
 for name in NOISY_LOGGERS:
     lg = logging.getLogger(name)
