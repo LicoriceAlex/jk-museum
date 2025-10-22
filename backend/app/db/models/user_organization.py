@@ -44,7 +44,7 @@ class UserOrganization(UserOrganizationBase, table=True):
 class UserOrganizationCreate(UserOrganizationBase):
     organization_id: uuid.UUID
     user_id: uuid.UUID
-    left_at: datetime | None
+    left_at: datetime | None = None
 
 
 class UserOrganizationPublic(UserOrganizationBase):
