@@ -1,31 +1,35 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
   z-index: 1000;
 }
 
 .modal {
-  background-color: var(--color-exhibitspage2);
-  width: 31,35vw;
-  border-radius: 0.41vw;
-  overflow: hidden;
+  background: var(--color-exhibitspage2);
+  width: 1088px;
+  border-radius: 12px;
+  overflow: auto;
   position: relative;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+
+  & > form {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 80px;
+
+    padding: 48px 56px;
+  }
 }
 
 .closeButton {
   position: absolute;
   top: 0.62vw;
-  right: 0.62vw; 
+  right: 0.62vw;
   background: none;
   border: none;
   cursor: pointer;
@@ -40,22 +44,20 @@
 }
 
 .imageUploadArea {
-  background-color: var(--color-text2);
-  height: 20vh;
-  min-height: 200px;
+  background: var(--color-text2);
+  height: 592px;
+  width: 448px;
+  min-width: 330px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   overflow: hidden;
-
-
 }
 
 .imagePreview {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -63,65 +65,63 @@
 
 .imageUploadLabel {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 0.41vw;
+  gap: 12px;
   color: var(--color-text4);
   cursor: pointer;
   font-family: var(--font-main);
   font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   z-index: 1;
-  font-size: 24px;
-  line-height: 120%;
-
-  svg {
-    margin-right: 0.41vw;
-  }
 }
 
 .imageInput {
   position: absolute;
   width: 0.05vw;
   height: 0.05vw;
-  padding: 0;
   margin: -0.05vw;
+  padding: 0;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
 
+/* ===== Правая колонка (форма) ===== */
+
 .formContent {
-  padding: 1.25vw 4.01vw;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.83vw;
+  gap: 16px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.31vw;
+  gap: 6px;
 }
 
 .formLabel {
   color: var(--color-text2);
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 24px;
-  line-height: 120%;
-  letter-spacing: 0px;
-
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
 }
 
 .formInput,
 .formTextarea,
 .formSelect {
   width: 100%;
-  padding: 0.41vw 0;
+  padding: 8px 0 10px;
   font-size: 16px;
   border: none;
-  border-bottom: 0.05vw solid var(--color-pagedown);
-  background-color: transparent;
+  border-bottom: 1px solid var(--color-pagedown);
+  background: transparent;
   color: var(--color-exibitcard6);
   resize: none;
 
@@ -131,37 +131,139 @@
 
   &:focus {
     outline: none;
-    border-bottom-color: var(--color-exibitcard6);
+    border-bottom: 2px solid var(--color-exibitcard6);
   }
 }
 
+.selectWrapper {
+  position: relative;
+}
+
 .formSelect {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
-  padding-right: 1.56vw;
+  padding-right: 32px;
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%231A2620' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0 center; 
+  background-position: right 0 center;
+}
+
+/* ===== Дата: ДД.ММ + год ===== */
+
+.dateField {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dateDM {
+  flex: 1 1 auto;
+}
+
+.yearBox {
+  position: relative;
+  width: 150px;
+  flex: 0 0 150px;
+}
+
+.yearInput {
+  padding-left: 10px;
+  padding-right: 72px;
+  text-align: left;
+}
+
+/* Показать суффикс «г.» только если год введён/выбран */
+.yearBox.hasYear::after {
+  content: 'г.';
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--color-text2);
+  pointer-events: none;
+}
+
+/* Видимая стрелка (иконка) */
+.yearChevron {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--color-exibitcard6);
+  pointer-events: none;
+}
+
+/* Невидимый, но кликабельный select поверх правой зоны (суффикс + стрелка) */
+.yearSelectOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 72px;
+  height: 100%;
+  z-index: 2;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  opacity: 0;
+}
+
+.yearSelectOverlay::-ms-expand {
+  display: none;
+}
+
+/* В раскрытом списке опции читаемы */
+.yearSelectOverlay option {
+  color: initial !important;
+  -webkit-text-fill-color: initial !important;
+  font-size: 14px !important;
 }
 
 .submitButtonWrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1.25vw;
+  margin-top: 8px;
 }
 
 .submitButton {
-  background-color: var(--color-exibitcard6);
+  background: var(--color-exibitcard6);
   color: var(--color-text4);
-  padding: 0.62vw 1.25vw;
-  border-radius: 0.41vw;
+  padding: 0.80vw 1.45vw;
   border: none;
+  border-radius: 0.29vw;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: filter 0.15s ease, transform 0.05s ease;
 
   &:hover {
-    background-color: var(--color-text2);
+    filter: brightness(1.04);
+    background: var(--color-text2);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@media (max-width: 960px) {
+  .modal > form {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .imageUploadArea {
+    display: none;
   }
 }
