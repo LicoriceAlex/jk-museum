@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import Depends, HTTPException
 from pydantic import BaseModel, Field
 from backend.app.api.dependencies.common import SessionDep
-from backend.app.db.models.exhibition import Exhibition
+from backend.app.db.models import Exhibition
 from backend.app.crud import exhibition as exhibition_crud
 
 

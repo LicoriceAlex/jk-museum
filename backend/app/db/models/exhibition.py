@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from .tag import TagPublic
 from .exhibition_tag import ExhibitionTag
-from backend.app.db.models.exhibition_block import ExhibitionBlockPublic, ExhibitionBlocksPublic
+from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 
 
@@ -28,13 +28,25 @@ class CoverTypeEnum(str, Enum):
     outside = "outside"
 
 
+class DateTemplate(str, Enum):
+    year: str = "year"
+    decade: str = "decade"
+    century: str = "century"
+
+
 class ExhibitionBase(SQLModel):
     title: str = Field(max_length=255, nullable=False)
     description: Optional[str] = Field(default=None, nullable=True)
     cover_image_key: str = Field(max_length=255, nullable=False)
     cover_type: Optional[CoverTypeEnum] = Field(default=CoverTypeEnum.outside)
     status: ExhibitionStatusEnum = Field(
-        default=ExhibitionStatusEnum.draft, nullable=False)
+        default=ExhibitionStatusEnum.draft, nullable=False
+    )
+    date_template: DateTemplate = Field(
+        default=DateTemplate.year, nullable=True
+    )
+    start_year: Optional[int] = Field(default=None, nullable=True)
+    end_year: Optional[int] = Field(default=None, nullable=True)
     rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 
@@ -80,7 +92,7 @@ class ExhibitionPublic(ExhibitionBase):
     tags: list["TagPublic"]
     is_liked_by_current_user: Optional[bool] = None
     likes_count: Optional[int] = Field(default=0)
-    blocks: Optional[list[ExhibitionBlockPublic]]
+    blocks: Optional[list[ExhibitionBlockPublic]] = None
 
 
 class ExhibitionsPublic(SQLModel):

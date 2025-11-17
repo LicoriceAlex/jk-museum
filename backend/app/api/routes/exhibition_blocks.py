@@ -5,8 +5,8 @@ from uuid import UUID
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.exhibition.exhibition import ExhibitionOr404
-from backend.app.db.models.exhibition_block import ExhibitionBlockCreate, ExhibitionBlockUpdate
-from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
+from backend.app.db.models import ExhibitionBlockCreate, ExhibitionBlockUpdate
+from backend.app.db.models import ExhibitionBlockItemCreate
 from backend.app.crud import exhibition_block as exhibition_block_crud
 
 router = APIRouter()

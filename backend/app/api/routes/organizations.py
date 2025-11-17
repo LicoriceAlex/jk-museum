@@ -1,13 +1,27 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
-from backend.app.api.dependencies.organizations import CurrentOrganization, OrgnizationOr404
+from backend.app.api.dependencies.organizations import (
+    OrganizationOr404,
+)
 from backend.app.api.dependencies.pagination import PaginationDep
-from backend.app.api.dependencies.users import CurrentUser, OptionalCurrentUser
-from backend.app.core.config import settings
+from backend.app.api.dependencies.users import (
+    CurrentUser,
+    CurrentActiveOrganizationMember,
+)
 from backend.app.crud import organization as organization_crud
-from backend.app.db.models.organization import (
-    Organization, OrganizationCreate, OrganizationPublic, OrganizationPublicShort, OrganizationsPublic
+from backend.app.crud import user_organization as user_organization_crud
+from backend.app.services import organization as organization_service
+from backend.app.db.models import (
+    OrganizationCreate,
+    OrganizationPublic,
+    OrganizationPublicShort,
+    OrganizationsPublic,
+    OrganizationMembersPublic,
+    OrganizationMemberPublic,
+    UserOrganizationPublic,
+    OrganizationMemberUpdate,
 )
 
 router = APIRouter()
@@ -18,18 +32,21 @@ router = APIRouter()
 )
 async def create_organization(
     organization_in: OrganizationCreate,
+    current_user: CurrentUser,
     session: SessionDep,
 ):
     """
     Create a new organization.
     """
     try:
-        organization_create = OrganizationCreate.model_validate(organization_in)
-        organization = await organization_crud.create_organization(
+        organization_create = OrganizationCreate.model_validate(
+            organization_in)
+        organization_response = await organization_service.create_organization(
             session=session,
-            organization_in=organization_create
+            organization_in=organization_create,
+            current_user_id=current_user.id,
         )
-        return organization
+        return organization_response
     except ValueError as e:
         raise HTTPException(
             status_code=400,
@@ -42,7 +59,7 @@ async def create_organization(
 )
 async def confirm_organization(
     session: SessionDep,
-    organization: OrgnizationOr404,
+    organization: OrganizationOr404,
 ):
     """
     Confirm an organization.
@@ -60,7 +77,7 @@ async def confirm_organization(
 )
 async def reject_organization(
     session: SessionDep,
-    organization: OrgnizationOr404,
+    organization: OrganizationOr404,
 ):
     """
     Reject an organization.
@@ -92,23 +109,20 @@ async def get_organizations(
 
 
 @router.get(
-    "/me",
+    "/my",
 )
-async def get_current_organization(
-    current_organization: CurrentOrganization,
+async def get_my_organization(
     session: SessionDep,
+    current_user: CurrentUser,
 ):
     """
-    Get current organization.
+    Get my organization.
     """
-    organization = await organization_crud.get_organization(
+    organizations = await organization_crud.get_my_organizations(
         session=session,
-        id=current_organization.id
+        user_id=current_user.id
     )
-    if not organization:
-        raise HTTPException(status_code=404, detail="Organization not found")
-    return organization
-    
+    return organizations
 
 
 @router.get(
@@ -140,11 +154,11 @@ async def get_organization_profile(
 @router.put(
     "/{organization_id}/profile",
     response_model=OrganizationPublicShort,
-    #dependencies=[Depends(CurrentUser.is_organization) or Depends(CurrentUser.is_admin_or_moderator)],
+    # dependencies=[Depends(CurrentUser.is_organization) or Depends(CurrentUser.is_admin_or_moderator)],
 )
 async def update_organization_profile(
     session: SessionDep,
-    organization: OrgnizationOr404,
+    organization: OrganizationOr404,
     organization_in: OrganizationCreate,
 ):
     """
@@ -156,3 +170,80 @@ async def update_organization_profile(
         organization_in=organization_in
     )
     return organization
+
+
+@router.post(
+    "/{organization_id}/members",
+)
+async def add_organization_member(
+    session: SessionDep,
+    organization: OrganizationOr404,
+    current_active_member: CurrentActiveOrganizationMember,
+    user_id: uuid.UUID,
+    position: str | None = None,
+):
+    """
+    Add a member to the organization.
+    """
+    try:
+        organization_member = await organization_service.add_organization_member(
+            session=session,
+            organization=organization,
+            user_id=user_id,
+            position=position,
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+
+    return organization_member
+
+
+@router.get(
+    "/{organization_id}/members",
+)
+async def get_organization_members(
+    session: SessionDep,
+    current_active_member: CurrentActiveOrganizationMember,
+    organization: OrganizationOr404,
+):
+    """
+    Get organization members.
+    """
+    members = await user_organization_crud.get_organization_members(
+        session=session,
+        organization_id=organization.id
+    )
+    return OrganizationMembersPublic(
+        items=[
+            OrganizationMemberPublic(
+                user=user,
+                membership=UserOrganizationPublic.model_validate(member)
+            )
+            for user, member in members
+        ]
+    )
+
+
+@router.patch(
+    "/{organization_id}/members/{user_id}",
+)
+async def update_organization_member(
+    session: SessionDep,
+    current_active_member: CurrentActiveOrganizationMember,
+    organization: OrganizationOr404,
+    member_in: OrganizationMemberUpdate,
+    user_id: uuid.UUID,
+):
+    """
+    Update organization member's position.
+    """
+    organization_member = await organization_service.update_organization_member(
+        session=session,
+        organization_id=organization.id,
+        user_id=user_id,
+        member_in=member_in,
+    )
+    return UserOrganizationPublic.model_validate(organization_member)

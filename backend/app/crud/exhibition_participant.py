@@ -1,15 +1,15 @@
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.config import settings
-from backend.app.db.models.exhibition_participant import (
+from backend.app.db.models import (
     ExhibitionParticipant,
-    ExhibitionParticipantCreate
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_exhibition_participant(
     session: AsyncSession,
     **filters
@@ -20,6 +20,7 @@ async def get_exhibition_participant(
     return exhibition_participant
 
 
+@log_method_call
 async def create_exhibition_participants(
     session: AsyncSession,
     exhibition_participant_names: list[str],
@@ -38,6 +39,7 @@ async def create_exhibition_participants(
     return exhibition_participant_list
 
 
+@log_method_call
 async def update_exhibition_participants(
     session: AsyncSession,
     participants_in: Optional[list[str]],
@@ -50,6 +52,7 @@ async def update_exhibition_participants(
     return await create_exhibition_participants(session, participants_in, exhibition_id)
 
 
+@log_method_call
 async def get_exhibition_participants(
     session: AsyncSession,
     exhibition_id: UUID

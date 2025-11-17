@@ -40,7 +40,7 @@ class MinIOClient:
 
     async def upload_file(self, file: UploadFile, prefix: str = "") -> str:
         """Upload a file to MinIO and return the object key."""
-        file_key = f"{uuid.uuid4()}_{file.filename}"
+        file_key = f"{uuid.uuid4()}"
         file_content = await file.read()
 
         async for client in self._get_client():

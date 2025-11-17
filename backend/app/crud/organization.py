@@ -4,21 +4,31 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
-from backend.app.core.config import settings
-from backend.app.core.security import get_password_hash, verify_password
-from backend.app.crud.exhibition import get_exhibitions
-from backend.app.db.models.organization import (
-    OrgStatusEnum, Organization, OrganizationCreate,
-    OrganizationsPublic, OrganizationPublic, OrganizationPublicShort
+from backend.app.api.dependencies.exhibition.filters import (
+    FilterParams,
+    SortParams
 )
-from backend.app.db.models.exhibition import Exhibition, ExhibitionsPublicWithPagination
+from backend.app.core.config import settings
+from backend.app.crud.exhibition import get_exhibitions
+from backend.app.db.models import (
+    OrgStatusEnum,
+    Organization,
+    OrganizationCreate,
+    OrganizationResponse,
+    OrganizationsPublic,
+    OrganizationPublic,
+    OrganizationPublicShort,
+    MyOrganization,
+    UserOrganization,
+    Exhibition,
+    ExhibitionsPublicWithPagination,
+    ExhibitionPublic,
+)
 from sqlalchemy import select
-from backend.app.db.models.tag import TagPublic
-from backend.app.db.models.exhibition_participant import ExhibitionParticipant
-from backend.app.db.models.exhibition import ExhibitionPublic
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_organization(
     session: AsyncSession,
     **filters
@@ -29,10 +39,11 @@ async def get_organization(
     return organization
 
 
+@log_method_call
 async def create_organization(
     session: AsyncSession,
     organization_in: OrganizationCreate
-) -> Organization:
+) -> OrganizationPublicShort:
     if await get_organization(
         session=session,
         email=organization_in.email
@@ -50,17 +61,16 @@ async def create_organization(
             detail="An organization with this name already exists."
         )
     
-    hashed_password = get_password_hash(organization_in.password)
     organization = Organization(
         **organization_in.model_dump(),
-        hashed_password=hashed_password,
     )
     session.add(organization)
     await session.commit()
     await session.refresh(organization)
-    return organization
+    return OrganizationPublicShort(**organization.model_dump())
 
 
+@log_method_call
 async def update_organization(
     session: AsyncSession,
     organization: Organization,
@@ -74,6 +84,7 @@ async def update_organization(
     return organization
 
 
+@log_method_call
 async def update_organization_profile(
     session: AsyncSession,
     organization: Organization,
@@ -87,6 +98,7 @@ async def update_organization_profile(
     return organization
 
 
+@log_method_call
 async def delete_organization(
     session: AsyncSession,
     organization: Organization
@@ -96,6 +108,7 @@ async def delete_organization(
     return organization
 
 
+@log_method_call
 async def get_organizations(
     session: AsyncSession,
     skip: int = 0,
@@ -114,6 +127,7 @@ async def get_organizations(
     return OrganizationsPublic(data=orgs_short, count=count)
 
 
+@log_method_call
 async def confirm_organization(
     session: AsyncSession,
     organization: Organization
@@ -125,6 +139,7 @@ async def confirm_organization(
     return organization
 
 
+@log_method_call
 async def reject_organization(
     session: AsyncSession,
     organization: Organization
@@ -136,6 +151,7 @@ async def reject_organization(
     return organization
 
 
+@log_method_call
 async def get_organization_profile_with_exhibitions(
     session: AsyncSession,
     organization_id: UUID,
@@ -154,7 +170,6 @@ async def get_organization_profile_with_exhibitions(
             sort_order='desc'
         ),
         current_user_id=current_user_id,)).data
-    print(exhibition_objs)
     exhibitions = [
         ExhibitionPublic(
             **exh.model_dump(),
@@ -176,17 +191,30 @@ async def get_organization_profile_with_exhibitions(
         **org.model_dump(),
         exhibitions=exhibitions_paginated
     )
-    
-async def authenticate(
-    session: AsyncSession,
-    email: str, password: str
-) -> Organization | None:
-    db_organization = await get_organization(session=session, email=email)
 
-    if not db_organization:
-        return None
-    if not verify_password(
-        password, db_organization.hashed_password
-    ):
-        return None
-    return db_organization
+
+@log_method_call
+async def get_my_organizations(
+    session: AsyncSession,
+    user_id: UUID,
+) -> list[MyOrganization]:
+    statement = select(
+        Organization,
+    ).add_columns(
+        UserOrganization,
+    ).where(
+        UserOrganization.user_id == user_id,
+        UserOrganization.organization_id == Organization.id
+    ).join(
+        UserOrganization,
+        Organization.id == UserOrganization.organization_id,
+    )
+    result = await session.execute(statement)
+    rows = result.all()
+    items = [
+        OrganizationResponse(
+            organization=organization,
+            membership=membership
+        ) for organization, membership in rows
+    ]
+    return MyOrganization(items=items)

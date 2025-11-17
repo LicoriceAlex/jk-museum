@@ -12,9 +12,13 @@ from .exhibition_block import *
 from .exhibition_block_item import *
 from .template import *
 from .exhibition import *
+from .user_organization import *
 
 
 ExhibitionPublic.model_rebuild()
 OrganizationPublic.model_rebuild()
 OrganizationsPublic.model_rebuild()
+UserOrganizationPublic.model_rebuild()
+OrganizationMemberPublic.model_rebuild()
+OrganizationResponse.model_rebuild()
 ExhibitionsPublic.model_rebuild()

@@ -29,4 +29,5 @@ dependencies = [
     "aiobotocore>=2.21.1",
     "boto3>=1.37.1",
     "bleach>=6.2.0",
+    "loguru>=0.7.3",
 ]

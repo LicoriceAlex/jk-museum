@@ -5,12 +5,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import settings
 from backend.app.crud.tag import create_tag, get_tag
-from backend.app.db.models.exhibition_tag import (
-    ExhibitionTag, ExhibitionTagCreate
+from backend.app.db.models import (
+    ExhibitionTag,
+    ExhibitionTagCreate,
+    Tag,
+    TagCreate,
+    TagPublic,
 )
-from backend.app.db.models.tag import Tag, TagCreate, TagPublic
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_exhibition_tag(
     session: AsyncSession,
     **filters
@@ -21,6 +26,7 @@ async def get_exhibition_tag(
     return exhibition_tag
 
 
+@log_method_call
 async def get_exhibition_tags(
     session: AsyncSession,
     exhibition_id: UUID
@@ -39,6 +45,7 @@ async def get_exhibition_tags(
     return tags
 
 
+@log_method_call
 async def create_exhibition_tag(
     session: AsyncSession,
     exhibition_tag_in: ExhibitionTagCreate
@@ -50,6 +57,7 @@ async def create_exhibition_tag(
     return exhibition_tag
 
 
+@log_method_call
 async def create_or_exist_exhibition_tags(
     session: AsyncSession,
     tags: list[str],
@@ -72,6 +80,7 @@ async def create_or_exist_exhibition_tags(
     return tag_list
 
 
+@log_method_call
 async def delete_exhibition_tags(
     session: AsyncSession,
     tags_in: Optional[list[str]],

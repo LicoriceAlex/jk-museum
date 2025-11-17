@@ -2,10 +2,17 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 from sqlmodel import SQLModel
+from backend.app.core.config import settings
 from backend.app.db.models.user import User
 from backend.app.db.models.admin_action import AdminAction
 from backend.app.db.models.organization import Organization
-from backend.app.core.config import settings
+
+
+__all__ = [
+    "User",
+    "AdminAction",
+    "Organization",
+]
 
 config = context.config
 if config.config_file_name is not None:

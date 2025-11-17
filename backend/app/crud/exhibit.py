@@ -3,11 +3,16 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import settings
-from backend.app.db.models.exhibit import (
-    Exhibit, ExhibitCreate, ExhibitUpdate, ExhibitsPublic
+from backend.app.db.models import (
+    Exhibit,
+    ExhibitCreate,
+    ExhibitUpdate,
+    ExhibitsPublic
 )
+from backend.app.utils.logger import log_method_call
 
 
+@log_method_call
 async def get_exhibit(
     session: AsyncSession,
     **filters
@@ -18,6 +23,7 @@ async def get_exhibit(
     return exhibit
 
 
+@log_method_call
 async def create_exhibit(
     session: AsyncSession,
     exhibit_in: ExhibitCreate
@@ -29,6 +35,7 @@ async def create_exhibit(
     return exhibit
 
 
+@log_method_call
 async def update_exhibit(
     session: AsyncSession,
     exhibit: Exhibit,
@@ -43,6 +50,7 @@ async def update_exhibit(
     return exhibit
 
 
+@log_method_call
 async def delete_exhibit(
     session: AsyncSession,
     exhibit: Exhibit
@@ -52,6 +60,7 @@ async def delete_exhibit(
     return exhibit
 
 
+@log_method_call
 async def get_exhibits(
     session: AsyncSession,
     skip: int = 0,
