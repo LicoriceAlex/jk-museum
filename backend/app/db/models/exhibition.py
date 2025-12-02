@@ -42,11 +42,6 @@ class ExhibitionBase(SQLModel):
     status: ExhibitionStatusEnum = Field(
         default=ExhibitionStatusEnum.draft, nullable=False
     )
-    date_template: DateTemplate = Field(
-        default=DateTemplate.year, nullable=True
-    )
-    start_year: Optional[int] = Field(default=None, nullable=True)
-    end_year: Optional[int] = Field(default=None, nullable=True)
     rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 

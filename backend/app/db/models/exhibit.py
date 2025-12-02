@@ -14,6 +14,11 @@ class ExhibitType(str, Enum):
     painting = "картина"
     sculpture = "скульптура"
     other = "другое"
+
+class DateTemplate(str, Enum):
+    year: str = "year"
+    decade: str = "decade"
+    century: str = "century"
     
     
 class ExhibitBase(SQLModel):
@@ -23,6 +28,11 @@ class ExhibitBase(SQLModel):
     description: str = Field(max_length=255)
     exhibit_type: ExhibitType = Field(default=ExhibitType.other, nullable=False)
     image_key: str = Field(max_length=255, nullable=False)
+    date_template: DateTemplate = Field(
+        default=DateTemplate.year, nullable=True
+    )
+    start_year: Optional[int] = Field(default=None, nullable=True)
+    end_year: Optional[int] = Field(default=None, nullable=True)
     
 
 class Exhibit(ExhibitBase, table=True):
@@ -51,6 +61,9 @@ class ExhibitUpdate(SQLModel):
     description: Optional[str] = None
     exhibit_type: Optional[ExhibitType] = None
     image_key: Optional[str] = None
+    date_template: Optional[DateTemplate] = None
+    start_year: Optional[int] = None
+    end_year: Optional[int] = None
 
 
 class ExhibitPublic(ExhibitBase):
