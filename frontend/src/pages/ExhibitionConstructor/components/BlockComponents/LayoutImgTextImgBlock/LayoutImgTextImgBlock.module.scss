@@ -5,6 +5,26 @@
   border-radius: 8px;
 }
 
+.wrap {
+  width: 100%;
+  max-width: 1221px;
+  margin: 0 auto 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.cell {
+  min-height: 280px;
+}
+
+.textCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .layout {
   display: flex;
   align-items: center;

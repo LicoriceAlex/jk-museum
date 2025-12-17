@@ -1,12 +1,8 @@
-$primary-color: #1F3B2C;
-$secondary-color: #E8E5DE;
-$background-light: #f7f5f2;
+$primary-color: #1f3b2c;
+$secondary-color: #e8e5de;
+$sidebar-bg: #dad7cd;
 $text-color-dark: #333333;
-$border-color: #d1d1d1;
-$button-hover-bg: #E8E5DE;
-$button-accent-bg: #1F3B2C;
-$button-accent-text: #ffffff;
-
+$accent-color: #d4a373;
 
 .sidebar__styles {
   padding: 0;
@@ -14,17 +10,14 @@ $button-accent-text: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
-
   font-family: 'Cormorant Infant', serif;
 }
-
 
 .sidebar__stylesGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 
 .sidebar__stylesTitle {
   font-size: 40px;
@@ -35,6 +28,7 @@ $button-accent-text: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 }
 
 .arrowIcon {
@@ -46,20 +40,14 @@ $button-accent-text: #ffffff;
   transform: rotate(180deg);
 }
 
-
-.sidebar__stylesTitle > span.arrow {
-  display: none;
-}
-
-
 .sidebar__label {
   font-size: 24px;
   color: $text-color-dark;
   margin-bottom: 4px;
 }
 
-
-.sidebar__select {
+.sidebar__select,
+.sidebar__fontDetailSelect {
   width: 100%;
   padding: 12px;
   border: none;
@@ -68,9 +56,7 @@ $button-accent-text: #ffffff;
   color: $text-color-dark;
   font-size: 0.9rem;
   appearance: none;
-  background-image: url(
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath fill='%231F3B2C' d='M6 6L0 0h12z'/%3E%3C/svg%3E"
-  );
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath fill='%231F3B2C' d='M6 6L0 0h12z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   cursor: pointer;
@@ -100,6 +86,17 @@ $button-accent-text: #ffffff;
   }
 }
 
+.sidebar__fontContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+
 .sidebar__editButton {
   display: flex;
   align-items: center;
@@ -115,11 +112,6 @@ $button-accent-text: #ffffff;
   &:hover {
     text-decoration: underline;
   }
-
-  .arrow {
-    width: 18px;
-    height: 18px;
-  }
 }
 
 .sidebar__fontDetails {
@@ -127,18 +119,23 @@ $button-accent-text: #ffffff;
   flex-direction: column;
   gap: 16px;
   margin-top: 8px;
+}
 
-  .fontDetail {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+.fontDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__rangeContainer {
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar__range {
   width: 100%;
   height: 6px;
-  background-color: $border-color;
+  background-color: #d1d1d1;
   border-radius: 3px;
   appearance: none;
   outline: none;
@@ -163,11 +160,6 @@ $button-accent-text: #ffffff;
   }
 }
 
-.sidebar__rangeContainer {
-  display: flex;
-  flex-direction: column;
-}
-
 .sidebar__rangeValue {
   font-size: 0.8rem;
   color: $text-color-dark;
@@ -175,434 +167,238 @@ $button-accent-text: #ffffff;
   margin-top: 4px;
 }
 
-// Цветовая схема
-.sidebar__colorScheme {
-  margin-top: 16px;
+/* ====== COLOR SECTION (макет 2) ====== */
+
+.colorSection {
+  margin-top: 6px;
 }
 
-.sidebar__colorSchemeTitle {
-  font-size: 1rem;
-  color: $text-color-dark;
-  margin-bottom: 12px;
-  font-weight: 500;
+.sectionTitle {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: rgba($text-color-dark, 0.8);
+  margin-bottom: 10px;
 }
 
-// Палитра цветов
-.sidebar__palette {
+.colorSchemeRow {
   display: flex;
-  gap: 2px;
-  margin-top: 8px;
-
-  .paletteColor {
-    height: 36px;
-    flex: 1;
-    border-radius: 2px;
-
-    &:first-child {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-    }
-
-    &:last-child {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-    }
-  }
-}
-
-.sidebar__addColor {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: transparent;
-  border: none;
-  padding: 12px 0;
-  color: $text-color-dark;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 8px;
-
-  .plusIcon {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-.sidebar__backgroundOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.sidebar__backgroundOption {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: $secondary-color;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darken($secondary-color, 5%);
-  }
-
-  .optionIcon {
-    width: 24px;
-    height: 24px;
-    color: $text-color-dark;
-  }
-
-  .optionText {
-    font-size: 0.9rem;
-    color: $text-color-dark;
-  }
-}
-
-.selected {
-  background-color: darken($secondary-color, 10%);
-}
-
-.sidebar__button {
-  background-color: $button-accent-bg;
-  color: $button-accent-text;
-  border: none;
-  border-radius: 4px;
-  padding: 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 16px;
-
-  &:hover {
-    background-color: darken($button-accent-bg, 5%);
-  }
-}
-
-.sidebar__fontDetailSelect {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  background-color: $secondary-color;
-  border-radius: 4px;
-  color: $text-color-dark;
-  font-size: 0.9rem;
-  appearance: none;
-  background-image: url(
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath fill='%231F3B2C' d='M6 6L0 0h12z'/%3E%3C/svg%3E"
-  );
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  cursor: pointer;
-}
-
-.sidebar__presetPalettes {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.sidebar__presetPalette {
-  cursor: pointer;
+  height: 38px;
   border-radius: 4px;
   overflow: hidden;
-
-  &:hover {
-    transform: translateY(-2px);
-    transition: transform 0.2s ease;
-  }
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.sidebar__colorScheme {
-  margin-top: 16px;
-}
-
-.sidebar__colorSchemeTitle {
-  font-size: 1rem;
-  color: $text-color-dark;
-  margin-bottom: 12px;
-  font-weight: 500;
-}
-
-.sidebar__currentPaletteDisplay {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  justify-content: space-between;
-}
-
-.sidebar__currentPaletteItem {
-  position: relative;
+.colorSwatch {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  border: none;
   cursor: pointer;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden;
+  background: transparent;
+  padding: 0;
 
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
+  &:focus-visible {
+    outline: 2px solid rgba(31, 59, 44, 0.25);
+    outline-offset: -2px;
   }
 }
 
-.currentPaletteColor {
-  width: 100%;
-  height: 40px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 8px;
-  transition: border-color 0.2s ease;
+.colorSwatchActive {
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
-.sidebar__currentPaletteItem:hover .currentPaletteColor {
-  border-color: darken($primary-color, 10%);
-}
-
-.colorRoleLabel {
-  font-size: 11px;
-  font-weight: 500;
-  color: #666;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.colorEditMenu {
+.swatchIcon {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  padding: 8px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-  pointer-events: none;
+  color: $primary-color;
+  background: rgba(255, 255, 255, 0.55);
 }
 
-.sidebar__currentPaletteItem:hover .colorEditMenu {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
-}
-
-.colorPicker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+.addColorButton {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: rgba($text-color-dark, 0.9);
   cursor: pointer;
-  z-index: 2;
+  padding: 6px 0;
+  font-size: 16px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.colorValue {
+.backgroundRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.backgroundButton {
+  width: 120px;
+  height: 56px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-color;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.55);
+  }
+}
+
+.backgroundButtonActive {
+  background: $accent-color;
+  color: $primary-color;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.hiddenFileInput {
   display: none;
 }
 
-.editButton {
-  background: none;
+.saveButton {
+  margin-top: 26px;
+  align-self: flex-end;
+  width: 150px;
+  background-color: $primary-color;
+  color: #fff;
   border: none;
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 16px;
   cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  position: relative;
-  z-index: 1;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    stroke: $primary-color;
-  }
-}
-
-.sidebar__presetPalettesGrid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
-  margin-top: 12px;
-}
-
-.sidebar__presetPalette {
-  cursor: pointer;
-  transition: transform 0.2s;
 
   &:hover {
-    transform: translateY(-2px);
+    filter: brightness(0.95);
   }
 }
 
-.presetPaletteName {
-  font-size: 12px;
-  margin-bottom: 8px;
-  color: #444;
-}
+/* ====== MODAL ====== */
 
-.customColorPickerOverlay {
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
+  align-items: center;
   justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  background: #f5f1e9;
+  border-radius: 6px;
+  padding: 12px 14px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.modalHeader {
+  display: flex;
   align-items: center;
-  z-index: 1000;
-}
-
-.customColorPickerModal {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 300px;
-  max-width: 90%;
-}
-
-.customColorPickerHeader {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.modalSelect {
+  flex: 1;
+  font-family: inherit;
+  font-size: 20px;
+  border: none;
+  background: transparent;
   color: $text-color-dark;
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin-bottom: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+  outline: none;
+}
 
-  button {
-    background: none;
-    border: none;
-    color: $text-color-dark;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 5px;
+.modalClose {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba($text-color-dark, 0.8);
+  padding: 6px;
+}
 
-    &:hover {
-      opacity: 0.8;
-    }
-  }
+.modalPickerWrap {
+  margin-top: 6px;
 }
 
 .hexColorPicker {
   width: 100% !important;
-}
 
-.colorCodeSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: $text-color-dark;
-  font-size: 0.95rem;
-}
-
-.hexColorInput {
-  background: none;
-  border: none;
-  border-bottom: 1px solid $text-color-dark;
-  color: $text-color-dark;
-  font-size: 0.95rem;
-  padding: 5px 0;
-  text-align: right;
-  width: 80px;
-
-  &:focus {
-    outline: none;
-    border-bottom-color: lighten($text-color-dark, 10%);
-  }
-}
-
-.colorPickerPopover {
-  position: absolute;
-  z-index: 1000;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.colorPickerPopoverContent {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.colorPickerPopoverHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-
-  button {
-    background: none;
-    border: none;
-    font-size: 1.2em;
-    cursor: pointer;
-    color: #888;
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
-.hexColorPicker {
-  width: 100%;
   .react-colorful__saturation,
-  .react-colorful__hue,
-  .react-colorful__alpha {
+  .react-colorful__hue {
     border-radius: 4px;
   }
 }
 
-.colorCodeSection {
+.modalCodeRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  font-size: 0.9em;
-  color: #555;
+  margin-top: 10px;
 }
 
-.hexColorInput {
-  flex-grow: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-family: monospace;
+.modalCodeLabel {
+  font-size: 16px;
+  color: rgba($text-color-dark, 0.85);
 }
 
-.confirmColorButton {
-  background-color: #007bff;
-  color: white;
+.modalHexInput {
+  width: 110px;
+  padding: 6px 10px;
   border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  font-family: monospace;
+  text-align: right;
+  outline: none;
+}
+
+.modalPrimaryButton {
+  width: 100%;
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 10px 12px;
   cursor: pointer;
-  align-self: flex-end;
+  font-size: 16px;
+
   &:hover {
-    background-color: #0056b3;
+    background: rgba(255, 255, 255, 0.35);
+  }
+}
+
+.modalDangerButton {
+  width: 100%;
+  margin-top: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba($text-color-dark, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+
+  &:hover {
+    text-decoration: underline;
   }
 }

@@ -1,0 +1,165 @@
+.page {
+  min-height: 100vh;
+  background: #f5ebe0;
+  color: #1f3b2c;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  box-sizing: border-box;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.title {
+  font-size: 36px;
+  font-family: 'Cormorant SC', serif;
+  font-weight: 600;
+  margin: 0;
+}
+
+.primaryBtn {
+  background: #344e41;
+  color: #fff;
+  border: 1px solid #344e41;
+  padding: 12px 20px;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease, border 0.15s ease, transform 0.05s ease;
+}
+
+.primaryBtn:hover {
+  background: #253a30;
+  border-color: #253a30;
+}
+
+.primaryBtn:active {
+  transform: translateY(1px);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 240px 1fr 180px;
+  gap: 20px;
+  padding: 18px;
+  background: #f7f2ea;
+  border: 1px solid #d9d2c4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.coverWrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 24px;
+  font-family: 'Cormorant SC', serif;
+}
+
+.cardDesc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.tags {
+  font-size: 13px;
+  color: #555;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.secondaryBtn {
+  background: transparent;
+  border: 1px solid #344e41;
+  color: #344e41;
+  padding: 10px 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.secondaryBtn:hover {
+  background: #344e41;
+  color: #fff;
+}
+
+.info {
+  padding: 12px 0;
+  color: #555;
+}
+
+.error {
+  padding: 12px 14px;
+  background: #f9e3e0;
+  color: #b3261e;
+  border: 1px solid #f1b8b0;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .coverWrap {
+    max-width: 420px;
+  }
+}
+

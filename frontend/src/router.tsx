@@ -10,6 +10,7 @@ import ExhibitionConstructor
   from './pages/ExhibitionConstructor/ExhibitionConstructor.tsx';
 import MainPage from './pages/MainPage/MainPage.tsx';
 import Profile from './pages/Profile/Profile.tsx';
+import ExhibitionsPage from './pages/ExhibitionsPage/ExhibitionsPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: 'new', element: <ExhibitionConstructor /> },
     ]
   },
+  { path: 'exhibitions', element: <ExhibitionsPage /> },
   {path: 'exhibits', element: <ExhibitsPage/>},
   {path: '', element: <MainPage/>},
   {path: 'profile', element: <Profile/>},

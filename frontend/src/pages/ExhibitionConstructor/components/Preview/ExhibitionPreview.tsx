@@ -1,9 +1,10 @@
 // components/Preview/ExhibitionPreview.tsx
 import React from 'react';
 import BlockPreview from '../Preview/BlockPreview';
-import { ExhibitionBlock, ExhibitionData, FontSettings, ColorSettings } from '../../types';
-
+import { ExhibitionBlock, ExhibitionData, FontSettings, ColorSettings, PageBackgroundSettings } from '../../types';
+import ExhibitionActions from './ExhibitionActions';	  
 import styles from './ExhibitionPreview.module.scss';
+
 
 interface ExhibitionPreviewProps {
   exhibitionData: ExhibitionData;
@@ -15,18 +16,20 @@ interface ExhibitionPreviewProps {
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   className?: string;
+  pageBackground: PageBackgroundSettings;
 }
 
 const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
-                                                               exhibitionData,
-                                                               updateBlock,
-                                                               removeBlock,
-                                                               moveBlock,
-                                                               fontSettings,
-                                                               colorSettings,
-                                                               onImageUpload,
-                                                               onImageRemove,
-                                                               className
+                                                                exhibitionData,
+                                                                updateBlock,
+                                                                removeBlock,
+                                                                moveBlock,
+                                                                fontSettings,
+                                                                colorSettings,
+                                                                pageBackground,
+                                                                onImageUpload,
+                                                                onImageRemove,
+                                                                className
                                                              }) => {
   
   console.log('ExhibitionPreview: exhibitionData.blocks at render:', exhibitionData.blocks);
@@ -35,9 +38,17 @@ const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
     <div
       className={`${styles.previewArea} ${className || ''}`}
       style={{
-        backgroundColor: colorSettings.background,
-        color: colorSettings.text
-      }}
+      backgroundColor: colorSettings.background,
+      color: colorSettings.text,
+      ...(pageBackground.mode === 'image' && pageBackground.imageUrl
+    ? {
+        backgroundImage: `url(${pageBackground.imageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : {}),
+}}
     >
       <div className={styles.headerContent}>
         {exhibitionData.cover && (
@@ -88,7 +99,7 @@ const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
                 color: colorSettings.text
               }}
             >
-              Организация: {exhibitionData.organization || 'Музейная организация'}
+              Организация: {exhibitionData.organization || 'Команда'}
             </p>
             
             {exhibitionData.team && (
@@ -141,6 +152,14 @@ const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
           colorSettings={colorSettings}
         />
       ))}
+
+      {/* Полоса с кнопками — последний элемент, прижатый к низу flex-контейнера */}
+      <ExhibitionActions
+        onCreateNewItem={() => console.log('Новый экспонат')}
+        onSelectExisting={() => console.log('Выбрать из существующих')}
+        onCreateExhibition={() => console.log('Создать выставку')}
+        onAddToDrafts={() => console.log('Добавить в черновики')}
+      />
     </div>
   );
 };

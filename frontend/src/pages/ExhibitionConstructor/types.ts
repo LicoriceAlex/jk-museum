@@ -42,13 +42,20 @@ export interface ExhibitionBlock {
 }
 
 export interface ExhibitionData {
+  /** появится после первого сохранения (создания на бэке) */
+  id?: string;
   title: string;
   description: string;
+  /** UI-поле (строкой). На бэк сейчас кладём в settings.constructor */
   organization: string;
+  /** UI-поле (строкой). На бэк мапим в participants (сплит по запятым/новой строке) */
   team: string;
   tags: string[];
   blocks: ExhibitionBlock[];
+  /** URL для превью (например: `${VITE_API_URL}/api/v1/files/${coverKey}`) */
   cover?: string;
+  /** object_key из /files/upload — то, что нужно бэку как cover_image_key */
+  coverKey?: string;
 }
 
 export interface FontSettings {
@@ -67,3 +74,11 @@ export interface ColorSettings {
 }
 
 export type PanelTab = 'info' | 'styles' | 'blocks';
+
+export type PageBackgroundMode = 'color' | 'image';
+
+export interface PageBackgroundSettings {
+  mode: PageBackgroundMode;
+  imageUrl?: string; // data-url или обычный URL
+}
+

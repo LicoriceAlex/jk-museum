@@ -12,16 +12,88 @@ $app-bg-color: #f5ebe0;
   background-color: $app-bg-color;
 }
 
-
 .main {
   display: flex;
   padding-top: 112px;
   flex-grow: 1;
   overflow: hidden;
 }
+
 .exhibitionPreview {
   flex-grow: 1;
   overflow-y: auto;
   padding: 20px;
   background-color: $app-bg-color;
+}
+
+.noticeOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+}
+
+.noticeModal {
+  width: 602px;
+  max-width: calc(100% - 40px);
+  padding: 32px;
+  border-radius: 4px;
+  background-color: #dad7cd;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+
+  position: relative;
+
+  font-family: 'Cormorant SC', serif;
+}
+
+.noticeTitle {
+  margin: 0 40px 24px 0;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  text-align: left;
+}
+
+.noticeText {
+  margin: 0;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  text-align: justify;
+}
+
+
+.noticeCloseButton {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+
+  font-size: 18px;
+  line-height: 1;
+  color: #1f3b2c;
+
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.noticeCloseButton:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.noticeCloseButton:focus-visible {
+  outline: 2px solid #1f3b2c;
+  outline-offset: 2px;
 }

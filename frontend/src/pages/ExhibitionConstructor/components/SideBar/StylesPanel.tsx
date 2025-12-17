@@ -1,248 +1,231 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontSettings, ColorSettings } from '../../types';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { HexColorInput, HexColorPicker } from 'react-colorful';
+import { ChevronDown, Image as ImageIcon, Palette as PaletteIcon, Pencil, Plus, Trash2, X } from 'lucide-react';
+
+import { ColorSettings, FontSettings, PageBackgroundSettings } from '../../types';
 import styles from './StylesPanel.module.scss';
-import { HexColorPicker, HexColorInput } from 'react-colorful';
-import { ChevronDown } from 'lucide-react';
 
 interface StylesPanelProps {
   fontSettings: FontSettings;
   setFontSettings: (settings: FontSettings) => void;
   colorSettings: ColorSettings;
   setColorSettings: (settings: ColorSettings) => void;
+  pageBackground: PageBackgroundSettings;
+  setPageBackground: (settings: PageBackgroundSettings) => void;
 }
 
-const COLOR_PRESETS = [
-  {
-    id: 'classic',
-    name: 'Классическая',
-    colors: {
-      primary: '#1F3B2C',
-      secondary: '#A67F5D',
-      background: '#F7F5F0',
-      text: '#333333',
-    },
-  },
-  {
-    id: 'warm',
-    name: 'Тёплая',
-    colors: {
-      primary: '#B85C38',
-      secondary: '#E09F3E',
-      background: '#FFF8E8',
-      text: '#513B2C',
-    },
-  },
-  {
-    id: 'cool',
-    name: 'Холодная',
-    colors: {
-      primary: '#335C67',
-      secondary: '#9EC5AB',
-      background: '#F2F5F7',
-      text: '#222E3A',
-    },
-  },
-  {
-    id: 'monochrome',
-    name: 'Монохромная',
-    colors: {
-      primary: '#2D3748',
-      secondary: '#4A5568',
-      background: '#EDF2F7',
-      text: '#1A202C',
-    },
-  },
-  {
-    id: 'vibrant',
-    name: 'Яркая',
-    colors: {
-      primary: '#6B46C1',
-      secondary: '#4299E1',
-      background: '#EBF8FF',
-      text: '#2D3748',
-    },
-  },
-  {
-    id: 'earth',
-    name: 'Земляная',
-    colors: {
-      primary: '#5F370E',
-      secondary: '#B7791F',
-      background: '#FAF5EB',
-      text: '#4A5568',
-    },
-  },
-];
+type ColorRole = keyof ColorSettings;
 
-type ColorRole = 'primary' | 'secondary' | 'background' | 'text';
+const DEFAULT_COLORS: ColorSettings = {
+  primary: '#1F3B2C',
+  secondary: '#E8E5DE',
+  background: '#FFFFFF',
+  text: '#333333',
+};
+
+const COLOR_ROLE_LABELS: Record<ColorRole, string> = {
+  primary: 'Заголовок',
+  secondary: 'Акцент',
+  background: 'Фон',
+  text: 'Текст',
+};
+
+const COLOR_ROLE_LIST: ColorRole[] = ['primary', 'secondary', 'background', 'text'];
 
 const fontOptions = [
-  "PT Serif",
-  "Open Sans",
-  "Roboto",
-  "Playfair Display",
-  "Merriweather",
-  "Lato",
-  "Montserrat"
+  'PT Serif',
+  'Open Sans',
+  'Roboto',
+  'Playfair Display',
+  'Merriweather',
+  'Lato',
+  'Montserrat',
 ];
 
+type ModalMode = 'add' | 'edit';
 
 const StylesPanel: React.FC<StylesPanelProps> = ({
-                                                   fontSettings,
-                                                   setFontSettings,
-                                                   colorSettings,
-                                                   setColorSettings,
-                                                 }) => {
+  fontSettings,
+  setFontSettings,
+  colorSettings,
+  setColorSettings,
+  pageBackground,
+  setPageBackground,
+}) => {
   const [showFontDetails, setShowFontDetails] = useState(false);
-  const [expandedPanels, setExpandedPanels] = useState({
-    font: true,
-    color: false,
-  });
-  const [editingColorRole, setEditingColorRole] = useState<ColorRole | null>(null);
-  const [tempColor, setTempColor] = useState<string>('');
-  const [pickerPosition, setPickerPosition] = useState<{ top: number; left: number } | null>(null);
-  
-  const clickedSwatchRef = useRef<HTMLDivElement | null>(null);
-  
+  const [expandedPanels, setExpandedPanels] = useState({ font: true, color: false });
+
+  const [modalMode, setModalMode] = useState<ModalMode | null>(null);
+  const [modalRole, setModalRole] = useState<ColorRole>('primary');
+  const [modalColor, setModalColor] = useState<string>('#FFFFFF');
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const togglePanel = (panel: 'font' | 'color') => {
     setExpandedPanels((prev) => {
-      const newState = { ...prev };
-      if (newState[panel]) {
-        newState[panel] = false;
+      const next = { ...prev };
+      if (next[panel]) {
+        next[panel] = false;
       } else {
-        Object.keys(newState).forEach((key) => {
-          newState[key as 'font' | 'color'] = false;
-        });
-        newState[panel] = true;
+        (Object.keys(next) as Array<keyof typeof next>).forEach((k) => (next[k] = false));
+        next[panel] = true;
       }
-      return newState;
+      return next;
     });
-    if (panel === 'font' && expandedPanels.font === false) {
-      setShowFontDetails(false);
-    }
-    if (editingColorRole && panel !== 'color') {
-      setEditingColorRole(null);
-      setPickerPosition(null);
-      clickedSwatchRef.current = null;
-    }
+
+    if (panel === 'font') setShowFontDetails(false);
+    if (panel !== 'color') setModalMode(null);
   };
-  
-  
-  const applyColorPreset = (presetId: string) => {
-    const preset = COLOR_PRESETS.find((p) => p.id === presetId);
-    if (preset) {
-      setColorSettings(preset.colors);
-    }
+
+  const openAddColor = () => {
+    setModalMode('add');
+    setModalRole('primary');
+    setModalColor('#FFFFFF');
   };
-  
-  const calculatePickerPosition = () => {
-    if (clickedSwatchRef.current) {
-      const rect = clickedSwatchRef.current.getBoundingClientRect();
-      setPickerPosition({
-        top: rect.top + window.scrollY + (rect.height / 2) - 100,
-        left: rect.right + window.scrollX + 15,
-      });
+
+  const openEditColor = (role: ColorRole) => {
+    setModalMode('edit');
+    setModalRole(role);
+    setModalColor(colorSettings[role]);
+  };
+
+  const closeModal = () => setModalMode(null);
+
+  const handleModalRoleChange = (role: ColorRole) => {
+    setModalRole(role);
+    if (modalMode === 'edit') {
+      setModalColor(colorSettings[role]);
     }
   };
-  
-  const handleColorSwatchClick = (role: ColorRole, event: React.MouseEvent<HTMLDivElement>) => {
-    setEditingColorRole(role);
-    setTempColor(colorSettings[role]);
-    clickedSwatchRef.current = event.currentTarget;
-    calculatePickerPosition();
-  };
-  
-  const handleConfirmColor = () => {
-    if (editingColorRole) {
-      setColorSettings({
-        ...colorSettings,
-        [editingColorRole]: tempColor,
-      });
+
+  const applyModalColor = () => {
+    setColorSettings({
+      ...colorSettings,
+      [modalRole]: modalColor,
+    });
+    closeModal();
+
+    // если редактировали фон и выбран режим "фон-цвет" — сразу применится
+    if (modalRole === 'background' && pageBackground.mode === 'color') {
+      setPageBackground({ mode: 'color', imageUrl: undefined });
     }
-    setEditingColorRole(null);
-    setPickerPosition(null);
-    clickedSwatchRef.current = null;
   };
-  
-  const handleCancelColor = () => {
-    setEditingColorRole(null);
-    setPickerPosition(null);
-    clickedSwatchRef.current = null;
+
+  const deleteRoleColor = () => {
+    setColorSettings({
+      ...colorSettings,
+      [modalRole]: DEFAULT_COLORS[modalRole],
+    });
+    closeModal();
+
+    if (modalRole === 'background') {
+      setPageBackground({ mode: 'color', imageUrl: undefined });
+    }
   };
-  
+
+  const handlePickBackgroundColor = () => {
+    setPageBackground({ mode: 'color', imageUrl: undefined });
+    openEditColor('background');
+  };
+
+  const handlePickBackgroundImage = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleBackgroundFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const url = reader.result as string;
+      setPageBackground({ mode: 'image', imageUrl: url });
+    };
+    reader.readAsDataURL(file);
+
+    // чтобы при повторной загрузке того же файла change срабатывал
+    e.currentTarget.value = '';
+  };
+
+  const handleSave = () => {
+    // в учебном конструкторе сейчас “сохранить” — UX-кнопка.
+    // если нужно — потом привяжем к API/сохранению в settings.
+  };
+
+  const activeSwatch = useMemo(() => {
+    if (modalMode !== 'edit') return null;
+    return modalRole;
+  }, [modalMode, modalRole]);
+
   useEffect(() => {
-    if (editingColorRole && clickedSwatchRef.current) {
-      window.addEventListener('scroll', calculatePickerPosition);
-      return () => {
-        window.removeEventListener('scroll', calculatePickerPosition);
-      };
-    }
-  }, [editingColorRole]);
-  
+    if (!modalMode) return;
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [modalMode]);
+
   return (
     <div className={styles.sidebar__styles}>
+      {/* ШРИФТ */}
       <div className={styles.sidebar__stylesGroup}>
-        <h3
-          className={styles.sidebar__stylesTitle}
-          onClick={() => togglePanel('font')}
-        >
+        <h3 className={styles.sidebar__stylesTitle} onClick={() => togglePanel('font')}>
           Шрифт
           <ChevronDown
             size={20}
             className={`${styles.arrowIcon} ${expandedPanels.font ? styles.arrowIconActive : ''}`}
           />
         </h3>
-        
-        {expandedPanels.font && (
-          <div className={styles.sidebar__fontContent} style={{ display: showFontDetails ? 'none' : 'block' }}>
+
+        {expandedPanels.font && !showFontDetails && (
+          <div className={styles.sidebar__fontContent}>
             <div className={styles.sidebar__stylesGroup}>
               <label className={styles.sidebar__label}>Шрифтовая пара (заголовок)</label>
               <select
                 className={styles.sidebar__select}
                 value={fontSettings.titleFont}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, titleFont: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, titleFont: e.target.value })}
               >
-                {fontOptions.map(font => (
-                  <option key={font} value={font}>{font}</option>
+                {fontOptions.map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.sidebar__stylesGroup}>
               <label className={styles.sidebar__label}>Шрифтовая пара (основной текст)</label>
               <select
                 className={styles.sidebar__select}
                 value={fontSettings.bodyFont || fontSettings.titleFont}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, bodyFont: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, bodyFont: e.target.value })}
               >
-                {fontOptions.map(font => (
-                  <option key={font} value={font}>{font}</option>
+                {fontOptions.map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.sidebar__fontExample}>
-              <h4 className={styles.exampleTitle} style={{ fontFamily: fontSettings.titleFont }}>Цифровой музей</h4>
+              <h4 className={styles.exampleTitle} style={{ fontFamily: fontSettings.titleFont }}>
+                Цифровой музей
+              </h4>
               <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont }}>
-                Искусство становится ближе — исследуйте коллекции онлайн в любое
-                время.
+                Искусство становится ближе — исследуйте коллекции онлайн в любое время.
               </p>
             </div>
-            
-            <button
-              className={styles.sidebar__editButton}
-              onClick={() => setShowFontDetails(true)}
-            >
+
+            <button className={styles.sidebar__editButton} onClick={() => setShowFontDetails(true)}>
               РЕДАКТИРОВАТЬ ШРИФТ
               <span className={styles.arrow}>→</span>
             </button>
           </div>
         )}
-        
+
         {expandedPanels.font && showFontDetails && (
           <div className={styles.sidebar__fontDetails}>
             <button
@@ -253,30 +236,28 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
               <span className={styles.arrow}>←</span>
               НАЗАД
             </button>
-            
+
             <div className={styles.fontDetail}>
               <label className={styles.sidebar__label}>ЗАГОЛОВОК (шрифт)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
                 value={fontSettings.titleFont}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, titleFont: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, titleFont: e.target.value })}
               >
-                {fontOptions.map(font => (
-                  <option key={font} value={font}>{font}</option>
+                {fontOptions.map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.fontDetail}>
               <label className={styles.sidebar__label}>ЗАГОЛОВОК (начертание)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
                 value={fontSettings.titleWeight || 'Normal'}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, titleWeight: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, titleWeight: e.target.value })}
               >
                 <option value="Normal">Normal</option>
                 <option value="Bold">Bold</option>
@@ -284,30 +265,28 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                 <option value="Italic">Italic</option>
               </select>
             </div>
-            
+
             <div className={styles.fontDetail}>
               <label className={styles.sidebar__label}>ОСНОВНОЙ ТЕКСТ (шрифт)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
                 value={fontSettings.bodyFont || 'Open Sans'}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, bodyFont: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, bodyFont: e.target.value })}
               >
-                {fontOptions.map(font => (
-                  <option key={font} value={font}>{font}</option>
+                {fontOptions.map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.fontDetail}>
               <label className={styles.sidebar__label}>ОСНОВНОЙ ТЕКСТ (начертание)</label>
               <select
                 className={styles.sidebar__fontDetailSelect}
                 value={fontSettings.bodyWeight || 'Normal'}
-                onChange={(e) =>
-                  setFontSettings({ ...fontSettings, bodyWeight: e.target.value })
-                }
+                onChange={(e) => setFontSettings({ ...fontSettings, bodyWeight: e.target.value })}
               >
                 <option value="Normal">Normal</option>
                 <option value="Bold">Bold</option>
@@ -315,7 +294,7 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                 <option value="Italic">Italic</option>
               </select>
             </div>
-            
+
             <div className={styles.fontDetail}>
               <label className={styles.sidebar__label}>РАЗМЕР БАЗОВОГО ШРИФТА (px)</label>
               <div className={styles.sidebar__rangeContainer}>
@@ -326,185 +305,189 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
                   step="1"
                   className={styles.sidebar__range}
                   value={fontSettings.fontSize}
-                  onChange={(e) =>
-                    setFontSettings({
-                      ...fontSettings,
-                      fontSize: Number(e.target.value),
-                    })
-                  }
+                  onChange={(e) => setFontSettings({ ...fontSettings, fontSize: Number(e.target.value) })}
                 />
-                <span className={styles.sidebar__rangeValue}>
-                  {fontSettings.fontSize}px
-                </span>
+                <span className={styles.sidebar__rangeValue}>{fontSettings.fontSize}px</span>
               </div>
             </div>
-            
+
             <div className={styles.sidebar__fontExample}>
-              <h4 className={styles.exampleTitle} style={{ fontFamily: fontSettings.titleFont,
-                fontWeight: fontSettings.titleWeight === 'Normal' ? 'normal' :
-                  fontSettings.titleWeight === 'Bold' ? 'bold' :
-                    fontSettings.titleWeight === 'Light' ? 300 :
-                      'normal',
-                fontStyle: fontSettings.titleWeight === 'Italic' ? 'italic' : 'normal',
-                fontSize: `${fontSettings.fontSize * 2}px`
-              }}>Подзаголовок</h4>
-              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
-                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
-                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
-                    fontSettings.bodyWeight === 'Light' ? 300 :
-                      'normal',
-                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
-                fontSize: `${fontSettings.fontSize}px`
-              }}>ПРИМЕР ВЫБРАННЫХ ШРИФТОВ</p>
-              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
-                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
-                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
-                    fontSettings.bodyWeight === 'Light' ? 300 :
-                      'normal',
-                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
-                fontSize: `${fontSettings.fontSize}px`
-              }}>Цифровой музей</p>
-              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
-                fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
-                  fontSettings.bodyWeight === 'Bold' ? 'bold' :
-                    fontSettings.bodyWeight === 'Light' ? 300 :
-                      'normal',
-                fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
-                fontSize: `${fontSettings.fontSize * 0.9}px`
-              }}>
-                Искусство становится ближе — исследуйте коллекции онлайн в любое
-                время.
+              <h4
+                className={styles.exampleTitle}
+                style={{
+                  fontFamily: fontSettings.titleFont,
+                  fontWeight:
+                    fontSettings.titleWeight === 'Normal'
+                      ? 'normal'
+                      : fontSettings.titleWeight === 'Bold'
+                        ? 'bold'
+                        : fontSettings.titleWeight === 'Light'
+                          ? 300
+                          : 'normal',
+                  fontStyle: fontSettings.titleWeight === 'Italic' ? 'italic' : 'normal',
+                  fontSize: `${fontSettings.fontSize * 2}px`,
+                }}
+              >
+                Подзаголовок
+              </h4>
+
+              <p
+                className={styles.exampleText}
+                style={{
+                  fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+                  fontWeight:
+                    fontSettings.bodyWeight === 'Normal'
+                      ? 'normal'
+                      : fontSettings.bodyWeight === 'Bold'
+                        ? 'bold'
+                        : fontSettings.bodyWeight === 'Light'
+                          ? 300
+                          : 'normal',
+                  fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
+                  fontSize: `${fontSettings.fontSize}px`,
+                }}
+              >
+                ПРИМЕР ВЫБРАННЫХ ШРИФТОВ
+              </p>
+
+              <p className={styles.exampleText} style={{ fontFamily: fontSettings.bodyFont || fontSettings.titleFont }}>
+                Цифровой музей
+              </p>
+
+              <p
+                className={styles.exampleText}
+                style={{
+                  fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
+                  fontSize: `${fontSettings.fontSize * 0.9}px`,
+                }}
+              >
+                Искусство становится ближе — исследуйте коллекции онлайн в любое время.
               </p>
             </div>
           </div>
         )}
       </div>
-      
+
+      {/* ЦВЕТ */}
       <div className={styles.sidebar__stylesGroup}>
-        <h3
-          className={styles.sidebar__stylesTitle}
-          onClick={() => togglePanel('color')}
-        >
+        <h3 className={styles.sidebar__stylesTitle} onClick={() => togglePanel('color')}>
           Цвет
           <ChevronDown
             size={20}
             className={`${styles.arrowIcon} ${expandedPanels.color ? styles.arrowIconActive : ''}`}
           />
         </h3>
-        
+
         {expandedPanels.color && (
-          <>
-            <div className={styles.sidebar__colorScheme}>
-              <h4 className={styles.sidebar__colorSchemeTitle}>
-                ТЕКУЩАЯ ПАЛИТРА
-              </h4>
-              
-              <div className={styles.sidebar__currentPaletteDisplay}>
-                {(['primary', 'secondary', 'background', 'text'] as ColorRole[]).map(
-                  (role) => (
-                    <div
-                      key={role}
-                      className={styles.sidebar__currentPaletteItem}
-                      onClick={(e) => handleColorSwatchClick(role, e)}
-                    >
-                      <div
-                        className={styles.currentPaletteColor}
-                        style={{ backgroundColor: colorSettings[role] }}
-                      />
-                      <span className={styles.colorRoleLabel}>
-                        {role === 'primary' && 'Основной'}
-                        {role === 'secondary' && 'Вторичный'}
-                        {role === 'background' && 'Фон'}
-                        {role === 'text' && 'Текст'}
-                      </span>
-                    </div>
-                  )
-                )}
-              </div>
-              
-              {editingColorRole && pickerPosition && (
-                <div
-                  className={styles.colorPickerPopover}
-                  style={{ top: pickerPosition.top, left: pickerPosition.left }}
+          <div className={styles.colorSection}>
+            <div className={styles.sectionTitle}>ЦВЕТОВАЯ СХЕМА</div>
+
+            <div className={styles.colorSchemeRow}>
+              {COLOR_ROLE_LIST.map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  className={`${styles.colorSwatch} ${activeSwatch === role ? styles.colorSwatchActive : ''}`}
+                  style={{ backgroundColor: colorSettings[role] }}
+                  onClick={() => openEditColor(role)}
+                  aria-label={`Изменить цвет: ${COLOR_ROLE_LABELS[role]}`}
                 >
-                  <div className={styles.colorPickerPopoverContent}>
-                    <div className={styles.colorPickerPopoverHeader}>
-                      <span>
-                        {editingColorRole === 'primary' && 'Основной'}
-                        {editingColorRole === 'secondary' && 'Вторичный'}
-                        {editingColorRole === 'background' && 'Фон'}
-                        {editingColorRole === 'text' && 'Текст'}
-                      </span>
-                      <button onClick={handleCancelColor}>✕</button>
-                    </div>
-                    <HexColorPicker
-                      color={tempColor}
-                      onChange={setTempColor}
-                      className={styles.hexColorPicker}
-                    />
-                    <div className={styles.colorCodeSection}>
-                      Цветовой код
-                      <HexColorInput
-                        color={tempColor}
-                        onChange={setTempColor}
-                        className={styles.hexColorInput}
-                      />
-                    </div>
-                    <button onClick={handleConfirmColor} className={styles.confirmColorButton}>ОК</button>
-                  </div>
-                </div>
-              )}
-              
-              <h4
-                className={styles.sidebar__colorSchemeTitle}
-                style={{ marginTop: '24px' }}
-              >
-                ПРЕДУСТАНОВЛЕННЫЕ ПАЛИТРЫ
-              </h4>
-              
-              <div className={styles.sidebar__presetPalettesGrid}>
-                {COLOR_PRESETS.map((preset) => (
-                  <div
-                    key={preset.id}
-                    className={styles.sidebar__presetPalette}
-                    onClick={() => applyColorPreset(preset.id)}
-                  >
-                    <div className={styles.presetPaletteName}>
-                      {preset.name}
-                    </div>
-                    <div className={styles.sidebar__palette}>
-                      <div
-                        className={styles.paletteColor}
-                        style={{ backgroundColor: preset.colors.primary }}
-                      ></div>
-                      <div
-                        className={styles.paletteColor}
-                        style={{ backgroundColor: preset.colors.secondary }}
-                      ></div>
-                      <div
-                        className={styles.paletteColor}
-                        style={{ backgroundColor: preset.colors.background }}
-                      ></div>
-                      <div
-                        className={styles.paletteColor}
-                        style={{ backgroundColor: preset.colors.text }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  {activeSwatch === role && (
+                    <span className={styles.swatchIcon}>
+                      <Pencil size={16} />
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
-            
-            <button
-              className={styles.sidebar__button}
-              onClick={() => {
-              }}
-            >
-              Применить стили
+
+            <button type="button" className={styles.addColorButton} onClick={openAddColor}>
+              <Plus size={16} />
+              Добавить цвет
             </button>
-          </>
+
+            <div className={styles.sectionTitle} style={{ marginTop: 18 }}>
+              ФОН СТРАНИЦЫ
+            </div>
+
+            <div className={styles.backgroundRow}>
+              <button
+                type="button"
+                className={`${styles.backgroundButton} ${pageBackground.mode === 'color' ? styles.backgroundButtonActive : ''}`}
+                onClick={handlePickBackgroundColor}
+                aria-label="Выбрать фон цветом"
+              >
+                <PaletteIcon size={22} />
+              </button>
+
+              <button
+                type="button"
+                className={`${styles.backgroundButton} ${pageBackground.mode === 'image' ? styles.backgroundButtonActive : ''}`}
+                onClick={handlePickBackgroundImage}
+                aria-label="Загрузить изображение фона"
+              >
+                <ImageIcon size={22} />
+              </button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleBackgroundFileChange}
+                className={styles.hiddenFileInput}
+              />
+            </div>
+
+            <button type="button" className={styles.saveButton} onClick={handleSave}>
+              Сохранить
+            </button>
+          </div>
         )}
       </div>
+
+      {/* MODAL */}
+      {modalMode && (
+        <div className={styles.modalOverlay} onMouseDown={closeModal}>
+          <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <select
+                className={styles.modalSelect}
+                value={modalRole}
+                onChange={(e) => handleModalRoleChange(e.target.value as ColorRole)}
+              >
+                {COLOR_ROLE_LIST.map((role) => (
+                  <option key={role} value={role}>
+                    {COLOR_ROLE_LABELS[role]}
+                  </option>
+                ))}
+              </select>
+
+              <button type="button" className={styles.modalClose} onClick={closeModal} aria-label="Закрыть">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className={styles.modalPickerWrap}>
+              <HexColorPicker color={modalColor} onChange={setModalColor} className={styles.hexColorPicker} />
+            </div>
+
+            <div className={styles.modalCodeRow}>
+              <div className={styles.modalCodeLabel}>Цветовой код</div>
+              <HexColorInput color={modalColor} onChange={setModalColor} className={styles.modalHexInput} />
+            </div>
+
+            <button type="button" className={styles.modalPrimaryButton} onClick={applyModalColor}>
+              {modalMode === 'add' ? 'Добавить' : 'Изменить'}
+            </button>
+
+            {modalMode === 'edit' && (
+              <button type="button" className={styles.modalDangerButton} onClick={deleteRoleColor}>
+                Удалить <Trash2 size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

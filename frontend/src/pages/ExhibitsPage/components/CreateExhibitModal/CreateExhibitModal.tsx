@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styles from './CreateExhibitModal.module.scss';
+import { getToken } from '../../../../utils/serviceToken';
 
 interface CreateExhibitModalProps {
   onClose: () => void;
@@ -129,8 +130,16 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
   const uploadImage = async (file: File): Promise<string> => {
     const fd = new FormData();
     fd.append('file', file);
+    const token = getToken();
+    const headers: Record<string, string> = {};
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/files/upload`, {
       method: 'POST',
+      headers,
       body: fd,
     });
     if (!response.ok) throw new Error('Не удалось загрузить изображение');
@@ -154,22 +163,42 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
 
       const isoDate = composeISO(formData.creation_daymonth, formData.creation_year);
 
-      let imageKey = '';
-      if (formData.image) imageKey = await uploadImage(formData.image);
+      let imageKey: string | undefined = undefined;
+      if (formData.image) {
+        imageKey = await uploadImage(formData.image);
+      }
 
-      const exhibitData = {
+      const exhibitData: Record<string, any> = {
         title: formData.title.trim(),
         author: formData.author?.trim() || 'Неизвестен',
-        creation_date: isoDate, // '' если дата неполная/невалидная
         description: formData.description || formData.short_description || '',
         exhibit_type: formData.exhibit_type || 'другое',
-        image_key: imageKey,
-        organization_id: '6e377c56-45fd-4c7f-a127-00cd6877e172',
+        // organization_id будет автоматически получен из текущего пользователя на бэкенде
       };
+
+      // Добавляем creation_date только если дата валидна
+      if (isoDate) {
+        exhibitData.creation_date = isoDate;
+      }
+
+      // Добавляем image_key только если изображение загружено
+      if (imageKey) {
+        exhibitData.image_key = imageKey;
+      }
+
+      const token = getToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/exhibits/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers,
         body: JSON.stringify(exhibitData),
       });
 

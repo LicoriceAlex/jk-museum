@@ -1,62 +1,60 @@
 import React from 'react';
-import TextBlock from '../TextBlock/TextBlock';
 import styles from './LayoutImgTextImgBlock.module.scss';
-import { ExhibitionBlock, BlockItem } from '../../../types.ts';
+import { BlockItem, ExhibitionBlock } from '../../../types';
+import ImageBlock from '../ImageBlock/ImageBlock';
+import TextBlock from '../TextBlock/TextBlock';
 
-interface StaticImageDisplayProps {
-  imageUrl?: string;
-}
-
-const StaticImageDisplay: React.FC<StaticImageDisplayProps> = ({ imageUrl }) => {
-  return (
-    <div className={styles.imageWrapper}>
-      {imageUrl ? (
-        <img src={imageUrl} alt="Блок изображения" className={styles.staticImage} />
-      ) : (
-        <div className={styles.placeholderImage}>
-          <p>Нет изображения</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface LayoutImgTextImgBlockProps {
+interface Props {
   blockId: string;
-  content: string;
   items: BlockItem[];
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  content: string;
   style?: React.CSSProperties;
+  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
+  onImageRemove: (blockId: string, itemIndex: number) => void;
 }
 
-const LayoutImgTextImgBlock: React.FC<LayoutImgTextImgBlockProps> = ({
-                                                                       blockId,
-                                                                       content,
-                                                                       items = [],
-                                                                       updateBlock,
-                                                                       style,
-                                                                     }) => {
-  
-  const handleTextChange = (newContent: string) => {
-    updateBlock(blockId, { content: newContent });
-  };
-  const leftImageUrl = items[0]?.image_url;
-  const rightImageUrl = items[1]?.image_url;
-  
+const LayoutImgTextImgBlock: React.FC<Props> = ({
+  blockId,
+  items,
+  content,
+  style,
+  updateBlock,
+  onImageUpload,
+  onImageRemove,
+}) => {
+  const leftUrl = items?.[0]?.image_url;
+  const rightUrl = items?.[1]?.image_url;
+
   return (
-    <div className={styles.block}>
-      <div className={styles.layout}>
-        <StaticImageDisplay imageUrl={leftImageUrl} />
-        
-        <div className={styles.contentWrapper}>
-          <TextBlock
-            initialContent={content}
-            onContentChange={handleTextChange}
-            style={style}
-            placeholder="Нажмите, чтобы добавить описание"
-          />
-        </div>
-        <StaticImageDisplay imageUrl={rightImageUrl} />
+    <div className={styles.wrap}>
+      <div className={styles.cell}>
+        <ImageBlock
+          imageUrl={leftUrl}
+          onUpload={(file) => onImageUpload(blockId, 0, file)}
+          onRemove={() => onImageRemove(blockId, 0)}
+          containerStyle={{ height: 280 }}
+          imageStyle={{ height: '100%', objectFit: 'cover' }}
+        />
+      </div>
+
+      <div className={`${styles.cell} ${styles.textCell}`}>
+        <TextBlock
+          initialContent={content}
+          onContentChange={(newContent) => updateBlock(blockId, { content: newContent })}
+          style={style}
+          placeholder="Нажмите, чтобы добавить описание"
+        />
+      </div>
+
+      <div className={styles.cell}>
+        <ImageBlock
+          imageUrl={rightUrl}
+          onUpload={(file) => onImageUpload(blockId, 1, file)}
+          onRemove={() => onImageRemove(blockId, 1)}
+          containerStyle={{ height: 280 }}
+          imageStyle={{ height: '100%', objectFit: 'cover' }}
+        />
       </div>
     </div>
   );
