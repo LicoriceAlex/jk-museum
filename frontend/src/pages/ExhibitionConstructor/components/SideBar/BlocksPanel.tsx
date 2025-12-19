@@ -265,7 +265,7 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
               )}
             </div>
 
-            {/* Видео (позже) */}
+            {/* Видео */}
             <div className={styles.menuItem}>
               <button type="button" className={styles.menuHeader} onClick={() => togglePhotoMenu('video')}>
                 <span>Видео</span>
@@ -274,7 +274,9 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
 
               {openPhotoMenu === 'video' && (
                 <div className={styles.menuBody}>
-                  <div className={styles.hint}>Сделаем следующим шагом: поле “ссылка на видео” + плеер.</div>
+                  <button type="button" className={styles.addBtn} onClick={() => addBlock('VIDEO', { settings: { video_url: '' } })}>
+                    Добавить
+                  </button>
                 </div>
               )}
             </div>

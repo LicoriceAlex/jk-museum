@@ -155,11 +155,12 @@
 
 .editButtonWrapper {
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  gap: 0.83vw;
+  margin-top: 1.25vw;
 }
 
 .editButton {
-  margin-top: 1.25vw;
   align-self: flex-start;
   background-color: var(--color-text2);
   color: var(--color-mainpage);
@@ -173,9 +174,27 @@
   line-height: 120%;
   font-family: var(--font-main);
 
-
   &:hover {
     background-color: var(--color-exibitmodal);
+  }
+}
+
+.deleteButton {
+  align-self: flex-start;
+  background-color: #dc3545;
+  color: var(--color-mainpage);
+  padding: 0.83vw 1.25vw;
+  border-radius: 0.2vw;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  font-family: var(--font-main);
+
+  &:hover {
+    background-color: #c82333;
   }
 }
 

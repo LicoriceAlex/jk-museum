@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import ExhibitCard from '../ExhibitCard/ExhibitCard';
 import ExhibitModal from '../ExhibitsModal/ExhibitModal';
 import CreateExhibitModal from '../CreateExhibitModal/CreateExhibitModal';
+import { getToken } from '../../../../utils/serviceToken';
 import styles from './ExhibitsList.module.scss';
 
 interface Exhibit {
@@ -101,6 +102,39 @@ const ExhibitsList:React.FC = forwardRef<
       console.error('Error after updating exhibit:', err);
     }
   };
+
+  const handleDeleteExhibit = async (exhibitId: string) => {
+    try {
+      const token = getToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/exhibits/${exhibitId}`, {
+        method: 'DELETE',
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error('Не удалось удалить экспонат');
+      }
+
+      // Удаляем экспонат из списка
+      setExhibits(prevExhibits => prevExhibits.filter(ex => ex.id !== exhibitId));
+      
+      // Закрываем модальное окно, если удаляемый экспонат был открыт
+      if (selectedExhibit?.id === exhibitId) {
+        handleCloseModal();
+      }
+    } catch (err) {
+      console.error('Error deleting exhibit:', err);
+      alert(err instanceof Error ? err.message : 'Произошла ошибка при удалении экспоната');
+    }
+  };
   
   return (
     <div className={styles.exhibitsList}>
@@ -144,6 +178,7 @@ const ExhibitsList:React.FC = forwardRef<
           exhibit={selectedExhibit}
           onClose={handleCloseModal}
           onUpdate={handleUpdateExhibit}
+          onDelete={handleDeleteExhibit}
         />
       )}
       

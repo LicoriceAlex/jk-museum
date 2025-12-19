@@ -7,7 +7,7 @@ export const API_BASE = (() => {
   }
   return "";
 })();
-const ORG_ID = "63456069-eac5-4841-92f0-a4d173634304";
+const ORG_ID = "1b0dd88a-ee50-47c0-9fe2-a762112deddf";
 
 export type CreateExhibitionRequest = {
   title: string;
@@ -129,5 +129,63 @@ export async function fetchExhibitionById(id: string) {
   return res.json();
 }
 
-export const ORGANIZATION_ID = ORG_ID;
+export async function updateExhibition(
+  id: string,
+  payload: CreateExhibitionRequest
+): Promise<void> {
+  const token = getToken();
+  const url = API_BASE
+    ? `${API_BASE}/api/v1/exhibitions/${id}`
+    : `/api/v1/exhibitions/${id}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(payload),
+  });
 
+  if (!res.ok) throw new Error("Не удалось обновить выставку");
+}
+
+export async function updateBlockOnServer(
+  exhibitionId: string,
+  blockId: string,
+  payload: CreateBlockRequest
+): Promise<void> {
+  const token = getToken();
+  const url = API_BASE
+    ? `${API_BASE}/api/v1/exhibitions/${exhibitionId}/blocks/${blockId}`
+    : `/api/v1/exhibitions/${exhibitionId}/blocks/${blockId}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ ...payload, exhibition_id: exhibitionId }),
+  });
+
+  if (!res.ok) throw new Error("Не удалось обновить блок");
+}
+
+export async function deleteBlock(
+  exhibitionId: string,
+  blockId: string
+): Promise<void> {
+  const token = getToken();
+  const url = API_BASE
+    ? `${API_BASE}/api/v1/exhibitions/${exhibitionId}/blocks/${blockId}`
+    : `/api/v1/exhibitions/${exhibitionId}/blocks/${blockId}`;
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!res.ok) throw new Error("Не удалось удалить блок");
+}
+
+export const ORGANIZATION_ID = ORG_ID;

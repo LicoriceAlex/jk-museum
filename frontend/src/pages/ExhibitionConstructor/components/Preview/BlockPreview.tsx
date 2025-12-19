@@ -130,7 +130,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
           <ImagesGridBlock
             blockId={block.id}
             items={block.items || []}
-            columns={4} // ✅ 4 в ряд
+            columns={4} 
             onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
           />
@@ -168,8 +168,9 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
         return (
           <LayoutTextImgTextBlock
             blockId={block.id}
-            items={block.items || []}
-            settings={block.settings}
+            leftText={block.settings?.text_left_html || ''}
+            rightText={block.settings?.text_right_html || ''}
+            imageUrl={block.items?.[0]?.image_url}
             style={textStyle}
             updateBlock={updateBlock}
             onImageUpload={onImageUpload}
@@ -196,6 +197,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
             onImageRemove={onImageRemove}
           />
         );
+
 
       default:
         return null;

@@ -19,6 +19,7 @@
 .imageContainer {
   width: 100%;
   height: 100%;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   position: relative;
   background-color: var(--color-exibitcard6);

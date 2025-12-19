@@ -19,9 +19,23 @@ import {
   createExhibition,
   fetchExhibitionById,
   uploadFile,
+  updateExhibition,
+  updateBlockOnServer,
+  deleteBlock,
 } from '../../features/exhibitions/service';
 import { useParams } from 'react-router-dom';
 
+const mapTypeToApi = (type: string) => {
+  // На бэке нет IMAGE_UPLOAD -> отправляем как CAROUSEL
+  if (type === 'IMAGE_UPLOAD') return 'CAROUSEL';
+  return type;
+};
+
+const mapTypeFromApi = (type: string, items?: any[]) => {
+  // Если с сервера пришёл CAROUSEL, а по факту 0-1 изображение — в UI показываем как одиночное фото
+  if (type === 'CAROUSEL' && ((items?.length ?? 0) <= 1)) return 'IMAGE_UPLOAD';
+  return type;
+};
 
 const ExhibitionConstructor: React.FC = () => {
   const { id: exhibitionId } = useParams<{ id: string }>();
@@ -50,15 +64,14 @@ const ExhibitionConstructor: React.FC = () => {
   });
 
   const [pageBackground, setPageBackground] = useState<PageBackgroundSettings>({
-  mode: 'color',
-  imageUrl: undefined,
-});
+    mode: 'color',
+    imageUrl: undefined,
+  });
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isLoadingExhibition, setIsLoadingExhibition] = useState(false);
 
-  
   const updateExhibitionData = (newData: Partial<ExhibitionData>) => {
     setExhibitionData(prev => ({ ...prev, ...newData }));
   };
@@ -66,17 +79,24 @@ const ExhibitionConstructor: React.FC = () => {
 
   const addBlock = useCallback((type: BlockType, initialData?: { items?: BlockItem[]; content?: string; }) => {
     console.log('ExhibitionConstructor: addBlock received type:', type, 'and initialData.items:', initialData?.items);
-    
+
     let itemsForNewBlock: BlockItem[];
     if (initialData && initialData.items && initialData.items.length > 0) {
       itemsForNewBlock = initialData.items;
-    } else if (type.includes('IMAGE') || type === 'CAROUSEL' || type === 'SLIDER' || type.includes('LAYOUT_IMG')) {
-      const numImageSlots = type === 'IMAGES_4' ? 4 : type === 'IMAGES_3' ? 3 : type === 'IMAGES_2' ? 2 : 1;
-      itemsForNewBlock = Array(numImageSlots).fill({} as BlockItem);
+    } else if (type === 'IMAGE_UPLOAD' || type.includes('IMAGE') || type === 'CAROUSEL' || type === 'SLIDER' || type.includes('LAYOUT_IMG')) {
+      const numImageSlots =
+        type === 'IMAGES_4' ? 4 :
+        type === 'IMAGES_3' ? 3 :
+        type === 'IMAGES_2' ? 2 :
+        type === 'IMAGE_UPLOAD' ? 1 : 1;
+
+      itemsForNewBlock = Array(numImageSlots)
+        .fill(null)
+        .map(() => ({ id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}` } as BlockItem));
     } else {
       itemsForNewBlock = [];
     }
-    
+
     const newBlock: ExhibitionBlock = {
       id: `block-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       type,
@@ -85,15 +105,15 @@ const ExhibitionConstructor: React.FC = () => {
       items: itemsForNewBlock,
       settings: {}
     };
-    
+
     console.log('ExhibitionConstructor: Created newBlock.items:', newBlock.items);
-    
+
     setExhibitionData(prev => ({
       ...prev,
       blocks: [...prev.blocks, newBlock]
     }));
   }, [exhibitionData.blocks.length]);
-  
+
   const updateBlock = (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => {
     setExhibitionData(prev => ({
       ...prev,
@@ -102,42 +122,42 @@ const ExhibitionConstructor: React.FC = () => {
       )
     }));
   };
-  
+
   const removeBlock = (blockId: string) => {
     setExhibitionData(prev => ({
       ...prev,
       blocks: prev.blocks.filter(block => block.id !== blockId)
     }));
   };
-  
+
   const moveBlock = (blockId: string, direction: 'up' | 'down') => {
     const blockIndex = exhibitionData.blocks.findIndex(block => block.id === blockId);
     if (blockIndex === -1) return;
-    
+
     const newIndex = direction === 'up' ? blockIndex - 1 : blockIndex + 1;
     if (newIndex < 0 || newIndex >= exhibitionData.blocks.length) return;
-    
+
     const newBlocks = [...exhibitionData.blocks];
     [newBlocks[blockIndex], newBlocks[newIndex]] = [newBlocks[newIndex], newBlocks[blockIndex]];
-    
+
     newBlocks.forEach((block, index) => {
       block.position = index;
     });
-    
+
     setExhibitionData(prev => ({ ...prev, blocks: newBlocks }));
   };
-  
+
   const handleImageUpload = useCallback(async (blockId: string, itemIndex: number, file: File) => {
     console.log(`[ExhibitionConstructor] Attempting to upload image for block ${blockId}, item ${itemIndex}, file:`, file);
-    
+
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      
+
       reader.onloadend = async () => {
         const uploadedImageUrl = reader.result as string;
         console.log(`[ExhibitionConstructor] Simulated upload successful. URL: ${uploadedImageUrl}`);
-        
+
         setExhibitionData(prevData => ({
           ...prevData,
           blocks: prevData.blocks.map(block => {
@@ -153,17 +173,17 @@ const ExhibitionConstructor: React.FC = () => {
           }),
         }));
       };
-      
+
       reader.onerror = (error) => {
         console.error('[ExhibitionConstructor] FileReader error:', error);
       };
-      
+
     } catch (error) {
       console.error('[ExhibitionConstructor] Error during image upload:', error);
       alert('Ошибка загрузки изображения. Проверьте консоль для деталей.');
     }
   }, []);
-  
+
   const handleImageRemove = useCallback((blockId: string, itemIndex: number) => {
     console.log(`[ExhibitionConstructor] Removing image for block ${blockId}, item ${itemIndex}`);
     setExhibitionData(prevData => ({
@@ -180,19 +200,20 @@ const ExhibitionConstructor: React.FC = () => {
       }),
     }));
   }, []);
+
   const onFileUploadForBlocksPanel = useCallback(async (file: File): Promise<{ url: string }> => {
     console.log('[ExhibitionConstructor] onFileUploadForBlocksPanel called with file:', file);
-    
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      
+
       reader.onloadend = () => {
         const uploadedImageUrl = reader.result as string;
         console.log('[ExhibitionConstructor] File read and URL generated:', uploadedImageUrl);
         resolve({ url: uploadedImageUrl });
       };
-      
+
       reader.onerror = (error) => {
         console.error('[ExhibitionConstructor] FileReader error:', error);
         reject(new Error('Failed to read file'));
@@ -217,52 +238,225 @@ const ExhibitionConstructor: React.FC = () => {
       if (exhibitionData.cover && exhibitionData.cover.startsWith('data:')) {
         const { object_key } = await uploadDataUrlAsFile(exhibitionData.cover, 'exhibitions/cover/');
         coverKey = object_key;
+      } else if (exhibitionData.cover && !exhibitionData.cover.startsWith('data:')) {
+        const match = exhibitionData.cover.match(/\/api\/v1\/files\/([^/?]+)/);
+        if (match) {
+          coverKey = match[1];
+        }
       }
-
-      const exhibitionResponse = await createExhibition({
-        title: exhibitionData.title || '',
-        description: exhibitionData.description || '',
-        cover_image_key: coverKey,
-        cover_type: 'outside',
-        status: 'draft',
-        date_template: 'year',
-        start_year: 0,
-        end_year: 0,
-        rating: 0,
-        settings: {},
-        organization_id: ORGANIZATION_ID,
-        participants: [],
-        tags: exhibitionData.tags || [],
-      });
-
-      const expoId = exhibitionResponse.id;
 
       const uploadItemImageIfNeeded = async (imageUrl?: string) => {
         if (!imageUrl) return undefined;
-        if (!imageUrl.startsWith('data:')) return undefined;
+        if (!imageUrl.startsWith('data:')) {
+          const match = imageUrl.match(/\/api\/v1\/files\/([^/?]+)/);
+          if (match) return match[1];
+          return undefined;
+        }
         const { object_key } = await uploadDataUrlAsFile(imageUrl, 'blocks/images/');
         return object_key;
       };
 
-      for (let i = 0; i < exhibitionData.blocks.length; i += 1) {
-        const block = exhibitionData.blocks[i];
-        const itemsPayload = block.items
-          ? await Promise.all(
-              block.items.map(async (item, idx) => ({
-                position: idx,
-                text: item.text,
-                image_key: await uploadItemImageIfNeeded(item.image_url),
-              }))
-            )
-          : undefined;
+      let expoId: string;
+      const isEditing = !!exhibitionId;
 
-        await createBlock(expoId, {
-          type: block.type,
-          content: block.content,
-          settings: block.settings || {},
-          position: i,
-          items: itemsPayload,
+      const settings = {
+        constructor: {
+          organization: exhibitionData.organization || '',
+          team: exhibitionData.team || '',
+          fontSettings: fontSettings,
+          colorSettings: colorSettings,
+        },
+      };
+
+      if (isEditing) {
+        expoId = exhibitionId!;
+        await updateExhibition(expoId, {
+          title: exhibitionData.title || '',
+          description: exhibitionData.description || '',
+          cover_image_key: coverKey,
+          cover_type: 'outside',
+          status: 'draft',
+          date_template: 'year',
+          start_year: 0,
+          end_year: 0,
+          rating: 0,
+          settings: settings,
+          organization_id: ORGANIZATION_ID,
+          participants: exhibitionData.team ? exhibitionData.team.split(/[,\n]/).map(s => s.trim()).filter(Boolean) : [],
+          tags: exhibitionData.tags || [],
         });
+
+        const currentExhibition = await fetchExhibitionById(expoId);
+        const existingBlocks = (currentExhibition.blocks || []).map((b: any) => b.id);
+
+        for (let i = 0; i < exhibitionData.blocks.length; i += 1) {
+          const block = exhibitionData.blocks[i];
+
+          let itemsPayload: Array<{ position: number; text?: string; image_key?: string }> | undefined = undefined;
+
+          if (block.items && block.items.length > 0) {
+            const processedItems = await Promise.all(
+              block.items.map(async (item, idx) => {
+                const imageKey = await uploadItemImageIfNeeded(item.image_url);
+                return {
+                  position: idx,
+                  text: item.text || undefined,
+                  image_key: imageKey,
+                };
+              })
+            );
+
+            const filteredItems = processedItems.filter(item => item.image_key || item.text);
+
+            const isImageBlock =
+              block.type === 'IMAGE_UPLOAD' ||
+              block.type === 'IMAGES_2' ||
+              block.type === 'IMAGES_3' ||
+              block.type === 'IMAGES_4';
+
+            if (block.type !== 'VIDEO') {
+              if (filteredItems.length > 0) {
+                itemsPayload = filteredItems;
+              } else if (!isImageBlock && block.items && block.items.some(item => item.text)) {
+                itemsPayload = processedItems.filter(item => item.text);
+              }
+            }
+          }
+
+          const isExistingBlock = block.id && existingBlocks.includes(block.id);
+
+          const apiType = mapTypeToApi(block.type);
+
+          if (isExistingBlock) {
+            const updatePayload: any = {
+              type: apiType,
+              content: block.content,
+              settings: block.settings || {},
+              position: i,
+            };
+
+            if (apiType !== 'VIDEO' && itemsPayload) {
+              updatePayload.items = itemsPayload;
+            }
+
+            await updateBlockOnServer(expoId, block.id, updatePayload);
+          } else {
+            // Раньше пропускали IMAGE_UPLOAD без изображения.
+            // Теперь IMAGE_UPLOAD уходит как CAROUSEL, и карусель с 0 картинок тоже лучше не создавать.
+            const isImageLike =
+              block.type === 'IMAGE_UPLOAD' ||
+              block.type === 'IMAGES_2' ||
+              block.type === 'IMAGES_3' ||
+              block.type === 'IMAGES_4';
+
+            if (isImageLike && (!itemsPayload || itemsPayload.length === 0)) {
+              console.warn(`Пропущен блок ${block.type} без изображения`);
+              continue;
+            }
+
+            const blockPayload: any = {
+              type: apiType,
+              content: block.content,
+              settings: block.settings || {},
+              position: i,
+            };
+
+            if (apiType !== 'VIDEO' && itemsPayload) {
+              blockPayload.items = itemsPayload;
+            }
+
+            await createBlock(expoId, blockPayload);
+          }
+        }
+
+        for (const existingBlockId of existingBlocks) {
+          if (!exhibitionData.blocks.some(b => b.id === existingBlockId)) {
+            await deleteBlock(expoId, existingBlockId);
+          }
+        }
+      } else {
+        const exhibitionResponse = await createExhibition({
+          title: exhibitionData.title || '',
+          description: exhibitionData.description || '',
+          cover_image_key: coverKey,
+          cover_type: 'outside',
+          status: 'draft',
+          date_template: 'year',
+          start_year: 0,
+          end_year: 0,
+          rating: 0,
+          settings: settings,
+          organization_id: ORGANIZATION_ID,
+          participants: exhibitionData.team ? exhibitionData.team.split(/[,\n]/).map(s => s.trim()).filter(Boolean) : [],
+          tags: exhibitionData.tags || [],
+        });
+
+        expoId = exhibitionResponse.id;
+
+        for (let i = 0; i < exhibitionData.blocks.length; i += 1) {
+          const block = exhibitionData.blocks[i];
+
+          let itemsPayload: Array<{ position: number; text?: string; image_key?: string }> | undefined = undefined;
+
+          if (block.items && block.items.length > 0) {
+            const processedItems = await Promise.all(
+              block.items.map(async (item, idx) => {
+                const imageKey = await uploadItemImageIfNeeded(item.image_url);
+                return {
+                  position: idx,
+                  text: item.text || undefined,
+                  image_key: imageKey,
+                };
+              })
+            );
+
+            const filteredItems = processedItems.filter(item => item.image_key || item.text);
+
+            const isImageBlock =
+              block.type === 'IMAGE_UPLOAD' ||
+              block.type === 'IMAGES_2' ||
+              block.type === 'IMAGES_3' ||
+              block.type === 'IMAGES_4';
+
+            if (block.type !== 'VIDEO') {
+              if (filteredItems.length > 0) {
+                itemsPayload = filteredItems;
+              } else if (!isImageBlock && block.items && block.items.some(item => item.text)) {
+                itemsPayload = processedItems.filter(item => item.text);
+              }
+            }
+          }
+
+          const isImageLike =
+            block.type === 'IMAGE_UPLOAD' ||
+            block.type === 'IMAGES_2' ||
+            block.type === 'IMAGES_3' ||
+            block.type === 'IMAGES_4';
+
+          if (isImageLike && (!itemsPayload || itemsPayload.length === 0)) {
+            console.warn(`Пропущен блок ${block.type} без изображения`);
+            continue;
+          }
+
+          const apiType = mapTypeToApi(block.type);
+
+          const blockPayload: any = {
+            type: apiType,
+            content: block.content,
+            settings: block.settings || {},
+            position: i,
+          };
+
+          if (apiType !== 'VIDEO' && itemsPayload) {
+            blockPayload.items = itemsPayload;
+          }
+
+          await createBlock(expoId, blockPayload);
+        }
+      }
+
+      if (!isEditing) {
+        setExhibitionData(prev => ({ ...prev, id: expoId }));
       }
 
       alert('Выставка сохранена и отправлена в список «Выставки»');
@@ -282,6 +476,7 @@ const ExhibitionConstructor: React.FC = () => {
         const data = await fetchExhibitionById(exhibitionId);
         setExhibitionData(prev => ({
           ...prev,
+          id: data.id || exhibitionId,
           title: data.title || '',
           description: data.description || '',
           organization: data.settings?.constructor?.organization || '',
@@ -293,13 +488,13 @@ const ExhibitionConstructor: React.FC = () => {
           blocks: (data.blocks || [])
             .sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0))
             .map((b: any, idx: number) => ({
-              id: b.id || `block-${idx}`,
-              type: b.type,
+              id: b.id || `block-${Date.now()}-${idx}`,
+              type: mapTypeFromApi(b.type, b.items),
               position: b.position ?? idx,
               content: b.content || '',
               settings: b.settings || {},
               items: (b.items || []).map((it: any, i: number) => ({
-                id: `${b.id || idx}-item-${i}`,
+                id: it.id || `${b.id || idx}-item-${i}`,
                 text: it.text,
                 image_url: it.image_key
                   ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${it.image_key}`
@@ -324,11 +519,11 @@ const ExhibitionConstructor: React.FC = () => {
 
     loadExhibition();
   }, [exhibitionId]);
-  
+
   return (
     <div className={styles.constructorWrapper}>
       <Header currentPath="/exhibits" />
-      
+
       <main className={styles.main}>
         <Sidebar
           activeTab={activeTab}
@@ -347,7 +542,7 @@ const ExhibitionConstructor: React.FC = () => {
           isSaving={isSaving}
           saveError={saveError}
         />
-        
+
         <ExhibitionPreview
           className={styles.exhibitionPreview}
           exhibitionData={exhibitionData}
@@ -361,6 +556,7 @@ const ExhibitionConstructor: React.FC = () => {
           pageBackground={pageBackground}
         />
       </main>
+
       {isNoticeOpen && (
         <div className={styles.noticeOverlay}>
           <div className={styles.noticeModal}>

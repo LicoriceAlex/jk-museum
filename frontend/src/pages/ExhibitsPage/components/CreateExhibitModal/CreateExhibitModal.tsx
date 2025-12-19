@@ -6,6 +6,7 @@ interface CreateExhibitModalProps {
   onClose: () => void;
   onSave: (exhibit: any) => void;
 }
+const organization_id = "1b0dd88a-ee50-47c0-9fe2-a762112deddf";
 
 interface FormData {
   title: string;

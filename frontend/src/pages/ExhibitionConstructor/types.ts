@@ -13,7 +13,8 @@ export type BlockType =
   | 'IMAGE_UPLOAD'
   | 'SLIDER'
   | 'PHOTO'
-  | 'CAROUSEL';
+  | 'CAROUSEL'
+  | 'VIDEO';
 
 export interface BlockItem {
   id: string;
@@ -36,6 +37,7 @@ export interface ExhibitionBlock {
     carousel_variant?: string;
     autoplay?: boolean;
     speed?: number;
+    video_url?: string;
     [key: string]: any;
   };
   position: number;
