@@ -28,7 +28,7 @@ class ExhibitBase(SQLModel):
     description: str = Field(max_length=255)
     exhibit_type: ExhibitType = Field(default=ExhibitType.other, nullable=False)
     image_key: str = Field(max_length=255, nullable=False)
-    date_template: DateTemplate = Field(
+    date_template: Optional[DateTemplate] = Field(
         default=DateTemplate.year, nullable=True
     )
     start_year: Optional[int] = Field(default=None, nullable=True)
