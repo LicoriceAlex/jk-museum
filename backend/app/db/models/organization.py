@@ -1,19 +1,16 @@
 from datetime import datetime
-from enum import Enum
-from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variable
+from backend.app.db.models.admin_action import AdminAction
+from backend.app.db.models.exhibit import Exhibit
+from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
+from backend.app.db.models.user_organization import UserOrganization
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
-if TYPE_CHECKING:
-    from backend.app.db.models.admin_action import AdminAction
-    from backend.app.db.models.exhibit import Exhibit
-    from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
-    from backend.app.db.models.user_organization import UserOrganization
 
-
-class OrgStatusEnum(str, Enum):
+class OrgStatusEnum(Variable):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
@@ -56,7 +53,7 @@ class OrganizationPublic(OrganizationBase):
     id: UUID
     status: OrgStatusEnum
     created_at: datetime
-    exhibitions: "ExhibitionsPublicWithPagination"
+    exhibitions: ExhibitionsPublicWithPagination | None = None
 
 
 class OrganizationPublicShort(OrganizationBase):

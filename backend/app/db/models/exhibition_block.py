@@ -1,8 +1,8 @@
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variable
 from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     pass
 
 
-class ExhibitionBlockTypeEnum(str, Enum):
+class ExhibitionBlockTypeEnum(Variable):
     HEADER = "HEADER"
     TEXT = "TEXT"
     QUOTE = "QUOTE"

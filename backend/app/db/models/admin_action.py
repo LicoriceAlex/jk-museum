@@ -1,8 +1,8 @@
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variable
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from backend.app.db.models.user import User
 
 
-class ActionTypeEnum(str, Enum):
+class ActionTypeEnum(Variable):
     approve_org = "approve_org"
     block_user = "block_user"
     unblock_user = "unblock_user"

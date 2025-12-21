@@ -63,8 +63,17 @@ async def get_user_or_404(session: SessionDep, user_id: uuid.UUID) -> User:
     return user
 
 
+@log_method_call
+async def get_current_admin(session: SessionDep, token: TokenDep) -> User:
+    current_user = await get_current_user(session, token)
+    if not current_user.role == RoleEnum.admin:
+        raise HTTPException(status_code=403, detail="The user doesn't have enough privileges")
+    return current_user
+
+
 UserOr404 = Annotated[User, Depends(get_user_or_404)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentAdmin = Annotated[User, Depends(get_current_admin)]
 OptionalCurrentUser = Annotated[User | None, Depends(get_optional_user)]
 
 

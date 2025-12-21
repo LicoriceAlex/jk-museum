@@ -1,8 +1,8 @@
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variable
 from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 from sqlalchemy import Column
@@ -17,18 +17,18 @@ if TYPE_CHECKING:
     from backend.app.db.models.tag import TagPublic
 
 
-class ExhibitionStatusEnum(str, Enum):
+class ExhibitionStatusEnum(Variable):
     draft = "draft"
     published = "published"
     archived = "archived"
 
 
-class CoverTypeEnum(str, Enum):
+class CoverTypeEnum(Variable):
     inside = "inside"
     outside = "outside"
 
 
-class DateTemplate(str, Enum):
+class DateTemplate(Variable):
     year: str = "year"
     decade: str = "decade"
     century: str = "century"

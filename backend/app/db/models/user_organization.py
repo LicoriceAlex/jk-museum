@@ -1,15 +1,15 @@
 import uuid
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 
+from backend.app.api.dependencies.common import Variable
 from sqlmodel import Field, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.user import UserPublic
 
 
-class UserOrganizationEnum(str, Enum):
+class UserOrganizationEnum(Variable):
     active = "active"
     left = "left"
 

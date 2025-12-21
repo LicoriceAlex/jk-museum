@@ -23,7 +23,7 @@ from backend.app.db.models.exhibition_exhibit import ExhibitionExhibitCreate
 from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 from backend.app.db.schemas import Message
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import select
 
 router = APIRouter()
 
@@ -151,14 +151,6 @@ async def read_exhibition_by_id(
     exhibition = ExhibitionPublic(**exhibition.model_dump())
     if not exhibition:
         raise HTTPException(status_code=404, detail="Exhibition not found")
-
-    # Получаем likes_count
-    likes_count = await session.execute(
-        select(func.count(UserExhibitionLike.user_id)).where(
-            UserExhibitionLike.exhibition_id == exhibition_id,
-        ),
-    )
-    likes_count = likes_count.scalar_one()
 
     # Проверяем лайк текущего пользователя
     is_liked = None
