@@ -1,5 +1,4 @@
-from enum import Enum
-
+from backend.app.api.dependencies.common import Variable
 from fastapi import Form
 from sqlmodel import Field, SQLModel
 
@@ -36,7 +35,7 @@ class FileUploadResponse(SQLModel):
     file_url: str
 
 
-class LoginType(str, Enum):
+class LoginType(Variable):
     user = "user"
     organization = "organization"
 

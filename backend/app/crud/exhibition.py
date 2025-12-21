@@ -1,3 +1,5 @@
+import uuid
+from collections.abc import Sequence
 from uuid import UUID
 
 from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
@@ -194,6 +196,26 @@ async def get_exhibitions(
     """
     query_builder = ExhibitionQueryBuilder(session, filters, sort, skip, limit, current_user_id)
     return await query_builder.execute()
+
+
+@log_method_call
+async def get_user_exhibition_likes(
+    session: AsyncSession,
+    exhibition_id: uuid.UUID,
+    current_user_id: uuid.UUID,
+) -> Sequence[UserExhibitionLike]:
+    return (
+        (
+            await session.execute(
+                select(UserExhibitionLike).where(
+                    UserExhibitionLike.exhibition_id == exhibition_id,
+                    UserExhibitionLike.user_id == current_user_id,
+                ),
+            )
+        )
+        .scalars()
+        .all()
+    )
 
 
 class ExhibitionQueryBuilder:

@@ -1,4 +1,5 @@
 from backend.app.api.routes import (
+    admin,
     exhibition_blocks,
     exhibitions,
     exhibits,
@@ -26,6 +27,7 @@ api_router.include_router(exhibits.router, tags=["exhibits"], prefix="/exhibits"
 api_router.include_router(files.router, tags=["files"], prefix="/files")
 api_router.include_router(healthcheck.router)
 api_router.include_router(exhibitions.router, tags=["exhibitions"], prefix="/exhibitions")
+api_router.include_router(admin.router, prefix="/admin")
 api_router.include_router(
     exhibition_blocks.router,
     tags=["exhibitions"],
