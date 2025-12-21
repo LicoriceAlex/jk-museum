@@ -1,45 +1,40 @@
 import uuid
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.exhibition.exhibition import ExhibitionOr404
 from backend.app.api.dependencies.exhibition.filters import FilterDep, SortDep
 from backend.app.api.dependencies.exhibits import ExhibitOr404
 from backend.app.api.dependencies.pagination import PaginationDep
-from backend.app.api.dependencies.users import CurrentUser, OptionalCurrentUser, get_current_admin_or_moderator
-from backend.app.core.config import settings
+from backend.app.api.dependencies.users import (
+    CurrentUser,
+    OptionalCurrentUser,
+    get_current_admin_or_moderator,
+)
 from backend.app.crud import exhibition as exhibition_crud
 from backend.app.crud import exhibition_exhibit as exhibition_exhibit_crud
-from backend.app.crud.exhibition_participant import get_exhibition_participants
-from backend.app.crud.exhibition_tag import get_exhibition_tags
-from backend.app.db.models import (
+from backend.app.db.models.exhibition import (
     Exhibition,
     ExhibitionCreate,
     ExhibitionPublic,
-    ExhibitionsPublic,
     ExhibitionUpdate,
-    ExhibitionExhibitCreate,
 )
+from backend.app.db.models.exhibition_exhibit import ExhibitionExhibitCreate
+from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 from backend.app.db.schemas import Message
-from fastapi import Body, status
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
-from sqlalchemy import select, func
-from backend.app.db.models import UserExhibitionLike
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func, select
 
 router = APIRouter()
 
 
-@router.get(
-    "/"
-)
+@router.get("/")
 async def read_exhibitions(
     session: SessionDep,
     pagination: PaginationDep,
     filters: FilterDep,
     sort: SortDep,
-    current_user: OptionalCurrentUser
+    current_user: OptionalCurrentUser,
 ) -> Any:
     """
     Retrieve a list of exhibitions with pagination.
@@ -50,7 +45,7 @@ async def read_exhibitions(
         limit=pagination.limit,
         filters=filters,
         sort=sort,
-        current_user_id=current_user.id if current_user else None
+        current_user_id=current_user.id if current_user else None,
     )
     return exhibitions
 
@@ -67,7 +62,7 @@ async def create_exhibition(
 ):
     exhibition = await exhibition_crud.create_exhibition(
         session=session,
-        exhibition_in=exhibition_in
+        exhibition_in=exhibition_in,
     )
     return exhibition
 
@@ -84,20 +79,18 @@ async def add_exhibit(
     Add an exhibit to an exhibition.
     """
     if not exhibit:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Exhibit not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exhibit not found")
 
     exhibition = await exhibition_crud.get_exhibition(session=session, id=exhibition_id)
     if not exhibition:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Exhibition not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exhibition not found")
 
     exhibition_exhibit = await exhibition_exhibit_crud.create_exhibition_exhibit(
         session=session,
         exhibition_exhibit_in=ExhibitionExhibitCreate(
             exhibition_id=exhibition_id,
-            exhibit_id=exhibit.id
-        )
+            exhibit_id=exhibit.id,
+        ),
     )
 
     return exhibition_exhibit
@@ -116,10 +109,7 @@ async def delete_exhibition(
     Delete an exhibition.
     """
     exhibition_to_delete = await session.get(Exhibition, exhibition.id)
-    await exhibition_crud.delete_exhibition(
-        session=session,
-        exhibition=exhibition_to_delete
-    )
+    await exhibition_crud.delete_exhibition(session=session, exhibition=exhibition_to_delete)
     return Message(message="Exhibition deleted successfully")
 
 
@@ -140,7 +130,7 @@ async def update_exhibition(
     updated_exhibition = await exhibition_crud.update_exhibition(
         session=session,
         exhibition_id=exhibition.id,
-        exhibition_in=exhibition_in
+        exhibition_in=exhibition_in,
     )
     return updated_exhibition
 
@@ -152,7 +142,7 @@ async def update_exhibition(
 async def read_exhibition_by_id(
     exhibition_id: uuid.UUID,
     session: SessionDep,
-    current_user: CurrentUser
+    current_user: CurrentUser,
 ) -> Any:
     """
     Retrieve full details of a specific exhibition, including likes_count and is_liked_by_current_user.
@@ -161,21 +151,12 @@ async def read_exhibition_by_id(
     exhibition = ExhibitionPublic(**exhibition.model_dump())
     if not exhibition:
         raise HTTPException(status_code=404, detail="Exhibition not found")
-    
-    tags = await get_exhibition_tags(
-        session=session,
-        exhibition_id=exhibition_id
-    )
-    
-    participants = await get_exhibition_participants(
-        session=session,
-        exhibition_id=exhibition_id
-    )
 
     # Получаем likes_count
     likes_count = await session.execute(
         select(func.count(UserExhibitionLike.user_id)).where(
-            UserExhibitionLike.exhibition_id == exhibition_id)
+            UserExhibitionLike.exhibition_id == exhibition_id,
+        ),
     )
     likes_count = likes_count.scalar_one()
 
@@ -185,8 +166,8 @@ async def read_exhibition_by_id(
         like = await session.execute(
             select(UserExhibitionLike).where(
                 UserExhibitionLike.exhibition_id == exhibition_id,
-                UserExhibitionLike.user_id == current_user.id
-            )
+                UserExhibitionLike.user_id == current_user.id,
+            ),
         )
         is_liked = like.scalar_one_or_none() is not None
 

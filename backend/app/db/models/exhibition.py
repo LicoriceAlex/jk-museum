@@ -1,20 +1,20 @@
-from sqlmodel import Field, Relationship, SQLModel
-from uuid import UUID, uuid4
-from enum import Enum
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Column
-from typing import TYPE_CHECKING, List, Optional
+from enum import Enum
+from typing import TYPE_CHECKING
+from uuid import UUID, uuid4
 
-from .tag import TagPublic
-from .exhibition_tag import ExhibitionTag
 from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field, Relationship, SQLModel
 
+from .exhibition_tag import ExhibitionTag
+from .tag import TagPublic
 
 if TYPE_CHECKING:
-    from backend.app.db.models.tag import TagPublic
     from backend.app.db.models.exhibition_tag import ExhibitionTag
+    from backend.app.db.models.tag import TagPublic
 
 
 class ExhibitionStatusEnum(str, Enum):
@@ -36,12 +36,10 @@ class DateTemplate(str, Enum):
 
 class ExhibitionBase(SQLModel):
     title: str = Field(max_length=255, nullable=False)
-    description: Optional[str] = Field(default=None, nullable=True)
+    description: str | None = Field(default=None, nullable=True)
     cover_image_key: str = Field(max_length=255, nullable=False)
-    cover_type: Optional[CoverTypeEnum] = Field(default=CoverTypeEnum.outside)
-    status: ExhibitionStatusEnum = Field(
-        default=ExhibitionStatusEnum.draft, nullable=False
-    )
+    cover_type: CoverTypeEnum | None = Field(default=CoverTypeEnum.outside)
+    status: ExhibitionStatusEnum = Field(default=ExhibitionStatusEnum.draft, nullable=False)
     rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 
@@ -51,43 +49,40 @@ class Exhibition(ExhibitionBase, table=True):
 
     id: UUID = Field(primary_key=True, nullable=False, default_factory=uuid4)
 
-    organization_id: Optional[UUID] = Field(
-        foreign_key="organizations.id", nullable=True)
+    organization_id: UUID | None = Field(foreign_key="organizations.id", nullable=True)
 
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
-        sa_column_kwargs={"onupdate": datetime.now}
+        sa_column_kwargs={"onupdate": datetime.now},
     )
 
-    exhibition_tags: List["ExhibitionTag"] = Relationship(
-        back_populates="exhibition")
-    participants: List["ExhibitionParticipant"] = Relationship(
-        back_populates="exhibition")
+    exhibition_tags: list["ExhibitionTag"] = Relationship(back_populates="exhibition")
+    participants: list["ExhibitionParticipant"] = Relationship(back_populates="exhibition")
 
 
 class ExhibitionCreate(ExhibitionBase):
-    organization_id: Optional[UUID] = None
+    organization_id: UUID | None = None
     participants: list[str]
     tags: list[str]
 
 
 class ExhibitionUpdate(ExhibitionBase):
-    organization_id: Optional[UUID] = None
-    tags: Optional[list[str]] = None
-    participants: Optional[list[str]] = None
+    organization_id: UUID | None = None
+    tags: list[str] | None = None
+    participants: list[str] | None = None
 
 
 class ExhibitionPublic(ExhibitionBase):
     id: UUID
-    organization_id: Optional[UUID]
+    organization_id: UUID | None
     created_at: datetime
     updated_at: datetime
     participants: list["ExhibitionParticipant"]
     tags: list["TagPublic"]
-    is_liked_by_current_user: Optional[bool] = None
-    likes_count: Optional[int] = Field(default=0)
-    blocks: Optional[list[ExhibitionBlockPublic]] = None
+    is_liked_by_current_user: bool | None = None
+    likes_count: int | None = Field(default=0)
+    blocks: list[ExhibitionBlockPublic] | None = None
 
 
 class ExhibitionsPublic(SQLModel):

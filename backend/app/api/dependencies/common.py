@@ -1,16 +1,13 @@
 from contextlib import asynccontextmanager
 from typing import Annotated
 
+from backend.app.core.config import settings
+from backend.app.db.database import async_engine
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.config import settings
-from backend.app.db.database import async_engine
-
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/login/access-token")
 
 
 async def get_db():

@@ -1,12 +1,18 @@
 from datetime import timedelta
 from typing import Annotated, Any
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import EmailStr
-from sqlalchemy import select
 
+import backend.app.crud.user as user_crud
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.core import security
 from backend.app.core.config import settings
+from backend.app.crud import organization as organization_crud
+from backend.app.db.models.user import User
+from backend.app.db.schemas import (
+    Message,
+    NewPassword,
+    OAuth2PasswordRequestFormWithLoginType,
+    Token,
+)
 from backend.app.utils.emails import (
     generate_reset_password_email,
     send_email,
@@ -15,16 +21,9 @@ from backend.app.utils.security import (
     generate_password_reset_token,
     verify_password_reset_token,
 )
-import backend.app.crud.user as user_crud
-from backend.app.crud import organization as organization_crud
-from backend.app.db.models import User
-from backend.app.db.schemas import (
-    OAuth2PasswordRequestFormWithLoginType,
-    Token,
-    Message,
-    NewPassword
-)
-
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import EmailStr
+from sqlalchemy import select
 
 router = APIRouter(tags=["login"])
 
@@ -32,10 +31,7 @@ router = APIRouter(tags=["login"])
 @router.post("/access-token")
 async def login_access_token(
     session: SessionDep,
-    form_data: Annotated[
-        OAuth2PasswordRequestFormWithLoginType,
-        Depends()
-    ]
+    form_data: Annotated[OAuth2PasswordRequestFormWithLoginType, Depends()],
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
@@ -44,31 +40,23 @@ async def login_access_token(
         entity = await user_crud.authenticate(
             session=session,
             email=form_data.username,
-            password=form_data.password
+            password=form_data.password,
         )
     elif form_data.login_type == "organization":
         entity = await organization_crud.authenticate(
             session=session,
             email=form_data.username,
-            password=form_data.password
+            password=form_data.password,
         )
     else:
         raise HTTPException(status_code=400, detail="Invalid login type")
 
     if not entity:
-        raise HTTPException(
-            status_code=400,
-            detail="Incorrect email or password"
-        )
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
 
-    access_token_expires = timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
-        access_token=security.create_access_token(
-            entity.id,
-            expires_delta=access_token_expires
-        )
+        access_token=security.create_access_token(entity.id, expires_delta=access_token_expires),
     )
 
 
@@ -86,7 +74,9 @@ async def recover_password(email: EmailStr, session: SessionDep) -> Message:
         )
     password_reset_token = await generate_password_reset_token(email=email)
     email_data = await generate_reset_password_email(
-        email_to=user.email, email=email, token=password_reset_token
+        email_to=user.email,
+        email=email,
+        token=password_reset_token,
     )
     await send_email(
         email_to=user.email,
@@ -94,14 +84,12 @@ async def recover_password(email: EmailStr, session: SessionDep) -> Message:
         html_content=email_data.html_content,
     )
     return Message(
-        message="Ссылка на восстановление пароля была отправлена вам на почту! Не забудьте проверить папку спам :)"
+        message="Ссылка на восстановление пароля была отправлена вам на почту! Не забудьте проверить папку спам :)",
     )
 
 
 @router.post("/reset-password/")
-async def reset_password(
-    session: SessionDep, body: NewPassword
-) -> Message:
+async def reset_password(session: SessionDep, body: NewPassword) -> Message:
     """
     Reset password
     """
@@ -111,9 +99,7 @@ async def reset_password(
         raise HTTPException(status_code=400, detail="Invalid token")
 
     statement = select(User).where(User.email == user_email)
-    user = (
-        await session.execute(statement)
-    ).scalar_one_or_none()
+    user = (await session.execute(statement)).scalar_one_or_none()
 
     if not user:
         raise HTTPException(
@@ -133,9 +119,7 @@ async def reset_password(
 @router.post(
     "/check-reset-password-token/{token}",
 )
-async def check_reset_password_token(
-    token: str
-) -> Any:
+async def check_reset_password_token(token: str) -> Any:
     """
     Check token
     """

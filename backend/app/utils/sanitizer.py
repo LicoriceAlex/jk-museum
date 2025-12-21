@@ -7,5 +7,6 @@ ALLOWED_ATTRIBUTES = {
     "a": ["href", "title", "target"],
 }
 
+
 def sanitize_html(html: str) -> str:
     return bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)

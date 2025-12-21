@@ -1,16 +1,15 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
-
 if TYPE_CHECKING:
-    from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
     from backend.app.db.models.admin_action import AdminAction
     from backend.app.db.models.exhibit import Exhibit
+    from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
     from backend.app.db.models.user_organization import UserOrganization
 
 
@@ -23,9 +22,9 @@ class OrgStatusEnum(str, Enum):
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
-    contact_info: Optional[str] = None
-    description: Optional[str] = Field(default=None, nullable=True)
-    logo_key: Optional[str] = Field(default=None, nullable=True)
+    contact_info: str | None = None
+    description: str | None = Field(default=None, nullable=True)
+    logo_key: str | None = Field(default=None, nullable=True)
 
 
 class Organization(OrganizationBase, table=True):
@@ -35,26 +34,22 @@ class Organization(OrganizationBase, table=True):
 
     created_at: datetime = Field(default_factory=datetime.now)
 
-    admin_actions: List["AdminAction"] = Relationship(
+    admin_actions: list["AdminAction"] = Relationship(
         back_populates="target_org",
-        sa_relationship_kwargs={
-            "foreign_keys": "AdminAction.target_org_id"
-        }
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.target_org_id"},
     )
-    exhibits: Optional[List["Exhibit"]] = Relationship(
-        back_populates="organization"
-    )
+    exhibits: list["Exhibit"] | None = Relationship(back_populates="organization")
 
 
 class OrganizationCreate(OrganizationBase):
-    position: Optional[str] = None
+    position: str | None = None
 
 
 class OrganizationUpdate(SQLModel):
-    name: Optional[str] = None
-    contact_info: Optional[str] = None
-    description: Optional[str] = None
-    logo_key: Optional[str] = None
+    name: str | None = None
+    contact_info: str | None = None
+    description: str | None = None
+    logo_key: str | None = None
 
 
 class OrganizationPublic(OrganizationBase):
@@ -68,7 +63,7 @@ class OrganizationPublicShort(OrganizationBase):
     id: UUID
     status: OrgStatusEnum
     created_at: datetime
-    logo_key: Optional[str] = None
+    logo_key: str | None = None
 
 
 class OrganizationResponse(SQLModel):
@@ -81,7 +76,7 @@ class MyOrganization(SQLModel):
 
 
 class OrganizationsPublic(SQLModel):
-    data: List["OrganizationPublicShort"]
+    data: list["OrganizationPublicShort"]
     count: int
 
 

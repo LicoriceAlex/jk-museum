@@ -1,10 +1,10 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
+
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
-
 
 if TYPE_CHECKING:
     from backend.app.db.models.admin_action import AdminAction
@@ -25,8 +25,8 @@ class UserBase(SQLModel):
     email: EmailStr = Field(max_length=255)
     name: str = Field(max_length=255)
     surname: str = Field(max_length=255)
-    profile_image_key: Optional[str] = Field(default=None, nullable=True)
-    about_me: Optional[str] = Field(default=None, nullable=True)
+    profile_image_key: str | None = Field(default=None, nullable=True)
+    about_me: str | None = Field(default=None, nullable=True)
     status: StatusEnum = Field(default=StatusEnum.active)
     role: RoleEnum = Field(default=RoleEnum.user)
     patronymic: str = Field(max_length=255)
@@ -34,21 +34,17 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     __tablename__ = "users"
-    id: Optional[UUID] = Field(primary_key=True, default_factory=uuid4)
-    hashed_password: Optional[str] = Field(default=None, nullable=True)
-    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+    id: UUID | None = Field(primary_key=True, default_factory=uuid4)
+    hashed_password: str | None = Field(default=None, nullable=True)
+    created_at: datetime | None = Field(default_factory=datetime.now)
 
-    admin_actions: List["AdminAction"] = Relationship(
+    admin_actions: list["AdminAction"] = Relationship(
         back_populates="admin",
-        sa_relationship_kwargs={
-            "foreign_keys": "AdminAction.admin_id"
-        }
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.admin_id"},
     )
-    targeted_actions: List["AdminAction"] = Relationship(
+    targeted_actions: list["AdminAction"] = Relationship(
         back_populates="target_user",
-        sa_relationship_kwargs={
-            "foreign_keys": "AdminAction.target_user_id"
-        }
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.target_user_id"},
     )
 
 
@@ -62,26 +58,25 @@ class UserRegister(SQLModel):
     name: str
     surname: str
     patronymic: str
-    role: Optional[RoleEnum] = Field(default=RoleEnum.user)
+    role: RoleEnum | None = Field(default=RoleEnum.user)
 
 
 class UserUpdate(SQLModel):
-    name: Optional[str]
-    surname: Optional[str]
-    profile_image_key: Optional[str]
-    about_me: Optional[str]
+    name: str | None
+    surname: str | None
+    profile_image_key: str | None
+    about_me: str | None
 
 
 class UserUpdateMe(UserBase):
-    email: Optional[EmailStr] = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
 
 
 class UserPublic(UserBase):
     id: UUID
-    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+    created_at: datetime | None = Field(default_factory=datetime.now)
 
 
 class UsersPublic(SQLModel):
-    data: List[UserPublic]
+    data: list[UserPublic]
     count: int
-    
