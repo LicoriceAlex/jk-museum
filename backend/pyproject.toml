@@ -30,4 +30,36 @@ dependencies = [
     "boto3>=1.37.1",
     "bleach>=6.2.0",
     "loguru>=0.7.3",
+    "lintrunner>=0.12.7",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "PL", "RUF", "COM", "SLF", "TID"]
+ignore = [
+    "E501",
+    "PLR2004",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "PLR0913",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.black]
+line-length = 100
+
+[tool.black.format]
+line-length = 100

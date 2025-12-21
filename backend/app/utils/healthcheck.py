@@ -1,5 +1,4 @@
 import asyncpg
-
 from backend.app.core.config import settings
 
 
@@ -10,7 +9,7 @@ async def check_postgres():
             password=settings.POSTGRES_PASSWORD,
             database=settings.POSTGRES_DB,
             host=settings.POSTGRES_SERVER,
-            port=settings.POSTGRES_PORT
+            port=settings.POSTGRES_PORT,
         )
         await conn.close()
         return True
