@@ -7,7 +7,7 @@ export const API_BASE = (() => {
   }
   return "";
 })();
-const ORG_ID = "4616a8e4-b322-4606-bf75-38bf95e01beb";
+const ORG_ID = "1b0dd88a-ee50-47c0-9fe2-a762112deddf";
 
 export type CreateExhibitionRequest = {
   title: string;
