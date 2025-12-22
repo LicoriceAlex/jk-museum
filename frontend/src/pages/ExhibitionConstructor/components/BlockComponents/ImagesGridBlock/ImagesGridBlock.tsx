@@ -4,19 +4,21 @@ import { BlockItem } from '../../../types';
 import ImageBlock from '../ImageBlock/ImageBlock';
 
 interface ImagesGridBlockProps {
-  blockId: string;
+  blockId?: string;
   items: BlockItem[];
   columns: number;
-  onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
-  onImageRemove: (blockId: string, itemIndex: number) => void;
+  onImageUpload?: (blockId: string, itemIndex: number, file: File) => void;
+  onImageRemove?: (blockId: string, itemIndex: number) => void;
+  readOnly?: boolean;
 }
 
 const ImagesGridBlock: React.FC<ImagesGridBlockProps> = ({
-  blockId,
+  blockId = '',
   items,
   columns,
   onImageUpload,
   onImageRemove,
+  readOnly = false,
 }) => {
   return (
     <div
@@ -27,10 +29,11 @@ const ImagesGridBlock: React.FC<ImagesGridBlockProps> = ({
         <div key={item.id} className={styles.cell}>
           <ImageBlock
             imageUrl={item.image_url}
-            onUpload={(file) => onImageUpload(blockId, index, file)}
-            onRemove={() => onImageRemove(blockId, index)}
+            onUpload={readOnly ? undefined : (file) => onImageUpload?.(blockId, index, file)}
+            onRemove={readOnly ? undefined : () => onImageRemove?.(blockId, index)}
             containerStyle={{ height: 280 }}
             imageStyle={{ height: '100%', objectFit: 'cover' }}
+            readOnly={readOnly}
           />
         </div>
       ))}

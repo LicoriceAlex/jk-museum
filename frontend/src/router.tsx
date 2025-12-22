@@ -11,6 +11,7 @@ import ExhibitionConstructor
 import MainPage from './pages/MainPage/MainPage.tsx';
 import Profile from './pages/Profile/Profile.tsx';
 import ExhibitionsPage from './pages/ExhibitionsPage/ExhibitionsPage.tsx';
+import ExhibitionView from './pages/ExhibitionView/ExhibitionView.tsx';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
     ]
   },
   { path: 'exhibitions', element: <ExhibitionsPage /> },
+  { path: 'exhibitions/:id', element: <ExhibitionView /> },
   {path: 'exhibits', element: <ExhibitsPage/>},
   {path: '', element: <MainPage/>},
   {path: 'profile', element: <Profile/>},

@@ -3,10 +3,12 @@ import styles from './TextBlock.module.scss';
 
 interface EditableTextProps {
   initialContent: string;
-  onContentChange: (newContent: string) => void;
+  onContentChange?: (newContent: string) => void;
   style?: React.CSSProperties;
   placeholder?: string;
   isHeader?: boolean;
+  readOnly?: boolean;
+  content?: string;
 }
 
 const TextBlock: React.FC<EditableTextProps> = ({
@@ -15,27 +17,46 @@ const TextBlock: React.FC<EditableTextProps> = ({
                                                      style,
                                                      placeholder = 'Нажмите, чтобы добавить текст...',
                                                      isHeader = false,
+                                                     readOnly = false,
+                                                     content,
                                                    }) => {
-  const [content, setContent] = useState(initialContent);
+  const [localContent, setLocalContent] = useState(content || initialContent);
   const divRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
-    setContent(initialContent);
-    if (divRef.current && divRef.current.textContent !== initialContent) {
-      divRef.current.textContent = initialContent;
+    const newContent = content !== undefined ? content : initialContent;
+    setLocalContent(newContent);
+    if (divRef.current && divRef.current.textContent !== newContent) {
+      divRef.current.textContent = newContent;
     }
-  }, [initialContent]);
+  }, [content, initialContent]);
   
   const handleInput = () => {
-    if (divRef.current) {
-      setContent(divRef.current.textContent || '');
+    if (divRef.current && !readOnly) {
+      setLocalContent(divRef.current.textContent || '');
     }
   };
   
   const handleBlur = () => {
-    onContentChange(content);
+    if (!readOnly && onContentChange) {
+      onContentChange(localContent);
+    }
   };
   
   const Tag = isHeader ? 'h2' : 'p';
+  const displayContent = content !== undefined ? content : localContent;
+  
+  if (readOnly) {
+    return (
+      <Tag
+        ref={divRef}
+        className={`${styles.Text} ${styles.readOnly}`}
+        style={style}
+      >
+        {displayContent || ''}
+      </Tag>
+    );
+  }
   
   return (
     <Tag
@@ -48,7 +69,7 @@ const TextBlock: React.FC<EditableTextProps> = ({
       style={style}
       data-placeholder={placeholder}
     >
-      {initialContent || ''}
+      {displayContent || ''}
     </Tag>
   );
 };

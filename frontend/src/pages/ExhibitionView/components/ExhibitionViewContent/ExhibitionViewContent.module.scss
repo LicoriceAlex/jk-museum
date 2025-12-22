@@ -1,13 +1,11 @@
-.previewArea {
+.exhibitionView {
   padding: 79px 40px 46px 171px;
   box-sizing: border-box;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #F5EBE0;
+  background-color: var(--color-background);
   color: var(--color-text);
-
 
   h1, h2, h3, h4, h5, h6, p, span, div {
     margin-bottom: 1em;
@@ -16,6 +14,10 @@
     overflow-wrap: break-word;
     white-space: normal;
   }
+
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
 }
 
 .headerContent {
@@ -23,6 +25,7 @@
   gap: 80px;
   align-items: flex-start;
   margin-bottom: 40px;
+  margin-top: 112px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -57,7 +60,6 @@
   max-width: 757px;
   font-family: 'Cormorant SC', serif;
 
-
   h1 {
     margin-bottom: 0.5em;
     font-family: 'Cormorant Infant', serif;
@@ -68,7 +70,6 @@
     font-family: var(--font-body);
     color: var(--color-text);
   }
-
 
   p:last-of-type, h1:last-of-type {
     margin-bottom: 0;
@@ -87,3 +88,17 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.blocksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+

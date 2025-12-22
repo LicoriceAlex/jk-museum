@@ -2,7 +2,7 @@ $primary-app-color: #007bff;
 $secondary-app-color: #6c757d;
 $header-bg-color: #343a40;
 $header-text-color: #ffffff;
-$app-bg-color: #f5ebe0;
+$app-bg-color: var(--color-mainpage);
 
 .constructorWrapper {
   display: flex;
@@ -23,7 +23,7 @@ $app-bg-color: #f5ebe0;
   flex-grow: 1;
   overflow-y: auto;
   padding: 20px;
-  background-color: $app-bg-color;
+  background-color: var(--color-mainpage);
 }
 
 .noticeOverlay {

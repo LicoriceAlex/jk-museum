@@ -6,17 +6,22 @@ import styles from './QuoteBlock.module.scss';
 interface QuoteBlockProps {
   content: string;
   settings?: ExhibitionBlock['settings'];
-  onUpdate: (updatedData: Partial<ExhibitionBlock>) => void;
+  onUpdate?: (updatedData: Partial<ExhibitionBlock>) => void;
   style?: React.CSSProperties;
+  readOnly?: boolean;
 }
 
-const QuoteBlock: React.FC<QuoteBlockProps> = ({ content, settings, onUpdate, style }) => {
+const QuoteBlock: React.FC<QuoteBlockProps> = ({ content, settings, onUpdate, style, readOnly = false }) => {
   const handleQuoteChange = (newContent: string) => {
-    onUpdate({ content: newContent });
+    if (!readOnly && onUpdate) {
+      onUpdate({ content: newContent });
+    }
   };
 
   const handleAuthorChange = (newAuthor: string) => {
-    onUpdate({ settings: { ...settings, author: newAuthor } });
+    if (!readOnly && onUpdate) {
+      onUpdate({ settings: { ...settings, author: newAuthor } });
+    }
   };
 
   const baseSize =
@@ -47,18 +52,22 @@ const QuoteBlock: React.FC<QuoteBlockProps> = ({ content, settings, onUpdate, st
       <div className={styles.quoteContentWrapper}>
         <TextBlock
           initialContent={content}
-          onContentChange={handleQuoteChange}
+          content={content}
+          onContentChange={readOnly ? undefined : handleQuoteChange}
           style={quoteTextStyle}
           placeholder="Введите цитату"
+          readOnly={readOnly}
         />
 
         <hr className={styles.quoteSeparator} />
 
         <TextBlock
           initialContent={(settings as any)?.author || ''}
-          onContentChange={handleAuthorChange}
+          content={(settings as any)?.author || ''}
+          onContentChange={readOnly ? undefined : handleAuthorChange}
           style={authorStyle}
           placeholder="Введите автора цитаты"
+          readOnly={readOnly}
         />
       </div>
 

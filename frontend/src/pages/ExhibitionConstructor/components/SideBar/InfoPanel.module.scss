@@ -180,17 +180,25 @@
 .saveButton {
   width: 100%;
   padding: 12px 20px;
-  background-color: #1F3B2C;
-  color: #FFFFFF;
+  background-color: #344E41;
+  color: var(--color-mainpage);
   border: none;
   border-radius: 8px;
+  font-family: var(--font-main);
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   cursor: pointer;
   margin-top: 30px;
 
   &:hover {
-    background-color: darken(#1F3B2C, 10%);
+    background-color: #253A30;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 

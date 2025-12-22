@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './ExhibitionCard.module.scss';
 
 export interface Exhibition {
@@ -19,6 +20,8 @@ interface ExhibitionCardProps {
 }
 
 const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition }) => {
+  const navigate = useNavigate();
+
   const formatMonthDay = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
@@ -33,12 +36,26 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition }) => {
       year: 'numeric'
     });
   };
+
+  const handleViewClick = () => {
+    navigate(`/exhibitions/${exhibition.id}`);
+  };
+
+  // Обработка image_key: если это уже URL, используем его, иначе формируем URL через API
+  const getImageUrl = () => {
+    if (!exhibition.image_key) return '/placeholder-museum.jpg';
+    if (exhibition.image_key.startsWith('http://') || exhibition.image_key.startsWith('https://')) {
+      return exhibition.image_key;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    return `${apiUrl.replace(/\/+$/, '')}/api/v1/files/${exhibition.image_key}`;
+  };
   
   return (
     <div className={styles.card}>
       <div className={styles.imageContainer}>
         <img
-          src={exhibition.image_key || '/placeholder-museum.jpg'}
+          src={getImageUrl()}
           alt={exhibition.title}
           className={styles.image}
         />
@@ -50,7 +67,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition }) => {
         <h3 className={styles.title}>{exhibition.title}</h3>
         <div className={styles.lineAndViewButton}>
           <div className={styles.line}></div>
-          <button className={styles.viewButton}>
+          <button className={styles.viewButton} onClick={handleViewClick}>
             Просмотр
           </button>
         </div>

@@ -25,20 +25,15 @@ const makeItem = (): BlockItem => ({ id: `item-${Date.now()}-${Math.random().toS
 const makeItems = (count: number): BlockItem[] => Array.from({ length: count }, () => makeItem());
 
 const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
-  // категории
   const [openCategory, setOpenCategory] = useState<CategoryKey>('photo');
-  // вложенные выдвижные пункты внутри "Фото и видео"
   const [openPhotoMenu, setOpenPhotoMenu] = useState<PhotoMenuKey | null>('photo');
 
-  // Фото (1..4)
   const [photoCount, setPhotoCount] = useState<number>(1);
 
-  // Фото и текст (ограничение: 2Т+1Ф или 1Т+2Ф или 1Т+1Ф)
-  const [ptTextCount, setPtTextCount] = useState<number>(1); // 1..2
-  const [ptPhotoCount, setPtPhotoCount] = useState<number>(1); // 1..2
+  const [ptTextCount, setPtTextCount] = useState<number>(1);
+  const [ptPhotoCount, setPtPhotoCount] = useState<number>(1);
 
-  // Карусель
-  const [carouselCount, setCarouselCount] = useState<number>(4); // 1..4
+  const [carouselCount, setCarouselCount] = useState<number>(4); 
   const [carouselVariant, setCarouselVariant] = useState<'v1' | 'v2'>('v2');
 
   const toggleCategory = (key: CategoryKey) => setOpenCategory((prev) => (prev === key ? key : key));
@@ -48,7 +43,6 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
   const addPhotoBlock = () => {
     const count = clamp(photoCount, 1, 4);
 
-    // маппинг под твои типы (они у тебя уже есть и работали):
     const typeByCount: Record<number, BlockType> = {
       1: 'IMAGE_UPLOAD',
       2: 'IMAGES_2',
@@ -60,7 +54,6 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
   };
 
   const addPhotoTextBlock = () => {
-    // 2 текста + 1 фото
     if (ptTextCount === 2 && ptPhotoCount === 1) {
       addBlock('LAYOUT_TEXT_IMG_TEXT', {
         items: makeItems(1),
@@ -69,7 +62,6 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
       return;
     }
 
-    // 1 текст + 2 фото
     if (ptTextCount === 1 && ptPhotoCount === 2) {
       addBlock('LAYOUT_IMG_TEXT_IMG', {
         items: makeItems(2),
@@ -78,7 +70,6 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
       return;
     }
 
-    // 1 текст + 1 фото
     addBlock('IMAGE_TEXT_LEFT', {
       items: makeItems(1),
       content: '',
@@ -94,23 +85,20 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
     }
   };
 
-  // --- handlers для ограничений "Фото и текст"
   const decPtText = () => setPtTextCount(1);
   const incPtText = () => {
-    // если ставим 2 текста — фото строго 1
     setPtTextCount(2);
     setPtPhotoCount(1);
   };
 
   const decPtPhoto = () => setPtPhotoCount(1);
   const incPtPhoto = () => {
-    // если ставим 2 фото — текст строго 1
     setPtPhotoCount(2);
     setPtTextCount(1);
   };
 
-  const canIncPtText = ptTextCount === 1 && ptPhotoCount === 1; // 2 текста только при 1 фото
-  const canIncPtPhoto = ptPhotoCount === 1 && ptTextCount === 1; // 2 фото только при 1 тексте
+  const canIncPtText = ptTextCount === 1 && ptPhotoCount === 1;
+  const canIncPtPhoto = ptPhotoCount === 1 && ptTextCount === 1;
 
   return (
     <div className={styles.root}>

@@ -4,11 +4,12 @@ import ImageUploadBlock from '../ImageUploadBlock/ImageUploadBlock';
 
 interface ImageBlockProps {
   imageUrl?: string;
-  onUpload: (file: File) => void;
-  onRemove: () => void;
+  onUpload?: (file: File) => void;
+  onRemove?: () => void;
   style?: React.CSSProperties;
   containerStyle?: React.CSSProperties;
   imageStyle?: React.CSSProperties;
+  readOnly?: boolean;
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({
@@ -18,6 +19,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({
   style,
   containerStyle,
   imageStyle,
+  readOnly = false,
 }) => {
   return (
     <div className={styles.imageBlock} style={{ ...style, ...containerStyle }}>
@@ -29,14 +31,18 @@ const ImageBlock: React.FC<ImageBlockProps> = ({
             className={styles.image}
             style={imageStyle}
           />
-          <button className={styles.removeButton} onClick={onRemove}>
-            ×
-          </button>
+          {!readOnly && onRemove && (
+            <button className={styles.removeButton} onClick={onRemove}>
+              ×
+            </button>
+          )}
         </div>
       ) : (
-        <div className={styles.uploadContainer} style={{ height: '100%' }}>
-          <ImageUploadBlock onUpload={onUpload} />
-        </div>
+        !readOnly && onUpload && (
+          <div className={styles.uploadContainer} style={{ height: '100%' }}>
+            <ImageUploadBlock onUpload={onUpload} />
+          </div>
+        )
       )}
     </div>
   );

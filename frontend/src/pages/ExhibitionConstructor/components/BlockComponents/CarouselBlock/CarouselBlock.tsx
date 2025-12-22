@@ -14,6 +14,7 @@ interface CarouselBlockProps {
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  readOnly?: boolean;
 }
 
 const CarouselBlock: React.FC<CarouselBlockProps> = ({
@@ -27,6 +28,7 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
                                                        onImageUpload,
                                                        onImageRemove,
                                                        updateBlock,
+                                                       readOnly = false,
                                                      }) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const slidesRef = useRef<HTMLDivElement>(null);
@@ -49,13 +51,15 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
   };
   
   const handleRemoveSlide = (itemIndexToRemove: number) => {
-    const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
-    updateBlock(blockId, { items: updatedItems });
-    
-    if (currentSlideIndex >= updatedItems.length && updatedItems.length > 0) {
-      setCurrentSlideIndex(updatedItems.length - 1);
-    } else if (updatedItems.length === 0) {
-      setCurrentSlideIndex(0);
+    if (!readOnly) {
+      const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
+      updateBlock(blockId, { items: updatedItems });
+      
+      if (currentSlideIndex >= updatedItems.length && updatedItems.length > 0) {
+        setCurrentSlideIndex(updatedItems.length - 1);
+      } else if (updatedItems.length === 0) {
+        setCurrentSlideIndex(0);
+      }
     }
   };
   
@@ -98,8 +102,9 @@ const CarouselBlock: React.FC<CarouselBlockProps> = ({
                   <div className={styles.imageWrapper}>
                     <ImageBlock
                       imageUrl={item.image_url}
-                      onUpload={(file: File) => onImageUpload(blockId, index, file)}
-                      onRemove={() => handleRemoveSlide(index)}
+                      onUpload={readOnly ? undefined : (file: File) => onImageUpload(blockId, index, file)}
+                      onRemove={readOnly ? undefined : () => handleRemoveSlide(index)}
+                      readOnly={readOnly}
                     />
                   </div>
                   {/* {type === 'current' && item.text && (

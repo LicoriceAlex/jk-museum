@@ -12,6 +12,7 @@ interface Props {
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
+  readOnly?: boolean;
 }
 
 const LayoutImgTextImgBlock: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const LayoutImgTextImgBlock: React.FC<Props> = ({
   updateBlock,
   onImageUpload,
   onImageRemove,
+  readOnly = false,
 }) => {
   const leftUrl = items?.[0]?.image_url;
   const rightUrl = items?.[1]?.image_url;
@@ -31,29 +33,33 @@ const LayoutImgTextImgBlock: React.FC<Props> = ({
       <div className={styles.cell}>
         <ImageBlock
           imageUrl={leftUrl}
-          onUpload={(file) => onImageUpload(blockId, 0, file)}
-          onRemove={() => onImageRemove(blockId, 0)}
+          onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 0, file)}
+          onRemove={readOnly ? undefined : () => onImageRemove(blockId, 0)}
           containerStyle={{ height: 280 }}
           imageStyle={{ height: '100%', objectFit: 'cover' }}
+          readOnly={readOnly}
         />
       </div>
 
       <div className={`${styles.cell} ${styles.textCell}`}>
         <TextBlock
           initialContent={content}
-          onContentChange={(newContent) => updateBlock(blockId, { content: newContent })}
+          content={content}
+          onContentChange={readOnly ? undefined : (newContent) => updateBlock(blockId, { content: newContent })}
           style={style}
           placeholder="Нажмите, чтобы добавить описание"
+          readOnly={readOnly}
         />
       </div>
 
       <div className={styles.cell}>
         <ImageBlock
           imageUrl={rightUrl}
-          onUpload={(file) => onImageUpload(blockId, 1, file)}
-          onRemove={() => onImageRemove(blockId, 1)}
+          onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 1, file)}
+          onRemove={readOnly ? undefined : () => onImageRemove(blockId, 1)}
           containerStyle={{ height: 280 }}
           imageStyle={{ height: '100%', objectFit: 'cover' }}
+          readOnly={readOnly}
         />
       </div>
     </div>

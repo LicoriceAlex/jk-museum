@@ -6,7 +6,7 @@ interface CreateExhibitModalProps {
   onClose: () => void;
   onSave: (exhibit: any) => void;
 }
-const organization_id = "1b0dd88a-ee50-47c0-9fe2-a762112deddf";
+const organization_id = "4616a8e4-b322-4606-bf75-38bf95e01beb";
 
 interface FormData {
   title: string;
@@ -18,6 +18,7 @@ interface FormData {
   description: string;
   image: File | null;
   imagePreviewUrl: string | null;
+  organization_id: string;
 }
 
 /** Маска + ограничение: ДД.ММ, день ≤ 31, месяц ≤ 12 */
@@ -82,6 +83,7 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
     description: '',
     image: null,
     imagePreviewUrl: null,
+    organization_id: "4616a8e4-b322-4606-bf75-38bf95e01beb",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -174,7 +176,7 @@ const CreateExhibitModal: React.FC<CreateExhibitModalProps> = ({ onClose, onSave
         author: formData.author?.trim() || 'Неизвестен',
         description: formData.description || formData.short_description || '',
         exhibit_type: formData.exhibit_type || 'другое',
-        // organization_id будет автоматически получен из текущего пользователя на бэкенде
+        organization_id: "4616a8e4-b322-4606-bf75-38bf95e01beb",
       };
 
       // Добавляем creation_date только если дата валидна

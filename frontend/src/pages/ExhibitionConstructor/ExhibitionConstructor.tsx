@@ -26,7 +26,6 @@ import {
 import { useParams } from 'react-router-dom';
 
 const mapTypeToApi = (type: string) => {
-  // На бэке нет IMAGE_UPLOAD -> отправляем как CAROUSEL
   if (type === 'IMAGE_UPLOAD') return 'CAROUSEL';
   return type;
 };
@@ -59,7 +58,7 @@ const ExhibitionConstructor: React.FC = () => {
   const [colorSettings, setColorSettings] = useState<ColorSettings>({
     primary: '#1F3B2C',
     secondary: '#E8E5DE',
-    background: '#FFFFFF',
+    background: '#F5EBE0',
     text: '#333333'
   });
 
@@ -341,8 +340,6 @@ const ExhibitionConstructor: React.FC = () => {
 
             await updateBlockOnServer(expoId, block.id, updatePayload);
           } else {
-            // Раньше пропускали IMAGE_UPLOAD без изображения.
-            // Теперь IMAGE_UPLOAD уходит как CAROUSEL, и карусель с 0 картинок тоже лучше не создавать.
             const isImageLike =
               block.type === 'IMAGE_UPLOAD' ||
               block.type === 'IMAGES_2' ||
@@ -522,7 +519,7 @@ const ExhibitionConstructor: React.FC = () => {
 
   return (
     <div className={styles.constructorWrapper}>
-      <Header currentPath="/exhibits" />
+      <Header currentPath="/constructor" className="constructorHeader" />
 
       <main className={styles.main}>
         <Sidebar

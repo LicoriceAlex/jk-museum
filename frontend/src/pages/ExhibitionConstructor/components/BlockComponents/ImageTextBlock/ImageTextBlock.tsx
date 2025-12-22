@@ -14,14 +14,17 @@ interface ImageTextBlockProps {
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  readOnly?: boolean;
 }
 
 const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
                                                          blockId, content, imageUrl, imagePosition, style,
-                                                         onImageUpload, onImageRemove, updateBlock
+                                                         onImageUpload, onImageRemove, updateBlock, readOnly = false
                                                        }) => {
   const handleTextChange = (newContent: string) => {
-    updateBlock(blockId, { content: newContent });
+    if (!readOnly) {
+      updateBlock(blockId, { content: newContent });
+    }
   };
   
   return (
@@ -30,25 +33,29 @@ const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
         <div className={styles.imageContainer}>
           <ImageBlock
             imageUrl={imageUrl}
-            onUpload={(file) => onImageUpload(blockId, 0, file)}
-            onRemove={() => onImageRemove(blockId, 0)}
+            onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 0, file)}
+            onRemove={readOnly ? undefined : () => onImageRemove(blockId, 0)}
+            readOnly={readOnly}
           />
         </div>
       )}
       <div className={styles.textContainer}>
         <TextBlock
           initialContent={content}
-          onContentChange={handleTextChange}
+          content={content}
+          onContentChange={readOnly ? undefined : handleTextChange}
           style={style}
-          placeholder="Нажмите, чтобы добавить текст"
+          placeholder="ВВЕДИТЕ ТЕКСТ"
+          readOnly={readOnly}
         />
       </div>
       {imagePosition === 'right' && (
         <div className={styles.imageContainer}>
           <ImageBlock
             imageUrl={imageUrl}
-            onUpload={(file) => onImageUpload(blockId, 0, file)}
-            onRemove={() => onImageRemove(blockId, 0)}
+            onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 0, file)}
+            onRemove={readOnly ? undefined : () => onImageRemove(blockId, 0)}
+            readOnly={readOnly}
           />
         </div>
       )}

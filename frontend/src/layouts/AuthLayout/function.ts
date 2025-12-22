@@ -166,6 +166,8 @@ export function buildProfileHandlers(params: {
   setIsEditing: Dispatch<SetStateAction<boolean>>;
   setProfile: Dispatch<SetStateAction<UserProfile>>;
   setEditedProfile: Dispatch<SetStateAction<UserProfile>>;
+  onSave?: (profileData: UserProfile) => Promise<void>;
+  onAvatarChange?: (file: File) => Promise<string>;
 }): ProfileHandlers {
   const {
     isEditing,
@@ -174,6 +176,8 @@ export function buildProfileHandlers(params: {
     setIsEditing,
     setProfile,
     setEditedProfile,
+    onSave,
+    onAvatarChange,
   } = params;
 
   const handleEdit = () => {
@@ -181,9 +185,18 @@ export function buildProfileHandlers(params: {
     setEditedProfile(profile);
   };
 
-  const handleSave = () => {
-    setProfile(editedProfile);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      if (onSave) {
+        await onSave(editedProfile);
+      } else {
+        setProfile(editedProfile);
+      }
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Ошибка при сохранении профиля:", error);
+      // Можно добавить обработку ошибок здесь
+    }
   };
 
   const handleCancel = () => {
@@ -209,8 +222,22 @@ export function buildProfileHandlers(params: {
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const dataUrl = await readFileAsDataURL(file);
-    setEditedProfile(prev => ({ ...prev, avatar: dataUrl }));
+    
+    if (onAvatarChange) {
+      try {
+        const avatarUrl = await onAvatarChange(file);
+        setEditedProfile(prev => ({ ...prev, avatar: avatarUrl }));
+      } catch (error) {
+        console.error("Ошибка при загрузке аватара:", error);
+        // В случае ошибки все равно показываем превью локально
+        const dataUrl = await readFileAsDataURL(file);
+        setEditedProfile(prev => ({ ...prev, avatar: dataUrl }));
+      }
+    } else {
+      // Fallback: используем data URL для превью
+      const dataUrl = await readFileAsDataURL(file);
+      setEditedProfile(prev => ({ ...prev, avatar: dataUrl }));
+    }
   };
 
   return {

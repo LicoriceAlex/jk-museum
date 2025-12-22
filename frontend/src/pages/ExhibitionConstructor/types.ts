@@ -14,7 +14,6 @@ export type BlockType =
   | 'SLIDER'
   | 'PHOTO'
   | 'CAROUSEL'
-  | 'VIDEO';
 
 export interface BlockItem {
   id: string;
@@ -35,28 +34,20 @@ export interface ExhibitionBlock {
     text_left_html?: string;
     text_right_html?: string;
     carousel_variant?: string;
-    autoplay?: boolean;
-    speed?: number;
-    video_url?: string;
     [key: string]: any;
   };
   position: number;
 }
 
 export interface ExhibitionData {
-  /** появится после первого сохранения (создания на бэке) */
   id?: string;
   title: string;
   description: string;
-  /** UI-поле (строкой). На бэк сейчас кладём в settings.constructor */
   organization: string;
-  /** UI-поле (строкой). На бэк мапим в participants (сплит по запятым/новой строке) */
   team: string;
   tags: string[];
   blocks: ExhibitionBlock[];
-  /** URL для превью (например: `${VITE_API_URL}/api/v1/files/${coverKey}`) */
   cover?: string;
-  /** object_key из /files/upload — то, что нужно бэку как cover_image_key */
   coverKey?: string;
 }
 
@@ -81,6 +72,6 @@ export type PageBackgroundMode = 'color' | 'image';
 
 export interface PageBackgroundSettings {
   mode: PageBackgroundMode;
-  imageUrl?: string; // data-url или обычный URL
+  imageUrl?: string;
 }
 

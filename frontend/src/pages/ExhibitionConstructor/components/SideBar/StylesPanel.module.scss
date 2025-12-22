@@ -104,13 +104,21 @@ $accent-color: #d4a373;
   background-color: transparent;
   border: none;
   padding: 8px 0;
-  color: $text-color-dark;
-  font-size: 0.9rem;
+  color: #344E41;
+  font-family: var(--font-main);
+  font-size: 14.4px;
+  font-weight: 400;
   cursor: pointer;
   margin-top: 8px;
+  width: 100%;
 
   &:hover {
     text-decoration: underline;
+  }
+
+  .arrow {
+    font-size: 16px;
+    line-height: 1;
   }
 }
 
@@ -270,16 +278,25 @@ $accent-color: #d4a373;
   margin-top: 26px;
   align-self: flex-end;
   width: 150px;
-  background-color: $primary-color;
-  color: #fff;
+  background-color: #344E41;
+  color: var(--color-mainpage);
   border: none;
-  border-radius: 4px;
-  padding: 10px 14px;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: var(--font-main);
   font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   cursor: pointer;
 
   &:hover {
-    filter: brightness(0.95);
+    background-color: #253A30;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 

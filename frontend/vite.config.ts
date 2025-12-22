@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: API_URL,
           changeOrigin: true,
-          // если есть вебсокеты на /api/ws — раскомментируй:
+          // если есть вебсокеты на /api/ws:
           // ws: true
         }
       },

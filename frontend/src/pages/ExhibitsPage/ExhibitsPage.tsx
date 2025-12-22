@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/layout/Header/Header.tsx";
 import ExhibitsList from "./components/ExhibitsList/ExhibitsList.tsx";
 import CreateExhibitModal from "./components/CreateExhibitModal/CreateExhibitModal.tsx";
@@ -6,6 +6,7 @@ import styles from "./ExhibitsPage.module.scss";
 import { useExhibitsPage } from "../../layouts/AuthLayout/function.ts";
 
 const ExhibitsPage: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     isCreateModalOpen,
     exhibitsListRef,
@@ -42,11 +43,13 @@ const ExhibitsPage: React.FC = () => {
                 type="text"
                 placeholder="Поиск"
                 className={styles.searchInput}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
 
-          <ExhibitsList onSaveExhibit={handleSaveExhibit} ref={exhibitsListRef} />
+          <ExhibitsList onSaveExhibit={handleSaveExhibit} ref={exhibitsListRef} searchTerm={searchTerm} />
 
           <div className={styles.addButtonContainer}>
             <button className={styles.addButton} onClick={handleOpenCreateModal}>

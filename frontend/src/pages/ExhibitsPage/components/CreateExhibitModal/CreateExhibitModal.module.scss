@@ -9,8 +9,8 @@
 
 .modal {
   background: var(--color-exhibitspage2);
-  width: 1088px;
-  border-radius: 12px;
+  width: 56.67vw;
+  border-radius: 0.63vw;
   overflow: auto;
   position: relative;
   max-height: 90vh;
@@ -19,10 +19,10 @@
 
   & > form {
     display: grid;
-    grid-template-columns: 400px 1fr;
-    gap: 80px;
+    grid-template-columns: 20.83vw 1fr;
+    gap: 4.17vw;
 
-    padding: 48px 56px;
+    padding: 2.5vw 2.92vw;
   }
 }
 
@@ -45,9 +45,9 @@
 
 .imageUploadArea {
   background: var(--color-text2);
-  height: 592px;
-  width: 448px;
-  min-width: 330px;
+  height: 30.83vw;
+  width: 23.33vw;
+  min-width: 17.19vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,12 +66,12 @@
 .imageUploadLabel {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: var(--color-text4);
+  gap: 0.63vw;
+  color: var(--color-mainpage);
   cursor: pointer;
   font-family: var(--font-main);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.73vw;
   line-height: 1.2;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -95,20 +95,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0.83vw;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.31vw;
 }
 
 .formLabel {
   color: var(--color-text2);
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.73vw;
   line-height: 1.2;
   letter-spacing: 0.08em;
 }
@@ -117,21 +117,25 @@
 .formTextarea,
 .formSelect {
   width: 100%;
-  padding: 8px 0 10px;
-  font-size: 16px;
+  padding: 0.42vw 0 0.52vw;
+  font-family: var(--font-secondary);
+  font-size: 0.83vw;
+  font-weight: 400;
+  line-height: 1.5;
   border: none;
   border-bottom: 1px solid var(--color-pagedown);
   background: transparent;
-  color: var(--color-exibitcard6);
+  color: #1A2620;
   resize: none;
 
   &::placeholder {
     color: var(--color-placeholder);
+    font-family: var(--font-secondary);
   }
 
   &:focus {
     outline: none;
-    border-bottom: 2px solid var(--color-exibitcard6);
+    border-bottom: 2px solid #1A2620;
   }
 }
 
@@ -143,11 +147,12 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  padding-right: 32px;
+  padding-right: 1.67vw;
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%231A2620' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0 center;
+  background-size: 1.04vw 1.04vw;
 }
 
 /* ===== Дата: ДД.ММ + год ===== */
@@ -155,7 +160,7 @@
 .dateField {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0.83vw;
 }
 
 .dateDM {
@@ -164,13 +169,13 @@
 
 .yearBox {
   position: relative;
-  width: 150px;
-  flex: 0 0 150px;
+  width: 7.81vw;
+  flex: 0 0 7.81vw;
 }
 
 .yearInput {
-  padding-left: 10px;
-  padding-right: 72px;
+  padding-left: 0.52vw;
+  padding-right: 3.75vw;
   text-align: left;
 }
 
@@ -178,10 +183,10 @@
 .yearBox.hasYear::after {
   content: 'г.';
   position: absolute;
-  right: 24px;
+  right: 1.25vw;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 0.73vw;
   line-height: 1;
   letter-spacing: 0.06em;
   color: var(--color-text2);
@@ -194,8 +199,8 @@
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  width: 1.04vw;
+  height: 1.04vw;
   color: var(--color-exibitcard6);
   pointer-events: none;
 }
@@ -205,7 +210,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 72px;
+  width: 3.75vw;
   height: 100%;
   z-index: 2;
   cursor: pointer;
@@ -226,41 +231,54 @@
 .yearSelectOverlay option {
   color: initial !important;
   -webkit-text-fill-color: initial !important;
-  font-size: 14px !important;
+  font-size: 0.73vw !important;
 }
 
 .submitButtonWrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
+  margin-top: 0.42vw;
 }
 
 .submitButton {
-  background: var(--color-exibitcard6);
-  color: var(--color-text4);
-  padding: 0.80vw 1.45vw;
+  background: #344E41;
+  color: var(--color-mainpage);
+  padding: 0.83vw 1.25vw;
   border: none;
-  border-radius: 0.29vw;
-  font-size: 16px;
-  font-weight: 500;
+  border-radius: 0.21vw;
+  font-family: var(--font-main);
+  font-size: 0.83vw;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0px;
   cursor: pointer;
   transition: filter 0.15s ease, transform 0.05s ease;
 
   &:hover {
     filter: brightness(1.04);
-    background: var(--color-text2);
+    background: #344E41;
   }
 
   &:active {
     transform: translateY(1px);
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 @media (max-width: 960px) {
+  .modal {
+    width: 90vw;
+    max-width: 56.67vw;
+  }
+
   .modal > form {
     grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 24px;
+    gap: 1.25vw;
+    padding: 1.25vw;
   }
 
   .imageUploadArea {

@@ -21,6 +21,7 @@ interface LayoutTextImgTextBlockProps {
 
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
   style?: React.CSSProperties;
+  readOnly?: boolean;
 }
 
 const LayoutTextImgTextBlock: React.FC<LayoutTextImgTextBlockProps> = ({
@@ -32,31 +33,38 @@ const LayoutTextImgTextBlock: React.FC<LayoutTextImgTextBlockProps> = ({
   onImageRemove,
   updateBlock,
   style,
+  readOnly = false,
 }) => {
   const updateSettings = (patch: Partial<ExhibitionBlock['settings']>) => {
-    updateBlock(blockId, {
-      settings: {
-        ...(patch as any),
-      },
-    });
+    if (!readOnly) {
+      updateBlock(blockId, {
+        settings: {
+          ...(patch as any),
+        },
+      });
+    }
   };
 
   const handleLeftTextChange = (value: string) => {
-    updateBlock(blockId, {
-      settings: {
-        text_left_html: value,
-        text_right_html: rightText,
-      },
-    });
+    if (!readOnly) {
+      updateBlock(blockId, {
+        settings: {
+          text_left_html: value,
+          text_right_html: rightText,
+        },
+      });
+    }
   };
 
   const handleRightTextChange = (value: string) => {
-    updateBlock(blockId, {
-      settings: {
-        text_left_html: leftText,
-        text_right_html: value,
-      },
-    });
+    if (!readOnly) {
+      updateBlock(blockId, {
+        settings: {
+          text_left_html: leftText,
+          text_right_html: value,
+        },
+      });
+    }
   };
 
   return (
@@ -64,26 +72,31 @@ const LayoutTextImgTextBlock: React.FC<LayoutTextImgTextBlockProps> = ({
       <div className={styles.textLeft}>
         <TextBlock
           initialContent={leftText || ''}
-          onContentChange={handleLeftTextChange}
+          content={leftText || ''}
+          onContentChange={readOnly ? undefined : handleLeftTextChange}
           style={style}
           placeholder="Введите текст..."
+          readOnly={readOnly}
         />
       </div>
 
       <div className={styles.imageCenter}>
         <ImageBlock
           imageUrl={imageUrl}
-          onUpload={(file: File) => onImageUpload(blockId, 0, file)}
-          onRemove={() => onImageRemove(blockId, 0)}
+          onUpload={readOnly ? undefined : (file: File) => onImageUpload(blockId, 0, file)}
+          onRemove={readOnly ? undefined : () => onImageRemove(blockId, 0)}
+          readOnly={readOnly}
         />
       </div>
 
       <div className={styles.textRight}>
         <TextBlock
           initialContent={rightText || ''}
-          onContentChange={handleRightTextChange}
+          content={rightText || ''}
+          onContentChange={readOnly ? undefined : handleRightTextChange}
           style={style}
           placeholder="Введите текст..."
+          readOnly={readOnly}
         />
       </div>
     </div>

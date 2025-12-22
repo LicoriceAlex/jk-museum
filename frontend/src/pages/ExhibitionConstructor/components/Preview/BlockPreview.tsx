@@ -70,7 +70,13 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
   const content = (() => {
     switch (block.type) {
       case 'HEADER':
-        return <HeaderBlock content={block.content || ''} style={headerStyle} />;
+        return (
+          <HeaderBlock
+            content={block.content || ''}
+            style={headerStyle}
+            onContentChange={(newContent) => updateBlock(block.id, { content: newContent })}
+          />
+        );
 
       case 'TEXT':
         return (

@@ -7,7 +7,7 @@
 .card {
   background-color: var(--color-exhibitspage2);
   overflow: hidden;
-  height: 16,66vw;
+  height: 16.66vw;
   position: relative;
   transition: transform 0.3s ease;
 
@@ -56,14 +56,14 @@
   text-overflow: ellipsis;
   font-family: var(--font-main);
   font-weight: 600;
-  font-size: 24px;
+  font-size: 1.25vw;
   line-height: 120%;
   letter-spacing: 0;
 
 }
 
 .viewButtonOverlay {
-  margin-top: 8px;
+  margin-top: 0.42vw;
   background: none;
   border: none;
   color: var(--color-exibitcard6);
@@ -72,7 +72,7 @@
   position: relative;
   font-family: var(--font-main);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 0.94vw;
   line-height: 120%;
   letter-spacing: 0;
 
@@ -81,7 +81,7 @@
     content: '';
     display: inline-block;
     width: 1.04vw;
-    height: 1px;
+    height: 0.05vw;
     background-color: var(--color-exibitcard6);
     margin-right: 0.41vw;
     vertical-align: middle;
