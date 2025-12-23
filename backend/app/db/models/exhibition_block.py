@@ -1,15 +1,11 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, SQLModel
-
-if TYPE_CHECKING:
-    pass
 
 
 class ExhibitionBlockTypeEnum(str, Enum):
