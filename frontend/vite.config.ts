@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const API_URL = env.PUBLIC_API_URL 
+  const API_URL = (env.PUBLIC_API_URL || env.VITE_API_URL || 'http://89.208.14.227:8000').replace(/\/+$/, '')
 
   return {
     plugins: [react()],
@@ -29,9 +29,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: API_URL,
           changeOrigin: true,
-          // если бэкенд НЕ имеет префикса /api — уберём его на прокси:
-          rewrite: (p) => p.replace(/^\/api/, ''),
-          // если есть вебсокеты на /api/ws — раскомментируй:
+          // если есть вебсокеты на /api/ws:
           // ws: true
         }
       },

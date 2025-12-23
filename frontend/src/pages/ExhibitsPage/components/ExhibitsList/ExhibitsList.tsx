@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import ExhibitCard from '../ExhibitCard/ExhibitCard';
 import ExhibitModal from '../ExhibitsModal/ExhibitModal';
 import CreateExhibitModal from '../CreateExhibitModal/CreateExhibitModal';
+import { getToken } from '../../../../utils/serviceToken';
 import styles from './ExhibitsList.module.scss';
 
 interface Exhibit {
@@ -19,11 +20,12 @@ interface Exhibit {
 
 interface ExhibitsListProps {
   onSaveExhibit?: (newExhibit: any) => void;
+  searchTerm?: string;
 }
 const ExhibitsList:React.FC = forwardRef<
   { fetchExhibits: () => Promise<void> },
   ExhibitsListProps
->(({ onSaveExhibit }, ref) => {
+>(({ onSaveExhibit, searchTerm = "" }, ref) => {
   const [exhibits, setExhibits] = useState<Exhibit[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +103,39 @@ const ExhibitsList:React.FC = forwardRef<
       console.error('Error after updating exhibit:', err);
     }
   };
+
+  const handleDeleteExhibit = async (exhibitId: string) => {
+    try {
+      const token = getToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/exhibits/${exhibitId}`, {
+        method: 'DELETE',
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error('Не удалось удалить экспонат');
+      }
+
+      // Удаляем экспонат из списка
+      setExhibits(prevExhibits => prevExhibits.filter(ex => ex.id !== exhibitId));
+      
+      // Закрываем модальное окно, если удаляемый экспонат был открыт
+      if (selectedExhibit?.id === exhibitId) {
+        handleCloseModal();
+      }
+    } catch (err) {
+      console.error('Error deleting exhibit:', err);
+      alert(err instanceof Error ? err.message : 'Произошла ошибка при удалении экспоната');
+    }
+  };
   
   return (
     <div className={styles.exhibitsList}>
@@ -124,26 +159,48 @@ const ExhibitsList:React.FC = forwardRef<
         <div className={styles.empty}>
           <p>Здесь пока ничего нет</p>
         </div>
-      ) : (
-        <div className={styles.grid}>
-          {exhibits.map(exhibit => (
-            <div key={exhibit.id} className={styles.item}>
-              <ExhibitCard
-                id={exhibit.id}
-                title={exhibit.title}
-                imageUrl={`${import.meta.env.VITE_API_URL}/api/v1/files/${exhibit.image_key}`}
-                onViewClick={handleViewClick}
-              />
+      ) : (() => {
+        const filteredExhibits = exhibits.filter(exhibit => {
+          if (!searchTerm.trim()) return true;
+          const searchLower = searchTerm.toLowerCase();
+          return (
+            exhibit.title?.toLowerCase().includes(searchLower) ||
+            exhibit.author?.toLowerCase().includes(searchLower) ||
+            exhibit.description?.toLowerCase().includes(searchLower) ||
+            exhibit.exhibit_type?.toLowerCase().includes(searchLower)
+          );
+        });
+
+        if (filteredExhibits.length === 0 && searchTerm.trim()) {
+          return (
+            <div className={styles.empty}>
+              <p>Ничего не найдено по запросу "{searchTerm}"</p>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        }
+
+        return (
+          <div className={styles.grid}>
+            {filteredExhibits.map(exhibit => (
+              <div key={exhibit.id} className={styles.item}>
+                <ExhibitCard
+                  id={exhibit.id}
+                  title={exhibit.title}
+                  imageUrl={`${import.meta.env.VITE_API_URL}/api/v1/files/${exhibit.image_key}`}
+                  onViewClick={handleViewClick}
+                />
+              </div>
+            ))}
+          </div>
+        );
+      })()}
       
       {isModalOpen && selectedExhibit && (
         <ExhibitModal
           exhibit={selectedExhibit}
           onClose={handleCloseModal}
           onUpdate={handleUpdateExhibit}
+          onDelete={handleDeleteExhibit}
         />
       )}
       

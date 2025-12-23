@@ -15,6 +15,12 @@
   background-color: #2D4739;
   padding: 24px 195px;
   font-family: Cormorant Infant, serif;
+  border-bottom: 1px solid #344E41;
+}
+
+.header.constructorHeader {
+  background-color: var(--color-mainpage);
+  border-bottom: 1px solid #344E41;
 }
 
 .homeHeader {
@@ -48,6 +54,14 @@
   margin-right: 10px;
 }
 
+.header.constructorHeader .logoIcon {
+  filter: brightness(0) saturate(100%) invert(19%) sepia(12%) saturate(1200%) hue-rotate(100deg) brightness(0.9);
+}
+
+.header.constructorHeader .logoIcon path {
+  fill: #344E41;
+}
+
 .logoText {
   color: #F2F1E9;
   font-family: Cormorant Infant, serif;
@@ -55,6 +69,10 @@
   font-size: 40px;
   line-height: 120%;
   letter-spacing: 0;
+}
+
+.header.constructorHeader .logoText {
+  color: #344E41;
 }
 
 .navigation {
@@ -97,6 +115,10 @@
     position: relative;
 
   }
+}
+
+.header.constructorHeader .navLink {
+  color: #344E41;
 }
 
 @media (max-width: 768px) {

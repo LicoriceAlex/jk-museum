@@ -72,7 +72,6 @@ async def get_exhibition(session: AsyncSession, **filters) -> ExhibitionPublic |
         blocks=blocks,
     )
 
-
 @log_method_call
 async def create_exhibition(
     session: AsyncSession,

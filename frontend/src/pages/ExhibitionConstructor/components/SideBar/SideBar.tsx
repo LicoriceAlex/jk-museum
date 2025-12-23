@@ -1,12 +1,17 @@
 import React from 'react';
 import styles from './SideBar.module.scss';
+
 import {
   PanelTab,
   ExhibitionData,
   FontSettings,
   ColorSettings,
-  BlockType, BlockItem
+  BlockType,
+  BlockItem,
+  ExhibitionBlock,
+  PageBackgroundSettings,
 } from '../../types';
+
 import InfoPanel from './InfoPanel';
 import StylesPanel from './StylesPanel';
 import BlocksPanel from './BlocksPanel';
@@ -21,27 +26,52 @@ import blocksActiveIcon from '../../../../assets/icons/blocks-active.svg';
 interface SidebarProps {
   activeTab: PanelTab;
   setActiveTab: (tab: PanelTab) => void;
+
   exhibitionData: ExhibitionData;
   updateExhibitionData: (data: Partial<ExhibitionData>) => void;
+
   fontSettings: FontSettings;
   setFontSettings: (settings: FontSettings) => void;
+
   colorSettings: ColorSettings;
   setColorSettings: (settings: ColorSettings) => void;
-  addBlock: (type: BlockType, initialData?: { items?: BlockItem[]; content?: string; }) => void;
+
+  addBlock: (
+    type: BlockType,
+    initialData?: {
+      items?: BlockItem[];
+      content?: string;
+      settings?: ExhibitionBlock['settings'];
+    }
+  ) => void;
+
   onFileUpload: (file: File) => Promise<{ url: string }>;
+
+  pageBackground: PageBackgroundSettings;
+  setPageBackground: (settings: PageBackgroundSettings) => void;
+
+  onSave: () => void;
+  isSaving: boolean;
+  saveError: string | null;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-                                           activeTab,
-                                           setActiveTab,
-                                           exhibitionData,
-                                           updateExhibitionData,
-                                           fontSettings,
-                                           setFontSettings,
-                                           colorSettings,
-                                           setColorSettings,
-                                           addBlock, onFileUpload
-                                         }) => {
+                activeTab,
+                setActiveTab,
+                exhibitionData,
+                updateExhibitionData,
+                fontSettings,
+                setFontSettings,
+                colorSettings,
+                setColorSettings,
+                addBlock,
+                onFileUpload,
+                pageBackground,
+                setPageBackground,
+                onSave,
+                isSaving,
+                saveError,
+}) => {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebar__tabs}>
@@ -56,6 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             className={styles.sidebar__tab__icon}
           />
         </button>
+
         <button
           className={`${styles.sidebar__tab} ${activeTab === 'styles' ? styles['sidebar__tab--active'] : ''}`}
           onClick={() => setActiveTab('styles')}
@@ -67,6 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             className={styles.sidebar__tab__icon}
           />
         </button>
+
         <button
           className={`${styles.sidebar__tab} ${activeTab === 'blocks' ? styles['sidebar__tab--active'] : ''}`}
           onClick={() => setActiveTab('blocks')}
@@ -79,27 +111,31 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </button>
       </div>
-      
+
       <div className={styles.sidebar__content}>
         {activeTab === 'info' && (
           <InfoPanel
             exhibitionData={exhibitionData}
             updateExhibitionData={updateExhibitionData}
-            onCoverImageUpload={() => {}}/>
+            onCoverImageUpload={() => {}}
+            onSave={onSave}
+            isSaving={isSaving}
+            saveError={saveError}
+          />
         )}
-        
+
         {activeTab === 'styles' && (
           <StylesPanel
             fontSettings={fontSettings}
             setFontSettings={setFontSettings}
             colorSettings={colorSettings}
             setColorSettings={setColorSettings}
+            pageBackground={pageBackground}
+            setPageBackground={setPageBackground}
           />
         )}
-        
-        {activeTab === 'blocks' && (
-          <BlocksPanel addBlock={addBlock} onFileUpload={onFileUpload} />
-        )}
+
+        {activeTab === 'blocks' && <BlocksPanel addBlock={addBlock} onFileUpload={onFileUpload} />}
       </div>
     </aside>
   );

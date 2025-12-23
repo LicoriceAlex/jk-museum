@@ -60,7 +60,6 @@ async def add_organization_member(
     )
     if current_organization_user:
         raise ValueError("User is already a member of the organization.")
-
     organization_user = await user_organization_crud.create_organization_user(
         session=session,
         user_organization_in=UserOrganizationCreate(

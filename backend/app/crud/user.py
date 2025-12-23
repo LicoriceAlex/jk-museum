@@ -34,7 +34,6 @@ async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
     await session.refresh(user)
     return user
 
-
 @log_method_call
 async def get_users(
     session: AsyncSession,

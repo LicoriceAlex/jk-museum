@@ -2,8 +2,7 @@
 
 from uuid import UUID
 
-from backend.app.db.models.exhibition import Exhibition, ExhibitionStatusEnum
-from backend.app.db.models.exhibition_block import (
+from backend.app.db.models import (
     ExhibitionBlock,
     ExhibitionBlockCreate,
     ExhibitionBlockItemCreate,

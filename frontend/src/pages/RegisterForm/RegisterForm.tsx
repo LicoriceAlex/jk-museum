@@ -1,40 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./RegisterForm.module.scss";
-import { register } from "../../features/auth/services/authService.ts";
+import { useRegisterForm } from "../../layouts/AuthLayout/function.ts";
 
 export const RegisterForm: React.FC = () => {
-  const navigate = useNavigate();
-  
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password !== repeatPassword) {
-      setError("Пароли не совпадают");
-      return;
-    }
-    
-    const result = await register({
-      email,
-      password,
-      name: "Имя",
-      surname: "Фамилия",
-      patronymic: "Отчество",
-      role: "user",
-    });
-    
-    if (result?.error) {
-      setError("Ошибка при регистрации");
-    } else {
-      navigate("/auth/login");
-    }
-  };
-  
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    repeatPassword,
+    setRepeatPassword,
+    error,
+    handleSubmit,
+  } = useRegisterForm();
+
   return (
     <div className={styles["register-form"]}>
       <h1 className={styles["register-form__title"]}>Регистрация</h1>

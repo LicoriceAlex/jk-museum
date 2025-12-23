@@ -2,26 +2,59 @@
   outline: none;
   cursor: text;
   min-height: 1.2em;
-  padding: 5px;
-  border: 1px dashed transparent;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid #344E41;
+  background: transparent;
   transition: border-color 0.2s ease-in-out;
   white-space: pre-wrap;
-  font-family: 'Cormorant Infant', serif;
-  font-weight: 600;
-  font-size: 52px;
-  line-height: 110%;
-  letter-spacing: 0;
+  font-family: 'Cormorant SC', serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 0px;
+  color: #344E41;
+  width: 100%;
+  text-align: center;
+  direction: ltr !important;
 
 
   &:empty:before {
     content: attr(data-placeholder);
-    color: #888;
+    color: #344E41;
     cursor: text;
     pointer-events: none;
   }
 
   &:focus {
-    border-color: #ccc;
-    background-color: #f9f9f9;
+    border-bottom-color: #253A30;
+    background-color: transparent;
   }
+
+  // Убираем границы в режиме просмотра (readOnly)
+  &.readOnly {
+    border-bottom: none;
+    cursor: default;
+  }
+
+  // Специальные стили для заголовков в режиме просмотра
+  &.readOnly[data-header="true"],
+  &.readOnly h2,
+  &.readOnly h1,
+  &.readOnly h3,
+  &.readOnly h4,
+  &.readOnly h5,
+  &.readOnly h6 {
+    border-bottom: none;
+  }
+}
+
+// Убираем границы для заголовков в режиме readOnly
+h2.readOnly,
+h1.readOnly,
+h3.readOnly,
+h4.readOnly,
+h5.readOnly,
+h6.readOnly {
+  border-bottom: none;
 }

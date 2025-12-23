@@ -1,90 +1,50 @@
-/* components/BlockComponents/QuoteBlock/QuoteBlock.module.scss */
-
 .quoteBlock {
   position: relative;
-  padding: 40px 60px; /* Adjust padding as needed for spacing from edges */
-  background-color: #f5eedc; /* Light background color from the screenshot */
+  padding: 40px 60px;
+  background-color: #f5eedc;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 250px; /* Adjust minimum height as needed */
-  text-align: center; // Center text by default
-  font-family: 'Georgia', serif; // A classic font often used for quotes
-  color: #333; // Darker text color
+  min-height: 250px;
+  text-align: center;
+  overflow: hidden; // ✅ чтобы кавычки не вылезали за фон
 }
 
 .quoteMarkTopLeft,
 .quoteMarkBottomRight {
   position: absolute;
-  font-size: 8em; /* Large quote marks */
-  color: #a0a09a; /* Slightly desaturated color for quote marks */
-  line-height: 0; // Remove extra line height
-  height: 0; // Remove extra height
-  z-index: 1; // Ensure quote marks are behind text if needed, or adjust
+  font-size: 6em; // ✅ чуть меньше и стабильнее
+  color: #a0a09a;
+  line-height: 1; // ✅ НЕ 0, иначе глиф рисуется “мимо” блока
+  z-index: 1;
+  pointer-events: none;
 }
 
 .quoteMarkTopLeft {
-  top: 15px; // Adjust position
-  left: 20px; // Adjust position
-  transform: rotate(180deg); // Rotate for top-left
+  top: 16px;
+  left: 18px;
+  transform: rotate(180deg);
 }
 
 .quoteMarkBottomRight {
-  bottom: 15px; // Adjust position
-  right: 20px; // Adjust position
+  bottom: 16px;
+  right: 18px;
 }
 
 .quoteContentWrapper {
   position: relative;
-  z-index: 2; // Ensure content is above quote marks
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center; // Center the content
-  width: 100%; // Take full width of parent
-  max-width: 800px; // Limit width for better readability
-}
-
-.quoteText {
-  font-size: 1.8em; // Larger font size for the quote
-  line-height: 1.4;
-  margin-bottom: 20px; // Space below the quote
-  color: #555; // Slightly lighter color for quote text
-  font-style: italic; // Italicize the quote
-
-  // Placeholder styling
-  &::placeholder {
-    color: #a0a09a; // Color of placeholder text
-    font-style: italic;
-  }
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 .quoteSeparator {
   border: none;
-  border-top: 1px solid #a0a09a; /* Thin line, similar color to quote marks */
-  width: 60%; /* Adjust width of the line */
-  margin: 20px 0; // Space above and below the line
-}
-
-.quoteAuthor {
-  font-size: 1.2em; // Smaller font size for the author
-  font-weight: normal; // Reset font-weight if inherited
-  color: #777; // Lighter color for author text
-  margin-top: 20px; // Space above the author
-  text-align: right; // Align author to the right as in screenshot
-  width: 100%; // Take full width
-
-  // Placeholder styling
-  &::placeholder {
-    color: #a0a09a; // Color of placeholder text
-  }
-}
-
-// Ensure TextBlock styling adapts for editable content
-:global(.textBlockEditable) {
-  // Styles for when the TextBlock is editable, e.g., to remove underlines or borders
-  &:focus {
-    outline: none;
-    border: none;
-  }
+  border-top: 1px solid #a0a09a;
+  width: 60%;
+  margin: 20px 0;
 }

@@ -1,343 +1,311 @@
-/* components/BlocksPanel/BlocksPanel.module.scss */
-
-.blocksPanel {
-  border-radius: 8px;
-  width: 100%; // Фиксированная ширина панели, можно изменить
+.root {
+  width: 100%;
   box-sizing: border-box;
-  font-family: 'PT Serif', serif; // Пример шрифта
-  color: #333333; // Цвет текста
+  padding-top: 6px;
+  font-family: var(--font-main);
+  color: var(--color-text2);
 }
 
-.blocksPanel__categories {
+.category {
+  margin-bottom: 18px;
+}
+
+.categoryHeader {
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-family: var(--font-secondary);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #344E41;
+  padding: 10px 6px;
+
+  &:hover {
+    background: rgba(31, 59, 44, 0.04);
+    border-radius: 8px;
+  }
+}
+
+.categoryBody {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+  padding: 6px 0 0;
 }
 
-.blocksPanel__category {
-  border-radius: 6px;
+.menuItem {
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.blocksPanel__categoryHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.menuHeader {
   width: 100%;
-  padding: 12px 15px;
   border: none;
+  background-color: var(--color-desfont);
   cursor: pointer;
-  color: #1F3B2C; // Темный цвет для заголовка
-  transition: background-color 0.2s ease;
-  background-color: transparent;
-  font-family: 'Cormorant Infant', serif;
-  font-weight: 600;
-  font-size: 40px;
-  line-height: 120%;
-  letter-spacing: 0;
 
-
-  &:hover {
-    background-color: darken(#EAE6DF, 3%);
-  }
-
-  svg {
-    transition: transform 0.2s ease;
-  }
-}
-
-.blocksPanel__options {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
+  align-items: center;
+  justify-content: space-between;
 
-  font-weight: 600;
+  padding: 12px 12px;
+  font-family: var(--font-main);
   font-size: 24px;
+  font-weight: 600;
   line-height: 120%;
   letter-spacing: 0px;
+  color: #344E41;
 
-  box-shadow: none;
-
-  span {
-    font-family: 'Cormorant SC', serif;
-    font-weight: 600;
+  &:hover {
+    background-color: var(--color-desfont);
+    opacity: 0.9;
   }
 }
 
-.blocksPanel__option {
+.menuIcon {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(31, 59, 44, 0.28);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-desfont);
+
+  font-size: 16px;
+}
+
+.menuBody {
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--color-desfont3);
+}
+
+.row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  background-color: #F5EBE0;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95em;
-  color: #333333;
-  transition: background-color 0.2s ease;
-  font-family: 'Open Sans', sans-serif; // Пример шрифта для опций
-  height: 72px;
-  box-shadow: none !important;
-
-  &:hover {
-    background-color: #F0F0F0;
-  }
-
-  svg {
-    width: 32px;
-    height: 32px;
-    stroke: #1F3B2C; // Цвет иконок
-    fill: none;
-  }
+  overflow: hidden;
 }
 
-.activeOption {
-  // Это класс, который добавляется при выборе опции
-  background-color: #D3D3D3; // Пример: измените цвет активной опции
-  // Если здесь есть box-shadow, удалите его или установите none:
-  box-shadow: none !important; // !important может потребоваться, если тень переопределяется где-то еще
-}
-
-// Если у вас есть другие состояния, например, :focus или :active
-.blocksPanel__option:focus,
-.blocksPanel__option:active {
-  outline: none; // Убираем стандартную обводку фокуса, которая может выглядеть как тень
-  box-shadow: none; // Убедитесь, что и здесь нет тени
-}
-
-.iconGroup {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-/* Стили для открывающейся менюшки настройки */
-.blocksPanel__configMenu { // Отступ от основной панели
-  padding: 16px 24px;
-  border-radius: 8px;
-  background-color: #F5EBE080;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  // background-color, border, border-radius, box-shadow, padding, z-index - оставляем как есть
-  z-index: 10;
-  box-sizing: border-box;
-
-  h3 {
-    margin-top: 0;
-    color: #1F3B2C;
-    font-size: 18px;
-    font-family: 'Cormorant SC', serif;
-  }
-
-  .closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    color: #A67F5D;
-
-    &:hover {
-      color: darken(#A67F5D, 10%);
-    }
-
-    svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-    }
-  }
-}
-
-.textSideSelection {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  label {
-    margin-top: 0;
-    color: #1F3B2C;
-    font-size: 18px;
-    font-family: 'Cormorant SC', serif;
-  }
-
-  .toggleAlignButton {
-    height: 24px;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-}
-
-.photoUploadGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
-.photoUploadThumbnail {
-  width: 76px; /* <-- Убедитесь, что это установлено */
-  height: 64px; /* <-- Убедитесь, что это установлено */
-  background-color: var(--color-background-secondary); /* Или любой другой цвет */
-  border-radius: 4px;
-  display: flex; /* Чтобы центрировать содержимое */
-  justify-content: center; /* Центрирование по горизонтали */
-  align-items: center; /* Центрирование по вертикали */
-  cursor: pointer;
-  position: relative; /* Для позиционирования кнопки X */
-  overflow: hidden; /* Обрезать содержимое, если оно выходит за пределы */
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Или contain, в зависимости от нужд */
-  }
-}
-
-.placeholderThumbnail {
-  // Возможно, здесь переопределяются или отсутствуют нужные свойства
-  // Убедитесь, что он наследует или устанавливает свои размеры
-  width: 76px; /* <-- Добавьте или убедитесь, что это есть */
-  height: 64px; /* <-- Добавьте или убедитесь, что это есть */
-  display: flex; /* Для центрирования плюсика */
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px; /* Скругление углов */
-  cursor: pointer;
-  background-color: #F5EBE0;
-}
-
-  .removeThumbnailButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8em;
-    cursor: pointer;
-    z-index: 2; // Поверх изображения
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-    }
-  }
-
-
-.photoCountControl {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-
-  .photoCountButton {
-    background-color: #A67F5D;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    width: 30px;
-    height: 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    &:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-  }
-  span {
-    font-weight: bold;
-    color: #1F3B2C;
-  }
-}
-
-.addButtonWrapper{
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.addConfiguredBlockButton {
-  width: 129px;
-  padding: 8px 24px;
-  background-color: #1F3B2C; // Цвет кнопки "Добавить"
-  color: white;
+.stepBtn {
+  width: 29px;
+  height: 26px;
+  border-radius: 0;
   border: none;
-  border-radius: 6px;
+  background: #344E41;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-family: 'Cormorant SC', serif;
+  font-weight: 600;
+  font-size: 13.33px;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  &:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.stepValue {
+  min-width: 29px;
+  height: 26px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F5EBE0;
+  border: none;
+  border-left: 1px solid rgba(31, 59, 44, 0.15);
+  border-right: 1px solid rgba(31, 59, 44, 0.15);
+  border-radius: 0;
+  color: #1F3B2C;
+}
+
+.addBtn {
+  margin-top: 4px;
+  width: 140px;
+  align-self: flex-end;
+
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+
+  background: #1f3b2c;
+  color: #DAD7CD;
+  font-family: var(--font-main);
   font-weight: 600;
   font-size: 18px;
   line-height: 120%;
   letter-spacing: 0px;
 
-
   &:hover {
-    background-color: darken(#1F3B2C, 10%);
-  }
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    filter: brightness(0.96);
   }
 }
 
-.configMenuTextarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 10px;
-  border: 1px solid #D6D0C4;
-  border-radius: 4px;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 0.95em;
-  resize: vertical;
-  margin-top: 15px; // Отступ от фото
-  box-sizing: border-box; // Учитываем padding и border в ширине
+// Кнопка "Добавить" в разделе Видео делаем серой
+// Видео идет последним menuItem в categoryBody
+.categoryBody .menuItem:last-child .addBtn {
+  background: #808080;
+  
+  &:hover {
+    filter: brightness(0.9);
+  }
 }
 
-.carouselTypeSelection {
+.subTitle {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.variantRow {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 4px;
+}
 
-  .carouselTypeButton {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #D6D0C4;
-    border-radius: 4px;
-    background-color: #F0F0F0;
-    color: #333333;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+.variantBtn {
+  width: 78px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid rgba(31, 59, 44, 0.28);
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    &.activeType {
-      background-color: #A67F5D;
-      color: #FFFFFF;
-      border-color: #A67F5D;
-    }
-    &:hover:not(.activeType) {
-      background-color: darken(#F0F0F0, 5%);
-    }
+  &:hover {
+    background: rgba(255, 255, 255, 0.55);
   }
 }
 
-.optionConfig__header {
+.variantBtnActive {
+  background: #d4a373;
+  border-color: rgba(31, 59, 44, 0.35);
+}
+
+// Для левой карусели (v1) делаем кнопку серой когда активна
+.variantRow .variantBtnActive:first-child {
+  background: #808080;
+}
+
+.variantThumbV1 {
+  width: 48px;
+  height: 18px;
+  border: 1px solid rgba(31, 59, 44, 0.35);
+  border-radius: 4px;
+  position: relative;
+  background: #808080;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(31, 59, 44, 0.35);
+    background: #808080;
+  }
+
+  &:before {
+    left: -14px;
+  }
+  &:after {
+    right: -14px;
+  }
+}
+
+
+.hint {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+/* ===== Текст ===== */
+
+.textList {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.textRow {
+  background: #F5EBE0;
+  border-radius: 8px;
+  padding: 12px 12px;
+
+  display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  color: #1F3B2C;
-  font-weight: bold;
+  justify-content: space-between;
+}
+
+.textRowTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.textAddBtn {
+  height: 30px;
+  min-width: 110px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+
+  background: #1f3b2c;
+  color: #DAD7CD;
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0px;
+
+  &:hover {
+    filter: brightness(0.96);
+  }
 }

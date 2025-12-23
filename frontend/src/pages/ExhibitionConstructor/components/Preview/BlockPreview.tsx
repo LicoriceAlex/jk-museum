@@ -1,78 +1,83 @@
-// components/Preview/BlockPreview.tsx
 import React from 'react';
-import { ExhibitionBlock, FontSettings, ColorSettings} from '../../types';
-import HeaderBlock from '../BlockComponents/HeaderBlock/HeaderBlock.tsx';
-import TextBlock from '../BlockComponents/TextBlock/TextBlock.tsx';
-import QuoteBlock from '../BlockComponents/QuoteBlock/QuoteBlock.tsx';
-import ImageBlock from '../BlockComponents/ImageBlock/ImageBlock.tsx';
-import ImageGridBlock from '../BlockComponents/ImagesGridBlock/ImagesGridBlock.tsx';
-import CarouselBlock from '../BlockComponents/CarouselBlock/CarouselBlock.tsx';
-import ImageTextBlock from '../BlockComponents/ImageTextBlock/ImageTextBlock.tsx';
-import LayoutImgTextImgBlock from '../BlockComponents/LayoutImgTextImgBlock/LayoutImgTextImgBlock.tsx';
-import LayoutTextImgTextBlock from '../BlockComponents/LayoutTextImgTextBlock/LayoutTextImgTextBlock.tsx';
-import PhotoBlock from '../BlockComponents/PhotoBlock/PhotoBlock.tsx';
-import SliderBlock from '../BlockComponents/SliderBlock/SliderBlock.tsx';
-import styles from './BlockPreview.module.scss'
+import { ExhibitionBlock, FontSettings, ColorSettings } from '../../types';
+
+import HeaderBlock from '../BlockComponents/HeaderBlock/HeaderBlock';
+import TextBlock from '../BlockComponents/TextBlock/TextBlock';
+import QuoteBlock from '../BlockComponents/QuoteBlock/QuoteBlock';
+import ImageTextBlock from '../BlockComponents/ImageTextBlock/ImageTextBlock';
+import ImagesGridBlock from '../BlockComponents/ImagesGridBlock/ImagesGridBlock';
+import ImageBlock from '../BlockComponents/ImageBlock/ImageBlock';
+import LayoutImgTextImgBlock from '../BlockComponents/LayoutImgTextImgBlock/LayoutImgTextImgBlock';
+import LayoutTextImgTextBlock from '../BlockComponents/LayoutTextImgTextBlock/LayoutTextImgTextBlock';
+import CarouselBlock from '../BlockComponents/CarouselBlock/CarouselBlock';
+import SliderBlock from '../BlockComponents/SliderBlock/SliderBlock';
+
+import styles from './BlockPreview.module.scss';
 
 interface BlockPreviewProps {
   block: ExhibitionBlock;
-  fontSettings: FontSettings;
-  colorSettings: ColorSettings;
-  onImageUpload: (blockId: string, index: number, file: File) => void;
-  onImageRemove: (blockId: string, index: number) => void;
-  updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  updateBlock: (blockId: string, updatedFields: Partial<ExhibitionBlock>) => void;
   removeBlock: (blockId: string) => void;
   moveBlock: (blockId: string, direction: 'up' | 'down') => void;
+  fontSettings: FontSettings;
+  colorSettings: ColorSettings;
+  onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
+  onImageRemove: (blockId: string, itemIndex: number) => void;
 }
 
 const BlockPreview: React.FC<BlockPreviewProps> = ({
-                                                     block,
-                                                     fontSettings,
-                                                     colorSettings,
-                                                     onImageUpload,
-                                                     onImageRemove,
-                                                     updateBlock,
-                                                     removeBlock,
-                                                     moveBlock
-                                                   }) => {
-  
-  const textStyle = {
+  block,
+  updateBlock,
+  removeBlock,
+  moveBlock,
+  fontSettings,
+  colorSettings,
+  onImageUpload,
+  onImageRemove,
+}) => {
+  // Стиль для обычного текста
+  const textStyle: React.CSSProperties = {
     fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
-    fontWeight: fontSettings.bodyWeight === 'Normal' ? 'normal' :
-      fontSettings.bodyWeight === 'Bold' ? 'bold' :
-        fontSettings.bodyWeight === 'Light' ? 300 :
-          'normal',
+    fontWeight:
+      fontSettings.bodyWeight === 'Normal'
+        ? 'normal'
+        : fontSettings.bodyWeight === 'Bold'
+          ? 'bold'
+          : fontSettings.bodyWeight === 'Light'
+            ? 300
+            : 'normal',
     fontStyle: fontSettings.bodyWeight === 'Italic' ? 'italic' : 'normal',
     color: colorSettings.text,
-    fontSize: `${fontSettings.fontSize}px`
+    fontSize: `${fontSettings.fontSize}px`,
   };
-  
-  const headerStyle = {
+
+  // Стиль для заголовков
+  const headerStyle: React.CSSProperties = {
     fontFamily: fontSettings.titleFont,
-    fontWeight: fontSettings.titleWeight === 'Normal' ? 'normal' :
-      fontSettings.titleWeight === 'Bold' ? 'bold' :
-        fontSettings.titleWeight === 'Light' ? 300 :
-          'normal',
+    fontWeight:
+      fontSettings.titleWeight === 'Normal'
+        ? 'normal'
+        : fontSettings.titleWeight === 'Bold'
+          ? 'bold'
+          : fontSettings.titleWeight === 'Light'
+            ? 300
+            : 'normal',
     fontStyle: fontSettings.titleWeight === 'Italic' ? 'italic' : 'normal',
     fontSize: `${fontSettings.fontSize * 1.5}px`,
-    color: colorSettings.primary
+    color: colorSettings.primary,
   };
-  
-  
-  const renderBlockContent = () => {
-    const getImageUrl = (itemIndex: number): string | undefined => {
-      return block.items?.[itemIndex]?.image_url;
-    };
-    
+
+  const content = (() => {
     switch (block.type) {
       case 'HEADER':
         return (
           <HeaderBlock
             content={block.content || ''}
             style={headerStyle}
+            onContentChange={(newContent) => updateBlock(block.id, { content: newContent })}
           />
         );
-      
+
       case 'TEXT':
         return (
           <TextBlock
@@ -82,7 +87,7 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
             placeholder="Нажмите, чтобы добавить текст."
           />
         );
-      
+
       case 'QUOTE':
         return (
           <QuoteBlock
@@ -92,79 +97,58 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
             style={textStyle}
           />
         );
-      
-      case 'IMAGE':
-        return (
-          <ImageBlock
-            imageUrl={getImageUrl(0)}
-            onUpload={(file: File) => onImageUpload(block.id, 0, file)}
-            onRemove={() => onImageRemove(block.id, 0)}
-            style={textStyle}
-          />
-        );
-      
+
       case 'IMAGE_UPLOAD':
         return (
           <ImageBlock
-            imageUrl={getImageUrl(0)}
-            onUpload={(file: File) => onImageUpload(block.id, 0, file)}
+            imageUrl={block.items?.[0]?.image_url}
+            onUpload={(file) => onImageUpload(block.id, 0, file)}
             onRemove={() => onImageRemove(block.id, 0)}
-            style={textStyle}
+            containerStyle={{ height: 576 }}
+            imageStyle={{ height: '100%', objectFit: 'cover' }}
           />
         );
-      
+
       case 'IMAGES_2':
         return (
-          <ImageGridBlock
-            images={(block.items || []).slice(0, 2)}
-            onUpload={(index, file) => onImageUpload(block.id, index, file)}
-            onRemove={(index) => onImageRemove(block.id, index)}
-            style={textStyle}
-            columns={2}
-          />
-        );
-      
-      case 'IMAGES_3':
-        return (
-          <ImageGridBlock
-            images={(block.items || []).slice(0, 3)}
-            onUpload={(index, file) => onImageUpload(block.id, index, file)}
-            onRemove={(index) => onImageRemove(block.id, index)}
-            style={textStyle}
-            columns={3}
-          />
-        );
-      
-      case 'IMAGES_4':
-        return (
-          <ImageGridBlock
-            images={(block.items || []).slice(0, 4)}
-            onUpload={(index, file) => onImageUpload(block.id, index, file)}
-            onRemove={(index) => onImageRemove(block.id, index)}
-            style={textStyle}
-            columns={2}
-          />
-        );
-      
-      case 'CAROUSEL':
-        return (
-          <CarouselBlock
+          <ImagesGridBlock
             blockId={block.id}
             items={block.items || []}
-            style={textStyle}
+            columns={2}
             onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock}
           />
         );
-      
+
+      case 'IMAGES_3':
+        return (
+          <ImagesGridBlock
+            blockId={block.id}
+            items={block.items || []}
+            columns={3}
+            onImageUpload={onImageUpload}
+            onImageRemove={onImageRemove}
+          />
+        );
+
+      case 'IMAGES_4':
+        return (
+          <ImagesGridBlock
+            blockId={block.id}
+            items={block.items || []}
+            columns={4} 
+            onImageUpload={onImageUpload}
+            onImageRemove={onImageRemove}
+          />
+        );
+
       case 'IMAGE_TEXT_RIGHT':
       case 'IMAGE_TEXT_LEFT':
         return (
           <ImageTextBlock
             blockId={block.id}
             content={block.content || ''}
-            imageUrl={getImageUrl(0)}
+            imageUrl={block.items?.[0]?.image_url}
             imagePosition={block.type === 'IMAGE_TEXT_RIGHT' ? 'right' : 'left'}
             style={textStyle}
             onImageUpload={onImageUpload}
@@ -172,75 +156,90 @@ const BlockPreview: React.FC<BlockPreviewProps> = ({
             updateBlock={updateBlock}
           />
         );
-      
+
       case 'LAYOUT_IMG_TEXT_IMG':
         return (
           <LayoutImgTextImgBlock
             blockId={block.id}
-            content={block.content || ''}
             items={block.items || []}
-            updateBlock={updateBlock}
+            content={block.content || ''}
             style={textStyle}
+            updateBlock={updateBlock}
+            onImageUpload={onImageUpload}
+            onImageRemove={onImageRemove}
           />
         );
-      
+
       case 'LAYOUT_TEXT_IMG_TEXT':
         return (
           <LayoutTextImgTextBlock
             blockId={block.id}
-            content={block.content || ''}
-            imageUrl={getImageUrl(0)}
+            leftText={block.settings?.text_left_html || ''}
+            rightText={block.settings?.text_right_html || ''}
+            imageUrl={block.items?.[0]?.image_url}
+            style={textStyle}
+            updateBlock={updateBlock}
             onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock}
-            style={textStyle}
           />
         );
-      
-      case 'PHOTO':
+
+      case 'CAROUSEL':
         return (
-          <PhotoBlock
+          <CarouselBlock
             blockId={block.id}
-            imageUrl={getImageUrl(0)}
-            onUpload={(file: File) => onImageUpload(block.id, 0, file)}
-            onRemove={() => onImageRemove(block.id, 0)}
-            updateBlock={updateBlock}
-            style={textStyle}
+            items={block.items || []}
+            onImageUpload={onImageUpload}
+            onImageRemove={onImageRemove}
           />
         );
-      
+
       case 'SLIDER':
         return (
           <SliderBlock
             blockId={block.id}
             items={block.items || []}
-            style={textStyle}
             onImageUpload={onImageUpload}
             onImageRemove={onImageRemove}
-            updateBlock={updateBlock}
           />
         );
-      
+
+
       default:
-        console.warn(`Unknown block type: ${block.type}`);
         return null;
     }
-  };
-  
+  })();
+
   return (
     <div className={styles.blockPreviewWrapper}>
       <div className={styles.controls}>
-        <button onClick={() => moveBlock(block.id, 'up')}
-                className={styles.controlButton}>↑
+        <button
+          type="button"
+          onClick={() => moveBlock(block.id, 'up')}
+          className={styles.controlButton}
+          title="Вверх"
+        >
+          ↑
         </button>
-        <button onClick={() => moveBlock(block.id, 'down')}
-                className={styles.controlButton}>↓
+        <button
+          type="button"
+          onClick={() => moveBlock(block.id, 'down')}
+          className={styles.controlButton}
+          title="Вниз"
+        >
+          ↓
         </button>
-        <button onClick={() => removeBlock(block.id)}
-                className={styles.controlButton}>✕
+        <button
+          type="button"
+          onClick={() => removeBlock(block.id)}
+          className={`${styles.controlButton} ${styles.removeButton}`}
+          title="Удалить"
+        >
+          ✕
         </button>
       </div>
-      {renderBlockContent()}
+
+      <div className={styles.blockPreviewContent}>{content}</div>
     </div>
   );
 };

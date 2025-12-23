@@ -1,0 +1,31 @@
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  height: 280px; /* как у твоих блоков с высотой 280 */
+  box-sizing: border-box;
+}
+
+.textLeft,
+.textRight {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.imageCenter {
+  width: 540px;    /* под макет (можно легко поменять) */
+  height: 280px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageCenter :global(.image) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

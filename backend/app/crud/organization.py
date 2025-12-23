@@ -48,7 +48,6 @@ async def create_organization(
             status_code=409,
             detail="An organization with this name already exists.",
         )
-
     organization = Organization(
         **organization_in.model_dump(),
     )

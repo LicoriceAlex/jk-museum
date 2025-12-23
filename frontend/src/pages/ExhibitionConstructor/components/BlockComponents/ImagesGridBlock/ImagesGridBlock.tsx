@@ -1,36 +1,39 @@
-// components/BlockComponents/ImagesGridBlock.tsx
 import React from 'react';
-import ImageBlock from '../ImageBlock/ImageBlock.tsx';
 import styles from './ImagesGridBlock.module.scss';
 import { BlockItem } from '../../../types';
+import ImageBlock from '../ImageBlock/ImageBlock';
 
 interface ImagesGridBlockProps {
-  images: BlockItem[];
-  onUpload: (index: number, file: File) => void;
-  onRemove: (index: number) => void;
-  style?: React.CSSProperties;
-  columns?: number;
+  blockId?: string;
+  items: BlockItem[];
+  columns: number;
+  onImageUpload?: (blockId: string, itemIndex: number, file: File) => void;
+  onImageRemove?: (blockId: string, itemIndex: number) => void;
+  readOnly?: boolean;
 }
 
 const ImagesGridBlock: React.FC<ImagesGridBlockProps> = ({
-                                                           images,
-                                                           onUpload,
-                                                           onRemove,
-                                                           style,
-                                                           columns = 2
-                                                         }) => {
+  blockId = '',
+  items,
+  columns,
+  onImageUpload,
+  onImageRemove,
+  readOnly = false,
+}) => {
   return (
     <div
-      className={styles.grid}
-      style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` } as React.CSSProperties}
+      className={styles.imageGridBlock}
+      style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
-      {images.map((image, index) => (
-        <div key={image.id || index} className={styles.gridItem}>
+      {items.map((item, index) => (
+        <div key={item.id} className={styles.cell}>
           <ImageBlock
-            imageUrl={image.image_url}
-            onUpload={(file: File) => onUpload(index, file)}
-            onRemove={() => onRemove(index)}
-            style={style}
+            imageUrl={item.image_url}
+            onUpload={readOnly ? undefined : (file) => onImageUpload?.(blockId, index, file)}
+            onRemove={readOnly ? undefined : () => onImageRemove?.(blockId, index)}
+            containerStyle={{ height: 280 }}
+            imageStyle={{ height: '100%', objectFit: 'cover' }}
+            readOnly={readOnly}
           />
         </div>
       ))}

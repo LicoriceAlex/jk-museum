@@ -75,6 +75,15 @@ class MyOrganization(SQLModel):
     items: list[OrganizationResponse]
 
 
+class OrganizationResponse(SQLModel):
+    organization: OrganizationPublicShort
+    membership: "UserOrganization"
+
+
+class MyOrganization(SQLModel):
+    items: list[OrganizationResponse]
+
+
 class OrganizationsPublic(SQLModel):
     data: list["OrganizationPublicShort"]
     count: int

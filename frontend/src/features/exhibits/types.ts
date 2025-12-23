@@ -25,6 +25,7 @@ export interface ExhibitModalProps {
   exhibit: Exhibit;
   onClose: () => void;
   onUpdate?: (updatedExhibit: Exhibit) => void;
+  onDelete?: (exhibitId: string) => void;
 }
 
 export interface EditExhibitModalProps {

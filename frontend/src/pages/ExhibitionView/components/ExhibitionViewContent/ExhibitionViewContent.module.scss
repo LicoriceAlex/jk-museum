@@ -1,0 +1,104 @@
+.exhibitionView {
+  padding: 79px 40px 46px 171px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+
+  h1, h2, h3, h4, h5, h6, p, span, div {
+    margin-bottom: 1em;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
+}
+
+.headerContent {
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  margin-top: 112px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 0 20px;
+  }
+}
+
+.coverImage {
+  width: 384px;
+  height: 256px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 80%;
+    max-width: 300px;
+    margin-bottom: 0px;
+  }
+}
+
+.textContent {
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  max-width: 757px;
+  font-family: 'Cormorant SC', serif;
+
+  h1 {
+    margin-bottom: 0.5em;
+    font-family: 'Cormorant Infant', serif;
+    color: var(--color-primary);
+  }
+
+  p {
+    font-family: var(--font-body);
+    color: var(--color-text);
+  }
+
+  p:last-of-type, h1:last-of-type {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    align-items: center;
+    h1, p {
+      text-align: center;
+    }
+  }
+}
+
+.otherInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.blocksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+

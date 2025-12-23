@@ -13,7 +13,7 @@ export type BlockType =
   | 'IMAGE_UPLOAD'
   | 'SLIDER'
   | 'PHOTO'
-  | 'CAROUSEL';
+  | 'CAROUSEL'
 
 export interface BlockItem {
   id: string;
@@ -34,14 +34,13 @@ export interface ExhibitionBlock {
     text_left_html?: string;
     text_right_html?: string;
     carousel_variant?: string;
-    autoplay?: boolean;
-    speed?: number;
     [key: string]: any;
   };
   position: number;
 }
 
 export interface ExhibitionData {
+  id?: string;
   title: string;
   description: string;
   organization: string;
@@ -49,6 +48,7 @@ export interface ExhibitionData {
   tags: string[];
   blocks: ExhibitionBlock[];
   cover?: string;
+  coverKey?: string;
 }
 
 export interface FontSettings {
@@ -67,3 +67,11 @@ export interface ColorSettings {
 }
 
 export type PanelTab = 'info' | 'styles' | 'blocks';
+
+export type PageBackgroundMode = 'color' | 'image';
+
+export interface PageBackgroundSettings {
+  mode: PageBackgroundMode;
+  imageUrl?: string;
+}
+
