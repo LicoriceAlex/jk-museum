@@ -52,14 +52,9 @@ async def login_access_token(
         raise HTTPException(status_code=400, detail="Invalid login type")
 
     if not entity:
-        raise HTTPException(
-            status_code=400,
-            detail="Incorrect email or password"
-        )
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
 
-    access_token_expires = timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=security.create_access_token(entity.id, expires_delta=access_token_expires),
     )
@@ -94,9 +89,7 @@ async def recover_password(email: EmailStr, session: SessionDep) -> Message:
 
 
 @router.post("/reset-password/")
-async def reset_password(
-    session: SessionDep, body: NewPassword
-) -> Message:
+async def reset_password(session: SessionDep, body: NewPassword) -> Message:
     """
     Reset password
     """

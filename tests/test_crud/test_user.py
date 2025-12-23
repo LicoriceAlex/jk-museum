@@ -1,11 +1,6 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.db.models.user import (
-    UserCreate,
-    User,
-    StatusEnum,
-    UserUpdate
-)
+from backend.app.db.models.user import UserCreate, User, StatusEnum, UserUpdate
 from backend.app.crud import user as user_crud
 from backend.app.core.security import verify_password
 
@@ -20,6 +15,7 @@ UPDATED_USER_SURNAME = "Updated"
 UPDATED_USER_PATRONYMIC = "Updatedovich"
 UPDATED_USER_EMAIL = "updated@gmail.com"
 UPDATED_USER_PASSWORD = "updated_password"
+
 
 @pytest.fixture
 async def test_user(db_session: AsyncSession) -> User:
@@ -51,12 +47,10 @@ async def test_create_user(db_session: AsyncSession):
     assert created_user.surname == TEST_USER_SURNAME
     assert created_user.patronymic == TEST_USER_PATRONYMIC
     assert created_user.status == StatusEnum.active
-    assert verify_password(
-        TEST_USER_PASSWORD, created_user.hashed_password
-    )
+    assert verify_password(TEST_USER_PASSWORD, created_user.hashed_password)
     assert created_user.created_at is not None
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_duplicate_user_email(db_session: AsyncSession, test_user):
     duplicate_user_data = UserCreate(
@@ -71,8 +65,8 @@ async def test_duplicate_user_email(db_session: AsyncSession, test_user):
         await user_crud.create_user(db_session, duplicate_user_data)
 
     assert "409" in str(excinfo.value)
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_get_user(db_session: AsyncSession, test_user):
     retrieved_user = await user_crud.get_user(db_session, id=test_user.id)
@@ -84,11 +78,9 @@ async def test_get_user(db_session: AsyncSession, test_user):
     assert retrieved_user.surname == TEST_USER_SURNAME
     assert retrieved_user.patronymic == TEST_USER_PATRONYMIC
     assert retrieved_user.status == StatusEnum.active
-    assert verify_password(
-        TEST_USER_PASSWORD, retrieved_user.hashed_password
-    )
-    
-    
+    assert verify_password(TEST_USER_PASSWORD, retrieved_user.hashed_password)
+
+
 @pytest.mark.asyncio
 async def test_update_user(db_session: AsyncSession, test_user):
     updated_user_data = UserUpdate(
@@ -97,9 +89,9 @@ async def test_update_user(db_session: AsyncSession, test_user):
         patronymic=UPDATED_USER_PATRONYMIC,
         email=UPDATED_USER_EMAIL,
     )
-    
+
     updated_user = await user_crud.update_user(db_session, test_user, updated_user_data)
-    
+
     assert updated_user is not None
     assert updated_user.id == test_user.id
     assert updated_user.email == UPDATED_USER_EMAIL
@@ -112,18 +104,14 @@ async def test_update_user(db_session: AsyncSession, test_user):
 @pytest.mark.asyncio
 async def test_change_user_password(db_session: AsyncSession, test_user):
     updated_user = await user_crud.change_password(
-        db_session, test_user,
-        TEST_USER_PASSWORD,
-        UPDATED_USER_PASSWORD
+        db_session, test_user, TEST_USER_PASSWORD, UPDATED_USER_PASSWORD
     )
 
     assert updated_user is not None
     assert updated_user.id == test_user.id
-    assert verify_password(
-        UPDATED_USER_PASSWORD, updated_user.hashed_password
-    )
-    
-    
+    assert verify_password(UPDATED_USER_PASSWORD, updated_user.hashed_password)
+
+
 @pytest.mark.asyncio
 async def test_ban_user(db_session: AsyncSession, test_user):
     banned_user = await user_crud.ban_user(db_session, test_user)
@@ -131,7 +119,7 @@ async def test_ban_user(db_session: AsyncSession, test_user):
     assert banned_user is not None
     assert banned_user.id == test_user.id
     assert banned_user.status == StatusEnum.blocked
-    
+
 
 @pytest.mark.asyncio
 async def test_unban_user(db_session: AsyncSession, test_user):
