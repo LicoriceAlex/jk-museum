@@ -1,0 +1,134 @@
+// Full HD (1920x1080) - все размеры в vw
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #F5EBE0;
+  border-radius: 0.83vw; // 16px -> 0.83vw
+  width: 31.25vw; // 600px -> 31.25vw
+  max-width: 90vw;
+  overflow: hidden;
+  box-shadow: 0 0.52vw 1.56vw rgba(0, 0, 0, 0.2); // 10px 30px -> 0.52vw 1.56vw
+}
+
+.header {
+  background-color: #344E41;
+  padding: 1.25vw 1.67vw; // 24px 32px -> 1.25vw 1.67vw
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-main);
+  font-size: 1.25vw; // 24px -> 1.25vw
+  font-weight: 600;
+  color: var(--color-mainpage);
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--color-mainpage);
+  cursor: pointer;
+  padding: 0.31vw; // 6px -> 0.31vw
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.content {
+  padding: 1.67vw; // 32px -> 1.67vw
+  display: flex;
+  flex-direction: column;
+  gap: 0.83vw; // 16px -> 0.83vw
+}
+
+.option {
+  background: transparent;
+  border: none;
+  padding: 1.04vw 1.25vw; // 20px 24px -> 1.04vw 1.25vw
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 0.41vw; // 8px -> 0.41vw
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    background-color: rgba(52, 78, 65, 0.1);
+  }
+}
+
+.optionText {
+  font-family: var(--font-secondary);
+  font-size: 0.94vw; // 18px -> 0.94vw
+  font-weight: 400;
+  color: #253A30;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.arrow {
+  color: #253A30;
+  flex-shrink: 0;
+}
+
+.logoutOption {
+  .optionText {
+    color: #DC3545;
+  }
+
+  &:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 90vw;
+    border-radius: 2vw;
+  }
+
+  .header {
+    padding: 3vw 4vw;
+  }
+
+  .title {
+    font-size: 4vw;
+  }
+
+  .content {
+    padding: 4vw;
+    gap: 2vw;
+  }
+
+  .option {
+    padding: 3vw 4vw;
+    border-radius: 1vw;
+  }
+
+  .optionText {
+    font-size: 3vw;
+  }
+}
+
