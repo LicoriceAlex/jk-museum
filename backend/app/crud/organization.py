@@ -118,7 +118,7 @@ async def confirm_organization(session: AsyncSession, organization: Organization
 
 @log_method_call
 async def reject_organization(session: AsyncSession, organization: Organization) -> Organization:
-    organization.status = OrgStatusEnum.rejected
+    organization.status = OrgStatusEnum.on_moderation
     session.add(organization)
     await session.commit()
     await session.refresh(organization)

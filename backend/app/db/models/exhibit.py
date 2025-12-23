@@ -2,20 +2,20 @@ import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from backend.app.api.dependencies.common import Variable
+from backend.app.api.dependencies.common import Variants
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.organization import Organization
 
 
-class ExhibitType(Variable):
+class ExhibitType(Variants):
     painting = "картина"
     sculpture = "скульптура"
     other = "другое"
 
 
-class DateTemplate(Variable):
+class DateTemplate(Variants):
     year: str = "year"
     decade: str = "decade"
     century: str = "century"

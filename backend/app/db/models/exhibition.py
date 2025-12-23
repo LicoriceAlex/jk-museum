@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from backend.app.api.dependencies.common import Variable
+from backend.app.api.dependencies.common import Variants
 from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 from sqlalchemy import Column
@@ -17,18 +17,21 @@ if TYPE_CHECKING:
     from backend.app.db.models.tag import TagPublic
 
 
-class ExhibitionStatusEnum(Variable):
-    draft = "draft"
-    published = "published"
-    archived = "archived"
+class ExhibitionStatusEnum(Variants):
+    on_mo_review = "on_mo_review"
+    on_mo_revision = "on_mo_revision"
+    ready_for_platform = "ready_for_platform"
+    awaiting_platform_review = "awaiting_platform_review"
+    needs_revision_after_moderation = "needs_revision_after_moderation"
+    published_changes_pending_review = "published_changes_pending_review"
 
 
-class CoverTypeEnum(Variable):
+class CoverTypeEnum(Variants):
     inside = "inside"
     outside = "outside"
 
 
-class DateTemplate(Variable):
+class DateTemplate(Variants):
     year: str = "year"
     decade: str = "decade"
     century: str = "century"

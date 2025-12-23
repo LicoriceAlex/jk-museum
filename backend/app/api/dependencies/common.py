@@ -25,10 +25,10 @@ async def get_db_session():
         await session.close()
 
 
-class Variable(str, Enum): ...
+class Variants(str, Enum): ...
 
 
-class SortOrder(Variable):
+class SortOrder(Variants):
     ASC = "asc"
     DESC = "desc"
 

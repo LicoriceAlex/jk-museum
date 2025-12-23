@@ -2,14 +2,14 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from backend.app.api.dependencies.common import Variable
+from backend.app.api.dependencies.common import Variants
 from sqlmodel import Field, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.user import UserPublic
 
 
-class UserOrganizationEnum(Variable):
+class UserOrganizationEnum(Variants):
     active = "active"
     left = "left"
 

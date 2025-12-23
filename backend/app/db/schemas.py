@@ -1,4 +1,4 @@
-from backend.app.api.dependencies.common import Variable
+from backend.app.api.dependencies.common import Variants
 from fastapi import Form
 from sqlmodel import Field, SQLModel
 
@@ -35,7 +35,7 @@ class FileUploadResponse(SQLModel):
     file_url: str
 
 
-class LoginType(Variable):
+class LoginType(Variants):
     user = "user"
     organization = "organization"
 

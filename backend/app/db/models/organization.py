@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from backend.app.api.dependencies.common import Variable
+from backend.app.api.dependencies.common import Variants
 from backend.app.db.models.admin_action import AdminAction
 from backend.app.db.models.exhibit import Exhibit
 from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
@@ -10,16 +10,23 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 
-class OrgStatusEnum(Variable):
-    pending = "pending"
+class OrgStatusEnum(Variants):
     approved = "approved"
-    rejected = "rejected"
+    draft = "draft"
+    on_moderation = "on_moderation"
+    needs_revision = "needs_revision"
 
 
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
+    short_name: str = Field(default=None, nullable=True, max_length=100)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
-    contact_info: str | None = None
+    region: str | None = Field(default=None, nullable=True)
+    adress: str | None = Field(default=None, nullable=True)
+    phone_number: str | None = Field(default=None, nullable=True)
+    social_links: str | None = Field(default=None, nullable=True)
+    charter_file: str | None = Field(default=None, nullable=True)
+    contact_info: str | None = Field(default=None, nullable=True)
     description: str | None = Field(default=None, nullable=True)
     logo_key: str | None = Field(default=None, nullable=True)
 
@@ -27,7 +34,7 @@ class OrganizationBase(SQLModel):
 class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
+    status: OrgStatusEnum = Field(default=OrgStatusEnum.draft)
 
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -47,6 +54,12 @@ class OrganizationUpdate(SQLModel):
     contact_info: str | None = None
     description: str | None = None
     logo_key: str | None = None
+    region: str | None = None
+    adress: str | None = None
+    phone_number: str | None = None
+    social_links: str | None = None
+    charter_file: str | None = None
+    contact_info: str | None = None
 
 
 class OrganizationPublic(OrganizationBase):

@@ -30,7 +30,7 @@ async def test_create_organization(db_session: AsyncSession):
     assert created_org is not None
     assert created_org.name == TEST_ORG_NAME
     assert created_org.email == TEST_ORG_EMAIL
-    assert created_org.status == OrgStatusEnum.pending
+    assert created_org.status == OrgStatusEnum.draft
     assert created_org.created_at is not None
 
 
@@ -52,7 +52,7 @@ async def test_get_organization(db_session: AsyncSession, test_organization):
     assert retrieved_org.id == test_organization.id
     assert retrieved_org.name == TEST_ORG_NAME
     assert retrieved_org.email == TEST_ORG_EMAIL
-    assert retrieved_org.status == OrgStatusEnum.pending
+    assert retrieved_org.status == OrgStatusEnum.draft
 
 
 @pytest.mark.asyncio
@@ -95,7 +95,7 @@ async def test_reject_organization(db_session: AsyncSession, test_organization):
 
     assert rejected_org is not None
     assert rejected_org.id == test_organization.id
-    assert rejected_org.status == OrgStatusEnum.rejected
+    assert rejected_org.status == OrgStatusEnum.needs_revision
 
 
 @pytest.mark.asyncio
