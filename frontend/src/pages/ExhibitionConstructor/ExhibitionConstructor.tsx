@@ -27,6 +27,7 @@ import { useParams } from 'react-router-dom';
 
 const mapTypeToApi = (type: string) => {
   if (type === 'IMAGE_UPLOAD') return 'CAROUSEL';
+  if (type === 'SLIDER') return 'CAROUSEL';
   return type;
 };
 
@@ -292,33 +293,91 @@ const ExhibitionConstructor: React.FC = () => {
           const block = exhibitionData.blocks[i];
 
           let itemsPayload: Array<{ position: number; text?: string; image_key?: string }> | undefined = undefined;
+          let processedItems: Array<{ position: number; text?: string; image_key?: string }> = [];
+          let filteredItems: Array<{ position: number; text?: string; image_key?: string }> = [];
+
+          const isCarouselOrSlider = block.type === 'CAROUSEL' || block.type === 'SLIDER';
 
           if (block.items && block.items.length > 0) {
-            const processedItems = await Promise.all(
+            processedItems = await Promise.all(
               block.items.map(async (item, idx) => {
                 const imageKey = await uploadItemImageIfNeeded(item.image_url);
                 return {
                   position: idx,
                   text: item.text || undefined,
-                  image_key: imageKey,
+                  image_key: imageKey || undefined,
                 };
               })
             );
 
-            const filteredItems = processedItems.filter(item => item.image_key || item.text);
+            // Фильтруем элементы: оставляем только те, у которых есть image_key или text
+            // Для карусели/слайдера требуем обязательный image_key
+            filteredItems = processedItems
+              .filter(item => {
+                if (isCarouselOrSlider) {
+                  return !!item.image_key && typeof item.image_key === 'string' && item.image_key.trim() !== ''; // Для карусели/слайдера требуем только элементы с непустым image_key
+                }
+                return item.image_key || item.text; // Для других типов блоков допускаем text без image_key
+              })
+              .map((item, idx) => {
+                // Для карусели/слайдера убеждаемся, что image_key есть и не пустой
+                const result: { position: number; text?: string; image_key?: string } = {
+                  position: idx,
+                };
+                if (item.text) {
+                  result.text = item.text;
+                }
+                if (item.image_key && typeof item.image_key === 'string' && item.image_key.trim() !== '') {
+                  result.image_key = item.image_key.trim();
+                }
+                return result;
+              })
+              .filter(item => {
+                // Для карусели/слайдера еще раз проверяем, что image_key есть
+                if (isCarouselOrSlider) {
+                  return !!item.image_key && typeof item.image_key === 'string' && item.image_key.trim() !== '';
+                }
+                return true;
+              });
 
             const isImageBlock =
               block.type === 'IMAGE_UPLOAD' ||
               block.type === 'IMAGES_2' ||
               block.type === 'IMAGES_3' ||
               block.type === 'IMAGES_4';
+            
+            const requiresItems = 
+              isImageBlock || 
+              isCarouselOrSlider || 
+              block.type === 'IMAGE_TEXT_LEFT' ||
+              block.type === 'LAYOUT_IMG_TEXT_IMG' ||
+              block.type === 'LAYOUT_TEXT_IMG_TEXT';
 
             if (block.type !== 'VIDEO') {
               if (filteredItems.length > 0) {
                 itemsPayload = filteredItems;
               } else if (!isImageBlock && block.items && block.items.some(item => item.text)) {
                 itemsPayload = processedItems.filter(item => item.text);
+              } else if (requiresItems) {
+                // Для блоков, которые требуют items, отправляем пустой массив, если нет элементов
+                itemsPayload = [];
               }
+            }
+          } else {
+            // Если block.items пустой или undefined, но блок требует items
+            const requiresItems = 
+              block.type === 'IMAGE_UPLOAD' ||
+              block.type === 'IMAGES_2' ||
+              block.type === 'IMAGES_3' ||
+              block.type === 'IMAGES_4' ||
+              block.type === 'CAROUSEL' ||
+              block.type === 'SLIDER' ||
+              block.type === 'IMAGE_TEXT_LEFT' ||
+              block.type === 'LAYOUT_IMG_TEXT_IMG' ||
+              block.type === 'LAYOUT_TEXT_IMG_TEXT';
+            
+            if (requiresItems && block.type !== 'VIDEO') {
+              itemsPayload = [];
             }
           }
 
@@ -334,8 +393,44 @@ const ExhibitionConstructor: React.FC = () => {
               position: i,
             };
 
-            if (apiType !== 'VIDEO' && itemsPayload) {
-              updatePayload.items = itemsPayload;
+            // Определяем блоки, которые требуют items
+            const requiresItems = 
+              apiType === 'CAROUSEL' ||
+              apiType === 'IMAGES_2' ||
+              apiType === 'IMAGES_3' ||
+              apiType === 'IMAGES_4' ||
+              apiType === 'IMAGE_TEXT_LEFT' ||
+              apiType === 'IMAGE_TEXT_RIGHT' ||
+              apiType === 'LAYOUT_IMG_TEXT_IMG' ||
+              apiType === 'LAYOUT_TEXT_IMG_TEXT';
+
+            if (apiType !== 'VIDEO') {
+              if (itemsPayload !== undefined) {
+                updatePayload.items = itemsPayload;
+              } else if (requiresItems) {
+                // Для блоков, которые требуют items, отправляем пустой массив, если itemsPayload undefined
+                updatePayload.items = [];
+              }
+            }
+
+            // Для карусели/слайдера проверяем, что items не пустой
+            if ((apiType === 'CAROUSEL' || apiType === 'SLIDER')) {
+              if (!updatePayload.items || updatePayload.items.length === 0) {
+                console.warn(`Пропущен блок ${apiType} без изображений`, { block, processedItems, filteredItems, itemsPayload });
+                continue;
+              }
+              // Проверяем, что все элементы имеют image_key
+              const invalidItems = updatePayload.items.filter((item: any) => !item.image_key || item.image_key.trim() === '');
+              if (invalidItems.length > 0) {
+                console.error(`Блок ${apiType} содержит элементы без image_key:`, invalidItems);
+                // Фильтруем только элементы с валидным image_key
+                updatePayload.items = updatePayload.items.filter((item: any) => item.image_key && item.image_key.trim() !== '');
+                // Если после фильтрации ничего не осталось, пропускаем блок
+                if (updatePayload.items.length === 0) {
+                  console.warn(`Пропущен блок ${apiType} - все элементы без image_key`);
+                  continue;
+                }
+              }
             }
 
             await updateBlockOnServer(expoId, block.id, updatePayload);
@@ -358,7 +453,7 @@ const ExhibitionConstructor: React.FC = () => {
               position: i,
             };
 
-            if (apiType !== 'VIDEO' && itemsPayload) {
+            if (apiType !== 'VIDEO' && itemsPayload !== undefined) {
               blockPayload.items = itemsPayload;
             }
 
@@ -555,8 +650,8 @@ const ExhibitionConstructor: React.FC = () => {
       </main>
 
       {isNoticeOpen && (
-        <div className={styles.noticeOverlay}>
-          <div className={styles.noticeModal}>
+        <div className={styles.noticeOverlay} onClick={() => setIsNoticeOpen(false)}>
+          <div className={styles.noticeModal} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className={styles.noticeCloseButton}

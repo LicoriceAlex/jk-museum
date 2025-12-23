@@ -45,7 +45,7 @@ const ImageTextBlock: React.FC<ImageTextBlockProps> = ({
           content={content}
           onContentChange={readOnly ? undefined : handleTextChange}
           style={style}
-          placeholder="ВВЕДИТЕ ТЕКСТ"
+          placeholder="Введите текст..."
           readOnly={readOnly}
         />
       </div>

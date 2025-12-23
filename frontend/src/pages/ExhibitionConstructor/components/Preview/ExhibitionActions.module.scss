@@ -17,8 +17,8 @@
 .primaryButton {
   padding: 10px 28px;
   border-radius: 0;
-  border: 1px solid #344e41;
-  background-color: #344e41;
+  border: 1px solid #808080;
+  background-color: #808080;
   color: var(--color-mainpage);
 
   font-size: 12px;
@@ -35,8 +35,8 @@
 }
 
 .primaryButton:hover {
-  background-color: #253a30;
-  border-color: #253a30;
+  background-color: #707070;
+  border-color: #707070;
 }
 
 .primaryButton:active {

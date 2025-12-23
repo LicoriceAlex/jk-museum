@@ -181,6 +181,16 @@
   }
 }
 
+// Кнопка "Добавить" в разделе Видео делаем серой
+// Видео идет последним menuItem в categoryBody
+.categoryBody .menuItem:last-child .addBtn {
+  background: #808080;
+  
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
 .subTitle {
   font-size: 14px;
   font-weight: 600;
@@ -216,12 +226,18 @@
   border-color: rgba(31, 59, 44, 0.35);
 }
 
+// Для левой карусели (v1) делаем кнопку серой когда активна
+.variantRow .variantBtnActive:first-child {
+  background: #808080;
+}
+
 .variantThumbV1 {
   width: 48px;
   height: 18px;
   border: 1px solid rgba(31, 59, 44, 0.35);
   border-radius: 4px;
   position: relative;
+  background: #808080;
 
   &:before,
   &:after {
@@ -233,7 +249,7 @@
     height: 10px;
     border-radius: 2px;
     border: 1px solid rgba(31, 59, 44, 0.35);
-    background: rgba(31, 59, 44, 0.08);
+    background: #808080;
   }
 
   &:before {
@@ -244,12 +260,6 @@
   }
 }
 
-.variantThumbV2 {
-  width: 48px;
-  height: 18px;
-  border: 1px solid rgba(31, 59, 44, 0.35);
-  border-radius: 4px;
-}
 
 .hint {
   font-size: 14px;

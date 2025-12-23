@@ -16,6 +16,8 @@
   color: #344E41;
   width: 100%;
   text-align: center;
+  direction: ltr !important;
+
 
   &:empty:before {
     content: attr(data-placeholder);

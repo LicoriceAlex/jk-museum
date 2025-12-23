@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './BlocksPanel.module.scss';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Image, Layout, GalleryHorizontal, GalleryHorizontalEnd, Video } from 'lucide-react';
 
 import { BlockItem, BlockType, ExhibitionBlock } from '../../types';
 
@@ -17,7 +17,6 @@ interface BlocksPanelProps {
   onFileUpload: (file: File) => Promise<{ url: string }>;
 }
 
-type CategoryKey = 'photo' | 'text';
 type PhotoMenuKey = 'photo' | 'photoText' | 'carousel' | 'video';
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
@@ -25,7 +24,8 @@ const makeItem = (): BlockItem => ({ id: `item-${Date.now()}-${Math.random().toS
 const makeItems = (count: number): BlockItem[] => Array.from({ length: count }, () => makeItem());
 
 const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
-  const [openCategory, setOpenCategory] = useState<CategoryKey>('photo');
+  const [isPhotoOpen, setIsPhotoOpen] = useState<boolean>(true);
+  const [isTextOpen, setIsTextOpen] = useState<boolean>(false);
   const [openPhotoMenu, setOpenPhotoMenu] = useState<PhotoMenuKey | null>('photo');
 
   const [photoCount, setPhotoCount] = useState<number>(1);
@@ -33,10 +33,11 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
   const [ptTextCount, setPtTextCount] = useState<number>(1);
   const [ptPhotoCount, setPtPhotoCount] = useState<number>(1);
 
-  const [carouselCount, setCarouselCount] = useState<number>(4); 
+  const [carouselCount, setCarouselCount] = useState<number>(1); 
   const [carouselVariant, setCarouselVariant] = useState<'v1' | 'v2'>('v2');
 
-  const toggleCategory = (key: CategoryKey) => setOpenCategory((prev) => (prev === key ? key : key));
+  const togglePhotoCategory = () => setIsPhotoOpen((prev) => !prev);
+  const toggleTextCategory = () => setIsTextOpen((prev) => !prev);
   const togglePhotoMenu = (key: PhotoMenuKey) =>
     setOpenPhotoMenu((prev) => (prev === key ? null : key));
 
@@ -104,18 +105,18 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
     <div className={styles.root}>
       {/* ===== Фото и видео ===== */}
       <div className={styles.category}>
-        <button type="button" className={styles.categoryHeader} onClick={() => toggleCategory('photo')}>
+        <button type="button" className={styles.categoryHeader} onClick={togglePhotoCategory}>
           <span>Фото и видео</span>
-          {openCategory === 'photo' ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          {isPhotoOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
         </button>
 
-        {openCategory === 'photo' && (
+        {isPhotoOpen && (
           <div className={styles.categoryBody}>
             {/* Фото */}
             <div className={styles.menuItem}>
               <button type="button" className={styles.menuHeader} onClick={() => togglePhotoMenu('photo')}>
                 <span>Фото</span>
-                <span className={styles.menuIcon}>🖼️</span>
+                <span className={styles.menuIcon}><Image size={28} /></span>
               </button>
 
               {openPhotoMenu === 'photo' && (
@@ -154,7 +155,7 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
             <div className={styles.menuItem}>
               <button type="button" className={styles.menuHeader} onClick={() => togglePhotoMenu('photoText')}>
                 <span>Фото и текст</span>
-                <span className={styles.menuIcon}>🖼️≡</span>
+                <span className={styles.menuIcon}><Layout size={28} /></span>
               </button>
 
               {openPhotoMenu === 'photoText' && (
@@ -196,7 +197,7 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
             <div className={styles.menuItem}>
               <button type="button" className={styles.menuHeader} onClick={() => togglePhotoMenu('carousel')}>
                 <span>Карусель</span>
-                <span className={styles.menuIcon}>⇆</span>
+                <span className={styles.menuIcon}><GalleryHorizontal size={28} /></span>
               </button>
 
               {openPhotoMenu === 'carousel' && (
@@ -219,7 +220,7 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
                       onClick={() => setCarouselVariant('v2')}
                       aria-label="Вид карусели 2"
                     >
-                      <div className={styles.variantThumbV2} />
+                      <GalleryHorizontalEnd size={24} color="#1F3B2C" strokeWidth={1.5} />
                     </button>
                   </div>
 
@@ -257,7 +258,7 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
             <div className={styles.menuItem}>
               <button type="button" className={styles.menuHeader} onClick={() => togglePhotoMenu('video')}>
                 <span>Видео</span>
-                <span className={styles.menuIcon}>▶</span>
+                <span className={styles.menuIcon}><Video size={28} /></span>
               </button>
 
               {openPhotoMenu === 'video' && (
@@ -274,12 +275,12 @@ const BlocksPanel: React.FC<BlocksPanelProps> = ({ addBlock }) => {
 
       {/* ===== Текст ===== */}
       <div className={styles.category}>
-        <button type="button" className={styles.categoryHeader} onClick={() => toggleCategory('text')}>
+        <button type="button" className={styles.categoryHeader} onClick={toggleTextCategory}>
           <span>Текст</span>
-          {openCategory === 'text' ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          {isTextOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
         </button>
 
-        {openCategory === 'text' && (
+        {isTextOpen && (
           <div className={styles.textList}>
             <div className={styles.textRow}>
               <div className={styles.textRowTitle}>Текст</div>

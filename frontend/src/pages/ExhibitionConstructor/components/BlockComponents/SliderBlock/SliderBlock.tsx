@@ -32,14 +32,6 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
     setCurrentSlideIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length);
   };
   
-  const handleAddSlide = () => {
-    if (!readOnly) {
-      const newItems = [...items, { image_url: undefined, text: '' }];
-      updateBlock(blockId, { items: newItems });
-      setCurrentSlideIndex(newItems.length - 1);
-    }
-  };
-  
   const handleRemoveSlide = (itemIndexToRemove: number) => {
     if (!readOnly) {
       const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
@@ -89,16 +81,11 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
           </div>
         )}
       </div>
-      {!readOnly && (
+      {!readOnly && items.length > 0 && (
         <div className={styles.controls}>
-          <button onClick={handleAddSlide} className={styles.addButton}>
-            + Добавить слайд
-          </button>
-          {items.length > 0 && (
-            <span className={styles.slideCounter}>
-              {currentSlideIndex + 1} / {items.length}
-            </span>
-          )}
+          <span className={styles.slideCounter}>
+            {currentSlideIndex + 1} / {items.length}
+          </span>
         </div>
       )}
       {readOnly && items.length > 0 && (

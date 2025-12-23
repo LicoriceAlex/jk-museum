@@ -15,7 +15,7 @@ const TextBlock: React.FC<EditableTextProps> = ({
                                                      initialContent,
                                                      onContentChange,
                                                      style,
-                                                     placeholder = 'Нажмите, чтобы добавить текст...',
+                                                     placeholder = 'Введите текст...',
                                                      isHeader = false,
                                                      readOnly = false,
                                                      content,
@@ -23,17 +23,39 @@ const TextBlock: React.FC<EditableTextProps> = ({
   const [localContent, setLocalContent] = useState(content || initialContent);
   const divRef = useRef<HTMLDivElement>(null);
   
+  // Устанавливаем содержимое и направление через ref при каждом рендере
   useEffect(() => {
-    const newContent = content !== undefined ? content : initialContent;
-    setLocalContent(newContent);
-    if (divRef.current && divRef.current.textContent !== newContent) {
-      divRef.current.textContent = newContent;
+    if (divRef.current && !readOnly) {
+      const newContent = content !== undefined ? content : initialContent;
+      const currentText = divRef.current.textContent || '';
+      
+      // Обновляем содержимое только если оно изменилось
+      if (currentText !== newContent) {
+        if (!newContent || !newContent.trim()) {
+          divRef.current.innerHTML = '';
+        } else {
+          divRef.current.textContent = newContent;
+        }
+      }
+      
+      // Устанавливаем direction через inline стиль для гарантии
+      divRef.current.style.direction = 'ltr';
+      divRef.current.setAttribute('dir', 'ltr');
     }
-  }, [content, initialContent]);
+  }, [content, initialContent, readOnly]);
   
   const handleInput = () => {
     if (divRef.current && !readOnly) {
-      setLocalContent(divRef.current.textContent || '');
+      const text = divRef.current.textContent || '';
+      setLocalContent(text);
+      
+      // Если элемент пустой, очищаем innerHTML чтобы :empty работал
+      if (!text.trim()) {
+        divRef.current.innerHTML = '';
+      }
+      
+      // Поддерживаем direction при вводе
+      divRef.current.style.direction = 'ltr';
     }
   };
   
@@ -52,6 +74,7 @@ const TextBlock: React.FC<EditableTextProps> = ({
         ref={divRef}
         className={`${styles.Text} ${styles.readOnly}`}
         style={style}
+        dir="ltr"
       >
         {displayContent || ''}
       </Tag>
@@ -66,11 +89,11 @@ const TextBlock: React.FC<EditableTextProps> = ({
       onInput={handleInput}
       onBlur={handleBlur}
       className={styles.Text}
-      style={style}
+      style={{ ...style, direction: 'ltr' }}
       data-placeholder={placeholder}
-    >
-      {displayContent || ''}
-    </Tag>
+      dir="ltr"
+      spellCheck={false}
+    />
   );
 };
 
