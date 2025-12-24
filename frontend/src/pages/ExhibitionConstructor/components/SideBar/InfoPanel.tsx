@@ -30,9 +30,12 @@ interface InfoPanelProps {
   exhibitionData: ExhibitionData;
   updateExhibitionData: (data: Partial<ExhibitionData>) => void;
   onCoverImageUpload: (file: File) => void;
+  onSave: () => void;
+  isSaving: boolean;
+  saveError: string | null;
 }
 
-const InfoPanel: React.FC<InfoPanelProps> = ({ exhibitionData, updateExhibitionData }) => {
+const InfoPanel: React.FC<InfoPanelProps> = ({ exhibitionData, updateExhibitionData, onSave, isSaving, saveError }) => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   
   const adjustTextareaHeight = (textareaRef: React.RefObject<HTMLTextAreaElement | null>) => {
@@ -213,9 +216,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ exhibitionData, updateExhibitionD
       <button
         type="button"
         className={styles.saveButton}
+        onClick={onSave}
+        disabled={isSaving}
       >
-        Сохранить
+        {isSaving ? 'Сохраняем...' : 'Сохранить'}
       </button>
+      {saveError && <p className={styles.errorText}>{saveError}</p>}
     </div>
   );
 };

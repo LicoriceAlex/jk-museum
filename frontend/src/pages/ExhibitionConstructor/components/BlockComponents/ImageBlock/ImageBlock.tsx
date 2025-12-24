@@ -4,42 +4,45 @@ import ImageUploadBlock from '../ImageUploadBlock/ImageUploadBlock';
 
 interface ImageBlockProps {
   imageUrl?: string;
-  onUpload: (file: File) => void;
-  onRemove: () => void;
+  onUpload?: (file: File) => void;
+  onRemove?: () => void;
   style?: React.CSSProperties;
+  containerStyle?: React.CSSProperties;
+  imageStyle?: React.CSSProperties;
+  readOnly?: boolean;
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({
-                                                 imageUrl,
-                                                 onUpload,
-                                                 onRemove,
-                                                 style
-                                               }) => {
-  console.log('ImageBlock received imageUrl:', imageUrl);
-  
+  imageUrl,
+  onUpload,
+  onRemove,
+  style,
+  containerStyle,
+  imageStyle,
+  readOnly = false,
+}) => {
   return (
-    <div className={styles.imageBlock} style={style}>
+    <div className={styles.imageBlock} style={{ ...style, ...containerStyle }}>
       {imageUrl ? (
-        <div className={styles.imageContainer}>
-          <img src={imageUrl} alt="Uploaded content" className={styles.image} />
-          <div className={styles.actions}>
-            <button
-              className={styles.removeButton}
-              onClick={onRemove}
-              aria-label="Remove image"
-            >
+        <div className={styles.imageContainer} style={{ height: '100%' }}>
+          <img
+            src={imageUrl}
+            alt="Uploaded content"
+            className={styles.image}
+            style={imageStyle}
+          />
+          {!readOnly && onRemove && (
+            <button className={styles.removeButton} onClick={onRemove}>
               ×
             </button>
-          </div>
+          )}
         </div>
       ) : (
-        <div className={styles.uploadContainer}>
-          <ImageUploadBlock
-            onUpload={onUpload}
-            style={style}
-            compactMode={false}
-          />
-        </div>
+        !readOnly && onUpload && (
+          <div className={styles.uploadContainer} style={{ height: '100%' }}>
+            <ImageUploadBlock onUpload={onUpload} />
+          </div>
+        )
       )}
     </div>
   );

@@ -3,7 +3,7 @@ import styles from './ExhibitModal.module.scss';
 import { useExhibitModal } from '../../../../features/exhibits/useExhibitModal';
 import {ExhibitModalProps, EditExhibitModalProps} from '../../../../features/exhibits/types';
 
-const ExhibitModal: React.FC<ExhibitModalProps> = ({ exhibit, onClose, onUpdate }) => {
+const ExhibitModal: React.FC<ExhibitModalProps> = ({ exhibit, onClose, onUpdate, onDelete }) => {
   const {
     isEditModalOpen,
     isSubmitting,
@@ -82,6 +82,18 @@ const ExhibitModal: React.FC<ExhibitModalProps> = ({ exhibit, onClose, onUpdate 
           
           <div className={styles.editButtonWrapper}>
             <button className={styles.editButton} onClick={handleOpenEditModal}>Редактировать</button>
+            {onDelete && (
+              <button 
+                className={styles.deleteButton} 
+                onClick={() => {
+                  if (window.confirm('Вы уверены, что хотите удалить этот экспонат?')) {
+                    onDelete(exhibit.id);
+                  }
+                }}
+              >
+                Удалить
+              </button>
+            )}
           </div>
         </div>
       </div>

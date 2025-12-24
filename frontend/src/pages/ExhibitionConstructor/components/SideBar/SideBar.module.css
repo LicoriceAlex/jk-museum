@@ -41,8 +41,8 @@
 }
 .sidebar__tab--active {
   color: #1F3B2C;
-  border-top: solid 1px #D4A373;
-  border-bottom: solid 1px #D4A373;
+  border-top: solid 1px #253A30;
+  border-bottom: solid 1px #253A30;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .sidebar__tab__icon {

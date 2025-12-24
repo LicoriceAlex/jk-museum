@@ -23,18 +23,32 @@
   }
 }
 
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.08vw;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.04vw;
+    margin-bottom: 1.56vw;
+  }
+}
+
 .title {
   font-family: var(--font-secondary);
   font-size: 52px;
   font-weight: 600;
   color: var(--color-text2);
-  margin-bottom: 2.08vw;
+  margin: 0;
   text-align: left;
   letter-spacing: 1px;
 
   @media (max-width: 768px) {
     font-size: 28px;
-    margin-bottom: 1.56vw;
   }
 }
 
@@ -303,7 +317,7 @@
   }
 }
 
-.editButton, .saveButton {
+.editButton, .saveButton, .settingsButton {
   background-color: var(--color-text2);
   color: var(--color-text4);
   border: none;
@@ -324,6 +338,16 @@
 
   &:active {
     transform: translateY(0);
+  }
+}
+
+.settingsButton {
+  flex-shrink: 0;
+  margin-left: auto;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

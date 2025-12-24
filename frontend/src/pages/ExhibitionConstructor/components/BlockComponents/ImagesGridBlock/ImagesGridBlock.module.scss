@@ -14,6 +14,20 @@
   overflow: hidden;
 }
 
+.imageGridBlock {
+  width: 100%;
+  max-width: 1221px;
+  margin: 0 auto 28px;
+
+  display: grid;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.cell {
+  height: 280px;
+}
+
 .gridItem :global(.imageBlock) {
   width: 100%;
   height: 100%;

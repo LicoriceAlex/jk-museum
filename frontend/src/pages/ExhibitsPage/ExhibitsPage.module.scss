@@ -29,7 +29,7 @@
 
 .pageTitle {
   font-weight: 600;
-  font-size: 52px;
+  font-size: 2.71vw;
   line-height: 110%;
   color: var(--color-text2);
 }
@@ -48,7 +48,7 @@
   color: var(--color-exibitcard6);
   outline: none;
   font-weight: 600;
-  font-size: 24px;
+  font-size: 1.25vw;
   font-family: var(--font-main);
   line-height: 120%;
   letter-spacing: 0px;
@@ -61,7 +61,7 @@
 
 .searchIcon {
   position: absolute;
-  left: 12px;
+  left: 0.63vw;
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-exibitcard6);
@@ -87,25 +87,24 @@
   padding: 0.83vw 1.25vw;
   border-radius: 4px;
   background-color: var(--color-text2);
-  color: var(--color-text4);
+  color: var(--color-mainpage);
   border: none;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
+  box-shadow: 0 0.1vw 0.21vw rgba(0, 0, 0, 0.1);
   &:hover {
     background-color: var(--color-text2);
   }
 }
 
 .addIcon {
-  font-size: 24px;
+  font-size: 1.25vw;
   font-weight: bold;
 }
 
 .addText {
   font-family: var(--font-main);
   font-weight: 600;
-  font-size: 24px;
+  font-size: 1.25vw;
   line-height: 120%;
   letter-spacing: 0px;
 

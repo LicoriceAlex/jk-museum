@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './Profile.module.scss';
 import Header from '../../components/layout/Header/Header';
 import { useProfile } from '../../features/profile/useProfile';
 import {Repeat} from 'lucide-react';
 import ExhibitionsGrid
   from '../MainPage/components/ExhibitionsGrid/ExhibitionsGrid.tsx';
+import AccountSettings from './AccountSettings/AccountSettings';
 
 const Profile: React.FC = () => {
+  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
   const {
     isEditing,
     profile,
     editedProfile,
+    isLoading,
+    isSaving,
+    error,
     handleEdit,
     handleSave,
     handleBack,
@@ -18,13 +23,43 @@ const Profile: React.FC = () => {
     handleAvatarChange
   } = useProfile();
   
+  if (isLoading) {
+    return (
+      <div className={styles.wrapper}>
+        <Header />
+        <div className={styles.container}>
+          <div className={styles.profileCard}>
+            <h1 className={styles.title}>Личный кабинет</h1>
+            <div style={{ padding: '20px', textAlign: 'center' }}>Загрузка профиля...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className={styles.wrapper}>
       <Header />
       
       <div className={styles.container}>
         <div className={styles.profileCard}>
-          <h1 className={styles.title}>Личный кабинет</h1>
+          <div className={styles.headerRow}>
+            <h1 className={styles.title}>Личный кабинет</h1>
+            {!isEditing && (
+              <button
+                onClick={() => setIsAccountSettingsOpen(true)}
+                className={styles.settingsButton}
+              >
+                Настройки аккаунта
+              </button>
+            )}
+          </div>
+          
+          {error && (
+            <div style={{ padding: '10px', margin: '10px 0', backgroundColor: '#fee', color: '#c00', borderRadius: '4px' }}>
+              Ошибка: {error}
+            </div>
+          )}
           
           <div className={styles.content}>
             <div className={styles.column}>
@@ -126,8 +161,9 @@ const Profile: React.FC = () => {
                   <button
                     onClick={handleSave}
                     className={styles.saveButton}
+                    disabled={isSaving}
                   >
-                    Сохранить
+                    {isSaving ? "Сохранение..." : "Сохранить"}
                   </button>
                   
                   <button onClick={() => {}}
@@ -149,6 +185,11 @@ const Profile: React.FC = () => {
         </div>
         <ExhibitionsGrid variant={'compact'} />
       </div>
+      
+      <AccountSettings
+        isOpen={isAccountSettingsOpen}
+        onClose={() => setIsAccountSettingsOpen(false)}
+      />
     </div>
   );
 };

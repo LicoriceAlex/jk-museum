@@ -6,9 +6,10 @@ import styles from './Header.module.scss';
 
 interface HeaderProps {
   currentPath?: string;
+  className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentPath }) => {
+const Header: React.FC<HeaderProps> = ({ currentPath, className }) => {
   const { isAuthenticated, isLoading} = useAuth();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -32,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ currentPath }) => {
   if (!isAuthenticated) {
     return (
       <header
-        className={`${styles.header} ${isHomePage ? styles.homeHeader : ''}`}>
+        className={`${styles.header} ${isHomePage ? styles.homeHeader : ''} ${className ? className : ''}`}>
         <div className={styles.container}>
           <div className={styles.logo}>
             <Link to="/">
@@ -54,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ currentPath }) => {
   
   return (
     <header
-      className={`${styles.header} ${isHomePage ? styles.homeHeader : ''}`}>
+      className={`${styles.header} ${isHomePage ? styles.homeHeader : ''} ${className ? styles[className] || className : ''}`}>
       <div className={styles.container}>
         <div className={styles.logo}>
           <Link to="/">

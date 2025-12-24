@@ -1,5 +1,13 @@
 import { getToken } from './serviceToken.ts';
 
+const apiBase = (() => {
+  const env = import.meta.env.VITE_API_URL;
+  if (env && typeof env === 'string') {
+    return env.replace(/\/+$/, '');
+  }
+  return '';
+})();
+
 export const apiRequest = async (
   endpoint: string,
   method = "POST",
@@ -29,10 +37,11 @@ export const apiRequest = async (
       }
     }
     
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/v1/${endpoint}`,
-      options
-    );
+    const url = apiBase
+      ? `${apiBase}/api/v1/${endpoint}`
+      : `/api/v1/${endpoint}`;
+    
+    const response = await fetch(url, options);
     
     if (!response.ok) {
       return { error: true, status: response.status };

@@ -1,18 +1,11 @@
-html, body, #root { /* Или ваш корневой div приложения */
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
 .previewArea {
   padding: 79px 40px 46px 171px;
   box-sizing: border-box;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  background-color: var(--color-background);
+  min-height: 100vh;
+  background-color: #F5EBE0;
   color: var(--color-text);
 
 

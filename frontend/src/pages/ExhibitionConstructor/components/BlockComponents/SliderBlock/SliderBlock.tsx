@@ -10,6 +10,7 @@ interface SliderBlockProps {
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   updateBlock: (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => void;
+  readOnly?: boolean;
 }
 
 const SliderBlock: React.FC<SliderBlockProps> = ({
@@ -19,6 +20,7 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
                                                    onImageUpload,
                                                    onImageRemove,
                                                    updateBlock,
+                                                   readOnly = false,
                                                  }) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   
@@ -30,20 +32,16 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
     setCurrentSlideIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length);
   };
   
-  const handleAddSlide = () => {
-    const newItems = [...items, { image_url: undefined, text: '' }];
-    updateBlock(blockId, { items: newItems });
-    setCurrentSlideIndex(newItems.length - 1);
-  };
-  
   const handleRemoveSlide = (itemIndexToRemove: number) => {
-    const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
-    updateBlock(blockId, { items: updatedItems });
-    
-    if (currentSlideIndex >= updatedItems.length && updatedItems.length > 0) {
-      setCurrentSlideIndex(updatedItems.length - 1);
-    } else if (updatedItems.length === 0) {
-      setCurrentSlideIndex(0);
+    if (!readOnly) {
+      const updatedItems = items.filter((_, idx) => idx !== itemIndexToRemove);
+      updateBlock(blockId, { items: updatedItems });
+      
+      if (currentSlideIndex >= updatedItems.length && updatedItems.length > 0) {
+        setCurrentSlideIndex(updatedItems.length - 1);
+      } else if (updatedItems.length === 0) {
+        setCurrentSlideIndex(0);
+      }
     }
   };
   
@@ -64,8 +62,9 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
             <div className={styles.slideContent}>
               <ImageBlock
                 imageUrl={currentItem?.image_url}
-                onUpload={(file: File) => onImageUpload(blockId, currentSlideIndex, file)}
-                onRemove={() => handleRemoveSlide(currentSlideIndex)}
+                onUpload={readOnly ? undefined : (file: File) => onImageUpload(blockId, currentSlideIndex, file)}
+                onRemove={readOnly ? undefined : () => handleRemoveSlide(currentSlideIndex)}
+                readOnly={readOnly}
               />
             </div>
             <button
@@ -82,16 +81,20 @@ const SliderBlock: React.FC<SliderBlockProps> = ({
           </div>
         )}
       </div>
-      <div className={styles.controls}>
-        <button onClick={handleAddSlide} className={styles.addButton}>
-          + Добавить слайд
-        </button>
-        {items.length > 0 && (
+      {!readOnly && items.length > 0 && (
+        <div className={styles.controls}>
           <span className={styles.slideCounter}>
             {currentSlideIndex + 1} / {items.length}
           </span>
-        )}
-      </div>
+        </div>
+      )}
+      {readOnly && items.length > 0 && (
+        <div className={styles.controls}>
+          <span className={styles.slideCounter}>
+            {currentSlideIndex + 1} / {items.length}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

@@ -106,7 +106,10 @@ const ExhibitionsGrid: React.FC<ExhibitionsGridProps> = ({
   const categories = ['Искусство', 'История', 'Наука', 'Культура', 'Природа', 'Все музеи'];
   const sortOptions = ['Сначала новые', 'Сначала старые', 'По названию'];
 
-  const dataToUse = exhibitions || mockExhibitions;
+  // Объединяем выставки с сервера с предустановленными
+  const dataToUse = exhibitions && exhibitions.length > 0 
+    ? [...exhibitions, ...mockExhibitions] 
+    : mockExhibitions;
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
