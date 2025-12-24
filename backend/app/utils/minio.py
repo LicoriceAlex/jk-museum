@@ -1,10 +1,10 @@
 import uuid
-from typing import Optional, AsyncGenerator
-from fastapi import HTTPException, UploadFile
-from aiobotocore.session import get_session
-from botocore.config import Config
+from collections.abc import AsyncGenerator
 
+from aiobotocore.session import get_session
 from backend.app.core.config import settings
+from botocore.config import Config
+from fastapi import HTTPException, UploadFile
 
 
 class MinIOClient:
@@ -22,7 +22,7 @@ class MinIOClient:
             endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
-            config=Config(signature_version="s3v4")
+            config=Config(signature_version="s3v4"),
         ) as client:
             yield client
 
@@ -58,7 +58,7 @@ class MinIOClient:
             url = await client.generate_presigned_url(
                 ClientMethod="get_object",
                 Params={"Bucket": self.bucket_name, "Key": file_key},
-                ExpiresIn=expires_in
+                ExpiresIn=expires_in,
             )
             return url
 
@@ -66,7 +66,7 @@ class MinIOClient:
         """Delete a file from MinIO."""
         async for client in self._get_client():
             await client.delete_object(Bucket=self.bucket_name, Key=file_key)
-            
+
     async def download_file(self, file_key: str) -> AsyncGenerator[bytes, None]:
         """Download a file from MinIO as a stream."""
         async for client in self._get_client():
@@ -74,13 +74,16 @@ class MinIOClient:
                 response = await client.get_object(Bucket=self.bucket_name, Key=file_key)
                 async for chunk in response["Body"].iter_chunks():
                     yield chunk
-            except client.exceptions.NoSuchKey:
-                raise HTTPException(status_code=404, detail="File not found")
-            except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Error downloading file: {str(e)}")
+            except client.exceptions.NoSuchKey as err:
+                raise HTTPException(status_code=404, detail="File not found") from err
+            except Exception as err:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Error downloading file: {err!s}",
+                ) from err
             finally:
                 # Ensure the response is closed
-                if 'response' in locals():
+                if "response" in locals():
                     response["Body"].close()
 
 

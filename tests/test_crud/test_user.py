@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.db.models import (
+from backend.app.db.models.user import (
     UserCreate,
     User,
     StatusEnum,
@@ -8,8 +8,6 @@ from backend.app.db.models import (
 )
 from backend.app.crud import user as user_crud
 from backend.app.core.security import verify_password
-from backend.app.core.config import settings
-from backend.app.db.schemas import UpdatePassword
 
 
 TEST_USER_EMAIL = "user@gmail.com"

@@ -1,11 +1,12 @@
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 import emails
-from jinja2 import Template
 from backend.app.core.config import settings
 from backend.app.utils import logger
+from jinja2 import Template
+
 
 @dataclass
 class EmailData:
@@ -57,9 +58,7 @@ async def generate_reset_password_email(email_to: str, email: str, token: str) -
     return EmailData(html_content=html_content, subject=subject)
 
 
-async def generate_new_account_email(
-    email_to: str, username: str, password: str
-) -> EmailData:
+async def generate_new_account_email(email_to: str, username: str, password: str) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {username}"
     html_content = await render_email_template(
@@ -73,4 +72,3 @@ async def generate_new_account_email(
         },
     )
     return EmailData(html_content=html_content, subject=subject)
-

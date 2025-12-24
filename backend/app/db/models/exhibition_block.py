@@ -1,16 +1,12 @@
-from enum import Enum
-from sqlmodel import Field, SQLModel
-from uuid import UUID, uuid4
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Column
-from typing import TYPE_CHECKING, Optional
+from enum import Enum
+from uuid import UUID, uuid4
+
 from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field, SQLModel
 
-
-
-if TYPE_CHECKING:
-    pass
 
 class ExhibitionBlockTypeEnum(str, Enum):
     HEADER = "HEADER"
@@ -24,13 +20,13 @@ class ExhibitionBlockTypeEnum(str, Enum):
     IMAGES_3 = "IMAGES_3"
     IMAGES_4 = "IMAGES_4"
     CAROUSEL = "CAROUSEL"
-    
-    
+
+
 class ExhibitionBlockBase(SQLModel):
     type: ExhibitionBlockTypeEnum = Field(nullable=False)
-    content: Optional[str] = Field(nullable=True)
+    content: str | None = Field(nullable=True)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
-    position: Optional[int] = Field(nullable=False)
+    position: int | None = Field(nullable=False)
 
 
 class ExhibitionBlock(ExhibitionBlockBase, table=True):
@@ -38,35 +34,40 @@ class ExhibitionBlock(ExhibitionBlockBase, table=True):
 
     id: UUID = Field(primary_key=True, nullable=False, default_factory=uuid4)
 
-    exhibition_id: UUID = Field(foreign_key="exhibitions.id", nullable=False, index=True, ondelete="CASCADE")
+    exhibition_id: UUID = Field(
+        foreign_key="exhibitions.id",
+        nullable=False,
+        index=True,
+        ondelete="CASCADE",
+    )
 
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
-        sa_column_kwargs={"onupdate": datetime.now}
+        sa_column_kwargs={"onupdate": datetime.now},
     )
-    
-    
+
+
 class ExhibitionBlockCreate(ExhibitionBlockBase):
     exhibition_id: UUID
-    
-    
+
+
 class ExhibitionBlockUpdateBase(ExhibitionBlockBase):
     pass
 
 
 class ExhibitionBlockUpdate(ExhibitionBlockUpdateBase):
-    items: Optional[list[ExhibitionBlockItemCreate]]
-    
-    
+    items: list[ExhibitionBlockItemCreate] | None
+
+
 class ExhibitionBlockPublic(ExhibitionBlockBase):
     id: UUID
     # exhibition_id: UUID
     created_at: datetime
     updated_at: datetime
-    items: Optional[list[ExhibitionBlockItemCreate]] = None
-    
-    
+    items: list[ExhibitionBlockItemCreate] | None = None
+
+
 class ExhibitionBlocksPublic(SQLModel):
     data: list[ExhibitionBlockPublic]
     count: int

@@ -1,9 +1,9 @@
+import uuid
 from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING
-import uuid
-from sqlmodel import Field, SQLModel
 
+from sqlmodel import Field, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.user import UserPublic
@@ -15,10 +15,7 @@ class UserOrganizationEnum(str, Enum):
 
 
 class UserOrganizationBase(SQLModel):
-    status: UserOrganizationEnum = Field(
-        nullable=False,
-        default=UserOrganizationEnum.active
-    )
+    status: UserOrganizationEnum = Field(nullable=False, default=UserOrganizationEnum.active)
     position: str | None = Field(default=None, nullable=True)
 
 
@@ -28,13 +25,9 @@ class UserOrganization(UserOrganizationBase, table=True):
     organization_id: uuid.UUID = Field(
         foreign_key="organizations.id",
         primary_key=True,
-        nullable=False
+        nullable=False,
     )
-    user_id: uuid.UUID = Field(
-        foreign_key="users.id",
-        primary_key=True,
-        nullable=False
-    )
+    user_id: uuid.UUID = Field(foreign_key="users.id", primary_key=True, nullable=False)
 
     left_at: datetime | None = Field(default=None, nullable=True)
     joined_at: datetime = Field(default_factory=datetime.now)
@@ -55,7 +48,7 @@ class UserOrganizationPublic(UserOrganizationBase):
 
 
 class OrganizationMemberPublic(SQLModel):
-    user: 'UserPublic'
+    user: "UserPublic"
     membership: UserOrganizationPublic
 
 
