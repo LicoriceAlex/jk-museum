@@ -1,9 +1,19 @@
+import asyncio
+import contextvars
+import inspect
 import logging
+<<<<<<< HEAD
 import contextvars
 import inspect
 import asyncio
 from loguru import logger
 import sys
+=======
+import sys
+from functools import wraps
+
+from loguru import logger
+>>>>>>> origin/main
 
 # trace_id context variable must exist before we configure the sink
 trace_id_var = contextvars.ContextVar("trace_id", default=None)
@@ -40,8 +50,12 @@ class InterceptHandler(logging.Handler):
         except Exception:
             level = record.levelno
         # Find caller from where the logging call was made
+<<<<<<< HEAD
         logger.opt(depth=6, exception=record.exc_info).log(
             level, record.getMessage())
+=======
+        logger.opt(depth=6, exception=record.exc_info).log(level, record.getMessage())
+>>>>>>> origin/main
 
 
 # Install InterceptHandler as the handler for the stdlib logging
@@ -83,7 +97,10 @@ def log_method_call(func):
     - место вызова (caller файл:строка)
     - аргументы и результат
     """
+<<<<<<< HEAD
     from functools import wraps
+=======
+>>>>>>> origin/main
 
     def _get_def_location(f):
         try:
@@ -115,11 +132,18 @@ def log_method_call(func):
         caller_loc = _get_caller_location()
         # use opt(depth=1) so loguru attributes (file/line) point to caller
         logger.opt(depth=1).info(
+<<<<<<< HEAD
             f"[{trace_id}] Call {func.__name__} defined_at={def_loc} called_from={caller_loc} args={args} kwargs={kwargs}"
         )
         result = await func(*args, **kwargs)
         logger.opt(depth=1).info(
             f"[{trace_id}] Result {func.__name__} -> {result}")
+=======
+            f"[{trace_id}] Call {func.__name__} defined_at={def_loc} called_from={caller_loc} args={args} kwargs={kwargs}",
+        )
+        result = await func(*args, **kwargs)
+        logger.opt(depth=1).info(f"[{trace_id}] Result {func.__name__} -> {result}")
+>>>>>>> origin/main
         return result
 
     @wraps(func)
@@ -128,11 +152,18 @@ def log_method_call(func):
         def_loc = _get_def_location(func)
         caller_loc = _get_caller_location()
         logger.opt(depth=1).info(
+<<<<<<< HEAD
             f"[{trace_id}] Call {func.__name__} defined_at={def_loc} called_from={caller_loc} args={args} kwargs={kwargs}"
         )
         result = func(*args, **kwargs)
         logger.opt(depth=1).info(
             f"[{trace_id}] Result {func.__name__} -> {result}")
+=======
+            f"[{trace_id}] Call {func.__name__} defined_at={def_loc} called_from={caller_loc} args={args} kwargs={kwargs}",
+        )
+        result = func(*args, **kwargs)
+        logger.opt(depth=1).info(f"[{trace_id}] Result {func.__name__} -> {result}")
+>>>>>>> origin/main
         return result
 
     if asyncio.iscoroutinefunction(func):

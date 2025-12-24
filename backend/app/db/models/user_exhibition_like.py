@@ -1,6 +1,7 @@
-from uuid import UUID
-from sqlmodel import SQLModel, Field
 from datetime import datetime
+from uuid import UUID
+
+from sqlmodel import Field, SQLModel
 
 
 class UserExhibitionLike(SQLModel, table=True):

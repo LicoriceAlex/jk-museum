@@ -1,4 +1,5 @@
 import uuid
+<<<<<<< HEAD
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.api.dependencies.common import SessionDep
@@ -14,15 +15,36 @@ from backend.app.crud import organization as organization_crud
 from backend.app.crud import user_organization as user_organization_crud
 from backend.app.services import organization as organization_service
 from backend.app.db.models import (
+=======
+
+from backend.app.api.dependencies.common import SessionDep
+from backend.app.api.dependencies.organizations import OrganizationOr404
+from backend.app.api.dependencies.pagination import PaginationDep
+from backend.app.api.dependencies.users import CurrentActiveOrganizationMember, CurrentUser
+from backend.app.crud import organization as organization_crud
+from backend.app.crud import user_organization as user_organization_crud
+from backend.app.db.models.organization import (
+>>>>>>> origin/main
     OrganizationCreate,
     OrganizationPublic,
     OrganizationPublicShort,
     OrganizationsPublic,
+<<<<<<< HEAD
     OrganizationMembersPublic,
     OrganizationMemberPublic,
     UserOrganizationPublic,
     OrganizationMemberUpdate,
+=======
+>>>>>>> origin/main
 )
+from backend.app.db.models.user_organization import (
+    OrganizationMemberPublic,
+    OrganizationMembersPublic,
+    OrganizationMemberUpdate,
+    UserOrganizationPublic,
+)
+from backend.app.services import organization as organization_service
+from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter()
 
@@ -39,8 +61,12 @@ async def create_organization(
     Create a new organization.
     """
     try:
+<<<<<<< HEAD
         organization_create = OrganizationCreate.model_validate(
             organization_in)
+=======
+        organization_create = OrganizationCreate.model_validate(organization_in)
+>>>>>>> origin/main
         organization_response = await organization_service.create_organization(
             session=session,
             organization_in=organization_create,
@@ -48,10 +74,7 @@ async def create_organization(
         )
         return organization_response
     except ValueError as e:
-        raise HTTPException(
-            status_code=400,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.patch(
@@ -66,7 +89,7 @@ async def confirm_organization(
     """
     organization = await organization_crud.confirm_organization(
         session=session,
-        organization=organization
+        organization=organization,
     )
     return organization
 
@@ -84,7 +107,7 @@ async def reject_organization(
     """
     organization = await organization_crud.reject_organization(
         session=session,
-        organization=organization
+        organization=organization,
     )
     return organization
 
@@ -93,17 +116,14 @@ async def reject_organization(
     "/",
     response_model=OrganizationsPublic,
 )
-async def get_organizations(
-    session: SessionDep,
-    pagination: PaginationDep
-):
+async def get_organizations(session: SessionDep, pagination: PaginationDep):
     """
     Get organizations.
     """
     organizations = await organization_crud.get_organizations(
         session=session,
         skip=pagination.skip,
-        limit=pagination.limit
+        limit=pagination.limit,
     )
     return organizations
 
@@ -120,7 +140,11 @@ async def get_my_organization(
     """
     organizations = await organization_crud.get_my_organizations(
         session=session,
+<<<<<<< HEAD
         user_id=current_user.id
+=======
+        user_id=current_user.id,
+>>>>>>> origin/main
     )
     return organizations
 
@@ -143,10 +167,9 @@ async def get_organization_profile(
         organization_id=organization_id,
         skip=skip,
         limit=limit,
-        current_user_id=current_user.id
+        current_user_id=current_user.id,
     )
     if not org:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Organization not found")
     return org
 
@@ -167,7 +190,7 @@ async def update_organization_profile(
     organization = await organization_crud.update_organization_profile(
         session=session,
         organization=organization,
-        organization_in=organization_in
+        organization_in=organization_in,
     )
     return organization
 
@@ -193,10 +216,14 @@ async def add_organization_member(
             position=position,
         )
     except ValueError as e:
+<<<<<<< HEAD
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
+=======
+        raise HTTPException(status_code=400, detail=str(e)) from e
+>>>>>>> origin/main
 
     return organization_member
 
@@ -214,16 +241,27 @@ async def get_organization_members(
     """
     members = await user_organization_crud.get_organization_members(
         session=session,
+<<<<<<< HEAD
         organization_id=organization.id
+=======
+        organization_id=organization.id,
+>>>>>>> origin/main
     )
     return OrganizationMembersPublic(
         items=[
             OrganizationMemberPublic(
                 user=user,
+<<<<<<< HEAD
                 membership=UserOrganizationPublic.model_validate(member)
             )
             for user, member in members
         ]
+=======
+                membership=UserOrganizationPublic.model_validate(member),
+            )
+            for user, member in members
+        ],
+>>>>>>> origin/main
     )
 
 

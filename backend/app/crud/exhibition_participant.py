@@ -1,5 +1,5 @@
-from typing import Optional
 from uuid import UUID
+<<<<<<< HEAD
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,13 +7,22 @@ from backend.app.db.models import (
     ExhibitionParticipant,
 )
 from backend.app.utils.logger import log_method_call
+=======
+
+from backend.app.db.models.exhibition_participant import (
+    ExhibitionParticipant,
+)
+from backend.app.utils.logger import log_method_call
+from sqlalchemy import delete, select
+from sqlalchemy.ext.asyncio import AsyncSession
+>>>>>>> origin/main
 
 
 @log_method_call
 async def get_exhibition_participant(
     session: AsyncSession,
-    **filters
-) -> Optional[ExhibitionParticipant]:
+    **filters,
+) -> ExhibitionParticipant | None:
     statement = select(ExhibitionParticipant).filter_by(**filters)
     result = await session.execute(statement)
     exhibition_participant = result.scalar_one_or_none()
@@ -24,13 +33,13 @@ async def get_exhibition_participant(
 async def create_exhibition_participants(
     session: AsyncSession,
     exhibition_participant_names: list[str],
-    exhibition_id: UUID
+    exhibition_id: UUID,
 ) -> list[ExhibitionParticipant]:
     exhibition_participant_list = []
     for exhibition_participant_name in exhibition_participant_names:
         exhibition_participant = ExhibitionParticipant(
             name=exhibition_participant_name,
-            exhibition_id=exhibition_id
+            exhibition_id=exhibition_id,
         )
         session.add(exhibition_participant)
         await session.commit()
@@ -42,12 +51,14 @@ async def create_exhibition_participants(
 @log_method_call
 async def update_exhibition_participants(
     session: AsyncSession,
-    participants_in: Optional[list[str]],
-    exhibition_id: UUID
-) -> Optional[list[ExhibitionParticipant]]:
+    participants_in: list[str] | None,
+    exhibition_id: UUID,
+) -> list[ExhibitionParticipant] | None:
     if participants_in is None:
         return None
-    await session.execute(delete(ExhibitionParticipant).where(ExhibitionParticipant.exhibition_id == exhibition_id))
+    await session.execute(
+        delete(ExhibitionParticipant).where(ExhibitionParticipant.exhibition_id == exhibition_id),
+    )
     await session.commit()
     return await create_exhibition_participants(session, participants_in, exhibition_id)
 
@@ -55,8 +66,8 @@ async def update_exhibition_participants(
 @log_method_call
 async def get_exhibition_participants(
     session: AsyncSession,
-    exhibition_id: UUID
-) -> Optional[list[ExhibitionParticipant]]:
+    exhibition_id: UUID,
+) -> list[ExhibitionParticipant] | None:
     statement = select(ExhibitionParticipant).filter_by(exhibition_id=exhibition_id)
     result = await session.execute(statement)
     exhibition_participants = result.scalars().all()

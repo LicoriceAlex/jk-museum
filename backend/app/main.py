@@ -1,12 +1,12 @@
-
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+
 from backend.app.api.main import api_router
 from backend.app.core.config import settings
 from backend.app.utils.logger import logger
 from backend.app.utils.middleware import LoggingMiddleware
 from backend.app.utils.minio import minio_client
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("Shutting down FastAPI application...")
 
+
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
@@ -30,8 +31,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+<<<<<<< HEAD
 app.add_middleware(
     LoggingMiddleware
 )
+=======
+app.add_middleware(LoggingMiddleware)
+>>>>>>> origin/main
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

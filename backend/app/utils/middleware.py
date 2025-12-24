@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 from loguru import logger
 import uuid
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import StreamingResponse
 from backend.app.utils.logger import set_trace_id
+=======
+import uuid
+
+from backend.app.utils.logger import set_trace_id
+from fastapi import Request, Response
+from loguru import logger
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import StreamingResponse
+>>>>>>> origin/main
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
