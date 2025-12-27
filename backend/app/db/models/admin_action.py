@@ -18,7 +18,7 @@ class ActionTypeEnum(Variants):
 
 
 class AdminActionBase(SQLModel):
-    action_type: ActionTypeEnum
+    action_type: str
 
 
 class AdminAction(AdminActionBase, table=True):

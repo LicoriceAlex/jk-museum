@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 
 class ExhibitionStatusEnum(Variants):
+    published = "published"
+    draft = "draft"
     on_mo_review = "on_mo_review"
     on_mo_revision = "on_mo_revision"
     ready_for_platform = "ready_for_platform"
@@ -42,7 +44,7 @@ class ExhibitionBase(SQLModel):
     description: str | None = Field(default=None, nullable=True)
     cover_image_key: str = Field(max_length=255, nullable=False)
     cover_type: CoverTypeEnum | None = Field(default=CoverTypeEnum.outside)
-    status: ExhibitionStatusEnum = Field(default=ExhibitionStatusEnum.draft, nullable=False)
+    status: str = Field(default=ExhibitionStatusEnum.draft, nullable=False)
     rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 

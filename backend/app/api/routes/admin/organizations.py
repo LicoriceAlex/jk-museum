@@ -2,7 +2,7 @@ import uuid
 
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.organizations import OrganizationOr404
-from backend.app.api.dependencies.users import get_current_admin
+from backend.app.api.dependencies.users import CurrentAdmin, get_current_admin
 from backend.app.api.routes.exhibitions import PaginationDep
 from backend.app.db.models.organization import (
     OrganizationPublic,
@@ -43,17 +43,23 @@ async def read_organization(
 
 @router.patch(
     "/{organization_id}/approve",
+    dependencies=[Depends(get_current_admin)],
 )
 async def approve_organization(
     session: SessionDep,
     organization: OrganizationOr404,
+    current_user: CurrentAdmin,
+    comment: str,
 ):
     """
     Confirm an organization.
     """
-    organization = await admin_organization_service.approve_organization(
+    organization = await admin_organization_service.update_organization_status(
         session=session,
         organization=organization,
+        user=current_user,
+        comment=comment,
+        new_status=OrgStatusEnum.approved,
     )
     return organization
 
@@ -64,5 +70,14 @@ async def approve_organization(
 async def request_organization_revision(
     session: SessionDep,
     organization: OrganizationOr404,
+    current_user: CurrentAdmin,
+    comment: str,
 ):
-    raise NotImplementedError("This endpoint is not implemented yet")
+    organization = await admin_organization_service.update_organization_status(
+        session=session,
+        organization=organization,
+        user=current_user,
+        comment=comment,
+        new_status=OrgStatusEnum.needs_revision,
+    )
+    return organization

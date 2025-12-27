@@ -19,7 +19,7 @@ class OrgStatusEnum(Variants):
 
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
-    short_name: str = Field(default=None, nullable=True, max_length=100)
+    short_name: str | None = Field(default=None, nullable=True, max_length=100)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
     region: str | None = Field(default=None, nullable=True)
     adress: str | None = Field(default=None, nullable=True)
@@ -34,7 +34,7 @@ class OrganizationBase(SQLModel):
 class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    status: OrgStatusEnum = Field(default=OrgStatusEnum.draft)
+    status: str | None = Field(default=OrgStatusEnum.draft, nullable=True)
 
     created_at: datetime = Field(default_factory=datetime.now)
 
