@@ -4,6 +4,7 @@ from uuid import UUID
 
 from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
 from backend.app.core.config import settings
+from backend.app.crud import organization as organization_crud
 from backend.app.crud.exhibition_participant import (
     create_exhibition_participants,
     update_exhibition_participants,
@@ -75,11 +76,22 @@ async def get_exhibition(session: AsyncSession, **filters) -> ExhibitionPublic |
     )
 
 
+async def _validate_organization(session: AsyncSession, organization_id: UUID) -> None:
+    organization = await organization_crud.get_organization(session, id=organization_id)
+    if not organization:
+        raise HTTPException(status_code=404, detail=f"Organization {organization_id} not found")
+
+
+async def _validate_exhibition_data(session: AsyncSession, exhibition_in: ExhibitionCreate) -> None:
+    await _validate_organization(session, exhibition_in.organization_id)
+
+
 @log_method_call
 async def create_exhibition(
     session: AsyncSession,
     exhibition_in: ExhibitionCreate,
 ) -> ExhibitionPublic:
+    await _validate_exhibition_data(session, exhibition_in)
     exhibition = await _create_base_exhibition(session, exhibition_in)
     exhibition_id = exhibition.id
     exhibition = exhibition.model_dump()
