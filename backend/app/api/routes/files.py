@@ -35,6 +35,7 @@ async def serve_exhibit_file(object_key: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error serving file: {e!s}") from e
 
+
 @router.get("/{object_key}/image")
 async def serve_exhibit_image(object_key: str):
     """Serve a file from MinIO as a streaming response."""

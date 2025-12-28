@@ -19,8 +19,10 @@ async def create_organization_moderation_comment(
         author_id=author_id,
         comment=comment,
     )
-    db_organization_moderation_comment = await organization_moderation_comment_crud.create_organization_moderation_comment(
-        session=session,
-        organization_moderation_comment_in=organization_moderation_comment,
+    db_organization_moderation_comment = (
+        await organization_moderation_comment_crud.create_organization_moderation_comment(
+            session=session,
+            organization_moderation_comment_in=organization_moderation_comment,
+        )
     )
     return db_organization_moderation_comment

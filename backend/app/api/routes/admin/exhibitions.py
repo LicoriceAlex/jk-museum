@@ -6,7 +6,11 @@ from backend.app.api.dependencies.pagination import PaginationDep
 from backend.app.api.dependencies.users import CurrentAdmin, get_current_admin
 from backend.app.api.routes.exhibitions import ExhibitionOr404
 from backend.app.crud import exhibition as exhibition_crud
-from backend.app.db.models.exhibition import ExhibitionPublic, ExhibitionStatusEnum, ExhibitionsPublic
+from backend.app.db.models.exhibition import (
+    ExhibitionPublic,
+    ExhibitionsPublic,
+    ExhibitionStatusEnum,
+)
 from backend.app.services.admin import exhibition as admin_exhibition_service
 from fastapi import APIRouter, Depends
 
@@ -20,6 +24,7 @@ async def read_exhibitions(
     filters: FilterDep,
     sort: SortDep,
     current_user: CurrentAdmin,
+    search: str | None = None,
 ) -> ExhibitionsPublic:
     exhibitions = await exhibition_crud.get_exhibitions(
         session=session,
@@ -28,6 +33,7 @@ async def read_exhibitions(
         filters=filters,
         sort=sort,
         current_user_id=current_user.id if current_user else None,
+        search=search,
     )
     return exhibitions
 
@@ -45,7 +51,11 @@ async def read_exhibition_by_id(
     return await admin_exhibition_service.read_exhibition(session, exhibition_id, current_user.id)
 
 
-@router.get('/{exhibition_id}/approve', response_model=ExhibitionPublic, dependencies=[Depends(get_current_admin)])
+@router.get(
+    "/{exhibition_id}/approve",
+    response_model=ExhibitionPublic,
+    dependencies=[Depends(get_current_admin)],
+)
 async def approve_exhibition(
     exhibition: ExhibitionOr404,
     session: SessionDep,
@@ -55,5 +65,23 @@ async def approve_exhibition(
         session=session,
         exhibition=exhibition,
         user=current_user,
-        new_status=ExhibitionStatusEnum.approved,
+        new_status=ExhibitionStatusEnum.published,
+    )
+
+
+@router.get(
+    "/{exhibition_id}/request-revision",
+    response_model=ExhibitionPublic,
+    dependencies=[Depends(get_current_admin)],
+)
+async def request_exhibition_revision(
+    exhibition: ExhibitionOr404,
+    session: SessionDep,
+    current_user: CurrentAdmin,
+) -> ExhibitionPublic:
+    return await admin_exhibition_service.update_exhibition_status(
+        session=session,
+        exhibition=exhibition,
+        user=current_user,
+        new_status=ExhibitionStatusEnum.needs_revision_after_moderation,
     )

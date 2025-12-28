@@ -202,11 +202,12 @@ async def get_exhibitions(
     skip: int = 0,
     limit: int = settings.DEFAULT_QUERY_LIMIT,
     current_user_id: UUID | None = None,
+    search: str | None = None,
 ) -> ExhibitionsPublic:
     """
     Retrieve a paginated list of exhibitions with filtering, sorting, and related data.
     """
-    query_builder = ExhibitionQueryBuilder(session, filters, sort, skip, limit, current_user_id)
+    query_builder = ExhibitionQueryBuilder(session, filters, sort, skip, limit, current_user_id, search)
     return await query_builder.execute()
 
 
@@ -241,6 +242,7 @@ class ExhibitionQueryBuilder:
         skip: int,
         limit: int,
         current_user_id=None,
+        search: str | None = None,
     ):
         self.session = session
         self.filters = filters
@@ -251,6 +253,7 @@ class ExhibitionQueryBuilder:
         self.count_statement = select(func.count(Exhibition.id))
         self._needs_likes = True
         self.current_user_id = current_user_id
+        self.search = search
 
     async def execute(self) -> ExhibitionsPublic:
         """Builds and executes the query, returning paginated results."""
@@ -298,6 +301,7 @@ class ExhibitionQueryBuilder:
             )
 
         self._apply_filters()
+        self._apply_search()
         self._apply_sorting()
         self._apply_pagination()
         if (
@@ -414,6 +418,13 @@ class ExhibitionQueryBuilder:
         """Applies pagination to the query."""
 
         self.statement = self.statement.offset(self.skip).limit(self.limit)
+
+    def _apply_search(self) -> None:
+        """Applies search filtering to the query."""
+        if self.search:
+            self.statement = self.statement.where(
+                Exhibition.title.startswith(self.search),
+            )
 
     def _apply_sorting(self) -> None:
         """Applies sorting to the query."""

@@ -14,6 +14,8 @@ from backend.app.services import (
     organization_moderation_comment as organization_moderation_comment_service,
 )
 from backend.app.utils.logger import log_method_call
+from backend.app.utils.organizations import organization_statuses_map
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -58,6 +60,11 @@ async def update_organization_status(
     new_status: OrgStatusEnum,
     comment: str | None,
 ) -> OrganizationPublic:
+    if new_status not in organization_statuses_map.get(organization.status, []):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Невозможен переход из статуса {organization.status} в статус {new_status.value}",
+        )
     updated_organization = await admin_organization_crud.update_organization_status(
         session=session,
         organization_id=organization.id,

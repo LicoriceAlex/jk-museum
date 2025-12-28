@@ -24,6 +24,8 @@ async def read_organizations(
                 )
                 .where(
                     Organization.status == status if status else True,
+                ).where(
+                    Organization.name.startswith(search) if search else True,
                 )
                 .offset(pagination.skip)
                 .limit(pagination.limit),

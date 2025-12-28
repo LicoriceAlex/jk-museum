@@ -15,7 +15,6 @@ class ExhibitionModerationComment(ExhibitionModerationCommentBase, table=True):
     author_id: uuid.UUID = Field(foreign_key="users.id", nullable=False)
 
 
-
 class ExhibitionModerationCommentCreate(ExhibitionModerationCommentBase):
     entity_id: uuid.UUID
     author_id: uuid.UUID

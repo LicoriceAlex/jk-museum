@@ -4,6 +4,7 @@ from backend.app.crud import exhibition as exhibition_crud
 from backend.app.crud.admin import exhibition as admin_exhibition_crud
 from backend.app.db.models.exhibition import Exhibition, ExhibitionPublic, ExhibitionStatusEnum
 from backend.app.db.models.user import User
+from backend.app.utils.exhibitions import exhibition_statuses_map
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,6 +37,11 @@ async def update_exhibition_status(
     user: User,
     new_status: ExhibitionStatusEnum,
 ) -> ExhibitionPublic:
+    if new_status not in exhibition_statuses_map.get(exhibition.status, []):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Невозможен переход из статуса {exhibition.status} в статус {new_status.value}",
+        )
     updated_exhibition = await admin_exhibition_crud.update_exhibition_status(
         session=session,
         exhibition_id=exhibition.id,

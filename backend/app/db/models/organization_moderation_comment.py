@@ -15,7 +15,6 @@ class OrganizationModerationComment(OrganizationModerationCommentBase, table=Tru
     author_id: uuid.UUID = Field(foreign_key="users.id", nullable=False)
 
 
-
 class OrganizationModerationCommentCreate(OrganizationModerationCommentBase):
     entity_id: uuid.UUID
     author_id: uuid.UUID
