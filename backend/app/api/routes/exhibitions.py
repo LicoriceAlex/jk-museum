@@ -13,13 +13,16 @@ from backend.app.api.dependencies.users import (
 )
 from backend.app.crud import exhibition as exhibition_crud
 from backend.app.crud import exhibition_exhibit as exhibition_exhibit_crud
+from backend.app.crud import exhibition_moderation_comment as organization_moderation_comment_crud
 from backend.app.db.models.exhibition import (
     Exhibition,
     ExhibitionCreate,
     ExhibitionPublic,
     ExhibitionUpdate,
+    ExhibitionWithCommentsPublic,
 )
 from backend.app.db.models.exhibition_exhibit import ExhibitionExhibitCreate
+from backend.app.db.models.exhibition_moderation_comment import ExhibitionModerationCommentPublic
 from backend.app.db.models.user_exhibition_like import UserExhibitionLike
 from backend.app.db.schemas import Message
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -48,6 +51,37 @@ async def read_exhibitions(
         current_user_id=current_user.id if current_user else None,
     )
     return exhibitions
+
+
+@router.get(
+    "/{exhibition_id}/with-comments",
+    response_model=ExhibitionWithCommentsPublic,
+)
+async def read_exhibition_with_comments_by_id(
+    exhibition_id: uuid.UUID,
+    session: SessionDep,
+    current_user: OptionalCurrentUser,
+) -> Any:
+    """
+    Retrieve an exhibition by its ID along with its moderation comments.
+    """
+    exhibition = await exhibition_crud.get_exhibition(session=session, id=exhibition_id)
+    if not exhibition:
+        raise HTTPException(status_code=404, detail="Exhibition not found")
+
+    exhibition_public = ExhibitionPublic(**exhibition.model_dump())
+
+    comments = await organization_moderation_comment_crud.get_comments_by_entity_id(
+        session=session,
+        entity_id=exhibition.id,
+    )
+    # Convert ORM objects to Pydantic public models
+    moderation_comments = [ExhibitionModerationCommentPublic(**c.model_dump()) for c in comments]
+
+    return ExhibitionWithCommentsPublic(
+        **exhibition_public.model_dump(),
+        moderation_comments=moderation_comments,
+    )
 
 
 @router.post(

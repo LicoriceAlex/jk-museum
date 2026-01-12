@@ -3,7 +3,7 @@ import uuid
 from backend.app.api.dependencies.common import SessionDep
 from backend.app.api.dependencies.exhibition.filters import FilterDep, SortDep
 from backend.app.api.dependencies.pagination import PaginationDep
-from backend.app.api.dependencies.users import CurrentAdmin, get_current_admin
+from backend.app.api.dependencies.users import CurrentAdmin, CurrentUser, get_current_admin
 from backend.app.api.routes.exhibitions import ExhibitionOr404
 from backend.app.crud import exhibition as exhibition_crud
 from backend.app.db.models.exhibition import (
@@ -51,37 +51,21 @@ async def read_exhibition_by_id(
     return await admin_exhibition_service.read_exhibition(session, exhibition_id, current_user.id)
 
 
-@router.get(
-    "/{exhibition_id}/approve",
+@router.patch(
+    "/{exhibition_id}",
     response_model=ExhibitionPublic,
-    dependencies=[Depends(get_current_admin)],
 )
-async def approve_exhibition(
+async def update_exhibition_status(
     exhibition: ExhibitionOr404,
     session: SessionDep,
-    current_user: CurrentAdmin,
+    current_user: CurrentUser,
+    new_status: ExhibitionStatusEnum,
+    comment: str | None = None,
 ) -> ExhibitionPublic:
     return await admin_exhibition_service.update_exhibition_status(
         session=session,
         exhibition=exhibition,
         user=current_user,
-        new_status=ExhibitionStatusEnum.published,
-    )
-
-
-@router.get(
-    "/{exhibition_id}/request-revision",
-    response_model=ExhibitionPublic,
-    dependencies=[Depends(get_current_admin)],
-)
-async def request_exhibition_revision(
-    exhibition: ExhibitionOr404,
-    session: SessionDep,
-    current_user: CurrentAdmin,
-) -> ExhibitionPublic:
-    return await admin_exhibition_service.update_exhibition_status(
-        session=session,
-        exhibition=exhibition,
-        user=current_user,
-        new_status=ExhibitionStatusEnum.needs_revision_after_moderation,
+        new_status=new_status,
+        comment=comment,
     )

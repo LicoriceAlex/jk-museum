@@ -7,6 +7,8 @@ from backend.app.db.models.exhibit import Exhibit
 from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
 from backend.app.db.models.user_organization import UserOrganization
 from pydantic import EmailStr
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -17,12 +19,25 @@ class OrgStatusEnum(Variants):
     needs_revision = "needs_revision"
 
 
+class HeadInfo(SQLModel):
+    last_name: str
+    first_name: str
+    patronymic: str
+    position: str
+    birth_date: str
+    phone: str
+    email: str
+
+
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
+    head_info: HeadInfo = Field(sa_column=Column(JSONB, nullable=False, default={}))
     short_name: str | None = Field(default=None, nullable=True, max_length=100)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
     region: str | None = Field(default=None, nullable=True)
-    adress: str | None = Field(default=None, nullable=True)
+    address: str | None = Field(default=None, nullable=True)
+    city: str | None = Field(default=None, nullable=True)
+    region: str | None = Field(default=None, nullable=True)
     phone_number: str | None = Field(default=None, nullable=True)
     social_links: str | None = Field(default=None, nullable=True)
     charter_file: str | None = Field(default=None, nullable=True)

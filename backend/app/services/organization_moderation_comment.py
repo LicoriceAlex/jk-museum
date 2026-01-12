@@ -15,9 +15,9 @@ async def create_organization_moderation_comment(
     comment: str | None,
 ) -> OrganizationModerationComment:
     organization_moderation_comment = OrganizationModerationCommentCreate(
-        target_org_id=target_id,
+        entity_id=target_id,
         author_id=author_id,
-        comment=comment,
+        text=comment,
     )
     db_organization_moderation_comment = (
         await organization_moderation_comment_crud.create_organization_moderation_comment(

@@ -11,8 +11,8 @@ from backend.app.db.models.organization import (
 from backend.app.db.models.user_organization import (
     OrganizationMemberUpdate,
     UserOrganizationCreate,
-    UserOrganizationEnum,
     UserOrganizationPublic,
+    UserOrganizationRole,
 )
 from backend.app.utils.logger import log_method_call
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -87,8 +87,8 @@ async def update_organization_member(
     if not organization_member:
         raise ValueError("User is not a member of the organization.")
 
-    if member_in.status == UserOrganizationEnum.left and (
-        organization_member.status != UserOrganizationEnum.left
+    if member_in.status == UserOrganizationRole.left and (
+        organization_member.status != UserOrganizationRole.left
     ):
         organization_member.left_at = datetime.now()
 

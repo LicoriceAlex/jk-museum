@@ -14,7 +14,7 @@ from backend.app.db.models.user import (
 )
 from backend.app.db.models.user_organization import (
     UserOrganization,
-    UserOrganizationEnum,
+    UserOrganizationRole,
 )
 from backend.app.db.schemas import TokenPayload
 from backend.app.utils.logger import log_method_call
@@ -116,7 +116,7 @@ async def get_current_active_organization_member(
         user_id=current_user.id,
         organization_id=organization.id,
     )
-    if not user_org or user_org.status != UserOrganizationEnum.active:
+    if not user_org or user_org.status != UserOrganizationRole.active:
         raise HTTPException(
             status_code=403,
             detail="Only active organization members can add new members.",

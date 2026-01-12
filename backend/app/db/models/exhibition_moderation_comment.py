@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from sqlmodel import Field, SQLModel
@@ -14,6 +15,8 @@ class ExhibitionModerationComment(ExhibitionModerationCommentBase, table=True):
     entity_id: uuid.UUID = Field(foreign_key="exhibitions.id", nullable=False)
     author_id: uuid.UUID = Field(foreign_key="users.id", nullable=False)
 
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
 
 class ExhibitionModerationCommentCreate(ExhibitionModerationCommentBase):
     entity_id: uuid.UUID
@@ -28,7 +31,7 @@ class ExhibitionModerationCommentPublic(ExhibitionModerationCommentBase):
     id: uuid.UUID
     entity_id: uuid.UUID
     author_id: uuid.UUID
-    created_at: str
+    created_at: datetime.datetime
 
 
 class ExhibitionModerationCommentsPublic(SQLModel):

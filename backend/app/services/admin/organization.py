@@ -65,25 +65,29 @@ async def update_organization_status(
             status_code=400,
             detail=f"Невозможен переход из статуса {organization.status} в статус {new_status.value}",
         )
-    updated_organization = await admin_organization_crud.update_organization_status(
+    user_db_id = (await session.get(User, user.id)).id
+    organization_db_id = (await session.get(Organization, organization.id)).id
+    _ = await admin_organization_crud.update_organization_status(
         session=session,
-        organization_id=organization.id,
-        user_id=user.id,
+        organization_id=organization_db_id,
+        author_id=user_db_id,
         comment=comment,
         new_status=new_status,
     )
     _ = await admin_action_service.create_admin_action(
         session=session,
-        target_id=organization.id,
-        author_id=user.id,
-        comment=f"Organization status changed from {organization.status.value} to {new_status.value}",
+        target_id=organization_db_id,
+        author_id=user_db_id,
+        comment=f"Organization status changed to {new_status.value}",
     )
     _ = await organization_moderation_comment_service.create_organization_moderation_comment(
         session=session,
-        organization_id=organization.id,
-        author_id=user.id,
+        target_id=organization_db_id,
+        author_id=user_db_id,
         comment=comment,
     )
-    return OrganizationPublic.model_validate(
-        updated_organization,
+    org_public = await admin_organization_crud.read_organization(
+        session=session,
+        organization_id=organization_db_id,
     )
+    return OrganizationPublic.model_validate(org_public)

@@ -207,7 +207,15 @@ async def get_exhibitions(
     """
     Retrieve a paginated list of exhibitions with filtering, sorting, and related data.
     """
-    query_builder = ExhibitionQueryBuilder(session, filters, sort, skip, limit, current_user_id, search)
+    query_builder = ExhibitionQueryBuilder(
+        session,
+        filters,
+        sort,
+        skip,
+        limit,
+        current_user_id,
+        search,
+    )
     return await query_builder.execute()
 
 

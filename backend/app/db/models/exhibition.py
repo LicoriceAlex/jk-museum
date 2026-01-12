@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 from backend.app.api.dependencies.common import Variants
 from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
+from backend.app.db.models.exhibition_moderation_comment import ExhibitionModerationCommentPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
@@ -13,6 +14,7 @@ from .exhibition_tag import ExhibitionTag
 from .tag import TagPublic
 
 if TYPE_CHECKING:
+    from backend.app.db.models.admin_action import AdminAction
     from backend.app.db.models.exhibition_tag import ExhibitionTag
     from backend.app.db.models.tag import TagPublic
 
@@ -64,6 +66,10 @@ class Exhibition(ExhibitionBase, table=True):
 
     exhibition_tags: list["ExhibitionTag"] = Relationship(back_populates="exhibition")
     participants: list["ExhibitionParticipant"] = Relationship(back_populates="exhibition")
+    admin_actions: list["AdminAction"] = Relationship(
+        back_populates="target_exhibition",
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.target_exhibition_id"},
+    )
 
 
 class ExhibitionCreate(ExhibitionBase):
@@ -88,6 +94,10 @@ class ExhibitionPublic(ExhibitionBase):
     is_liked_by_current_user: bool | None = None
     likes_count: int | None = Field(default=0)
     blocks: list[ExhibitionBlockPublic] | None = None
+
+
+class ExhibitionWithCommentsPublic(ExhibitionPublic):
+    moderation_comments: list["ExhibitionModerationCommentPublic"]
 
 
 class ExhibitionsPublic(SQLModel):

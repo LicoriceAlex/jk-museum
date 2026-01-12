@@ -24,10 +24,11 @@ class ExhibitionBlockTypeEnum(Variants):
     IMAGES_3 = "IMAGES_3"
     IMAGES_4 = "IMAGES_4"
     CAROUSEL = "CAROUSEL"
+    VK_VIDEO_LINK = "VK_VIDEO_LINK"
 
 
 class ExhibitionBlockBase(SQLModel):
-    type: ExhibitionBlockTypeEnum = Field(nullable=False)
+    type: str = Field(nullable=False)
     content: str | None = Field(nullable=True)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
     position: int | None = Field(nullable=False)
@@ -53,6 +54,7 @@ class ExhibitionBlock(ExhibitionBlockBase, table=True):
 
 
 class ExhibitionBlockCreate(ExhibitionBlockBase):
+    type: ExhibitionBlockTypeEnum
     exhibition_id: UUID
 
 

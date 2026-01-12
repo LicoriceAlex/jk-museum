@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 from backend.app.api.dependencies.common import Variants
+from backend.app.db.models.exhibition import Exhibition
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -14,6 +15,8 @@ class ActionTypeEnum(Variants):
     approve_org = "approve_org"
     block_user = "block_user"
     unblock_user = "unblock_user"
+    update_org_status = "update_org_status"
+    update_exhibition_status = "update_exhibition_status"
     reset_password = "reset_password"
 
 
@@ -27,6 +30,7 @@ class AdminAction(AdminActionBase, table=True):
     admin_id: UUID = Field(foreign_key="users.id", nullable=False)
     target_user_id: UUID | None = Field(foreign_key="users.id")
     target_org_id: UUID | None = Field(foreign_key="organizations.id")
+    target_exhibition_id: UUID | None = Field(foreign_key="exhibitions.id")
     created_at: datetime = Field(default_factory=datetime.now)
 
     admin: "User" = Relationship(
@@ -41,12 +45,17 @@ class AdminAction(AdminActionBase, table=True):
         back_populates="admin_actions",
         sa_relationship_kwargs={"foreign_keys": "AdminAction.target_org_id"},
     )
+    target_exhibition: Optional["Exhibition"] = Relationship(
+        back_populates="admin_actions",
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.target_exhibition_id"},
+    )
 
 
 class AdminActionCreate(AdminActionBase):
     admin_id: UUID
     target_user_id: UUID | None = None
     target_org_id: UUID | None = None
+    target_exhibition_id: UUID | None = None
 
 
 class AdminActionPublic(AdminActionBase):
