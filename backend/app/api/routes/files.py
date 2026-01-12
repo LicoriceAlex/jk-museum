@@ -21,8 +21,23 @@ async def upload_file(file: UploadFile = None, prefix: str = "general/") -> Any:
     return FileUploadResponse(object_key=object_key, file_url=file_url)
 
 
-@router.get("/{object_key}")
+@router.get("/{object_key}/file")
 async def serve_exhibit_file(object_key: str):
+    """Serve a file from MinIO as a streaming response."""
+    try:
+        return StreamingResponse(
+            content=minio_client.download_file(object_key),
+            media_type="application/octet-stream",
+            headers={"Cache-Control": "no-cache"},
+        )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving file: {e!s}") from e
+
+
+@router.get("/{object_key}/image")
+async def serve_exhibit_image(object_key: str):
     """Serve a file from MinIO as a streaming response."""
     try:
         return StreamingResponse(

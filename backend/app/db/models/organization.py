@@ -1,28 +1,47 @@
 from datetime import datetime
-from enum import Enum
-from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variants
+from backend.app.db.models.admin_action import AdminAction
+from backend.app.db.models.exhibit import Exhibit
+from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
+from backend.app.db.models.user_organization import UserOrganization
 from pydantic import EmailStr
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
-if TYPE_CHECKING:
-    from backend.app.db.models.admin_action import AdminAction
-    from backend.app.db.models.exhibit import Exhibit
-    from backend.app.db.models.exhibition import ExhibitionsPublicWithPagination
-    from backend.app.db.models.user_organization import UserOrganization
 
-
-class OrgStatusEnum(str, Enum):
-    pending = "pending"
+class OrgStatusEnum(Variants):
     approved = "approved"
-    rejected = "rejected"
+    draft = "draft"
+    on_moderation = "on_moderation"
+    needs_revision = "needs_revision"
+
+
+class HeadInfo(SQLModel):
+    last_name: str
+    first_name: str
+    patronymic: str
+    position: str
+    birth_date: str
+    phone: str
+    email: str
 
 
 class OrganizationBase(SQLModel):
     name: str = Field(unique=True, nullable=False, max_length=255)
+    head_info: HeadInfo = Field(sa_column=Column(JSONB, nullable=False, default={}))
+    short_name: str | None = Field(default=None, nullable=True, max_length=100)
     email: EmailStr = Field(unique=True, nullable=False, max_length=255)
-    contact_info: str | None = None
+    region: str | None = Field(default=None, nullable=True)
+    address: str | None = Field(default=None, nullable=True)
+    city: str | None = Field(default=None, nullable=True)
+    region: str | None = Field(default=None, nullable=True)
+    phone_number: str | None = Field(default=None, nullable=True)
+    social_links: str | None = Field(default=None, nullable=True)
+    charter_file: str | None = Field(default=None, nullable=True)
+    contact_info: str | None = Field(default=None, nullable=True)
     description: str | None = Field(default=None, nullable=True)
     logo_key: str | None = Field(default=None, nullable=True)
 
@@ -30,7 +49,7 @@ class OrganizationBase(SQLModel):
 class Organization(OrganizationBase, table=True):
     __tablename__ = "organizations"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    status: OrgStatusEnum = Field(default=OrgStatusEnum.pending)
+    status: str | None = Field(default=OrgStatusEnum.draft, nullable=True)
 
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -50,13 +69,19 @@ class OrganizationUpdate(SQLModel):
     contact_info: str | None = None
     description: str | None = None
     logo_key: str | None = None
+    region: str | None = None
+    adress: str | None = None
+    phone_number: str | None = None
+    social_links: str | None = None
+    charter_file: str | None = None
+    contact_info: str | None = None
 
 
 class OrganizationPublic(OrganizationBase):
     id: UUID
     status: OrgStatusEnum
     created_at: datetime
-    exhibitions: "ExhibitionsPublicWithPagination"
+    exhibitions: ExhibitionsPublicWithPagination | None = None
 
 
 class OrganizationPublicShort(OrganizationBase):

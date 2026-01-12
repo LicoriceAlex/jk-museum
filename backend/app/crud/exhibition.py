@@ -1,7 +1,10 @@
+import uuid
+from collections.abc import Sequence
 from uuid import UUID
 
 from backend.app.api.dependencies.exhibition.filters import FilterParams, SortParams
 from backend.app.core.config import settings
+from backend.app.crud import organization as organization_crud
 from backend.app.crud.exhibition_participant import (
     create_exhibition_participants,
     update_exhibition_participants,
@@ -73,11 +76,22 @@ async def get_exhibition(session: AsyncSession, **filters) -> ExhibitionPublic |
     )
 
 
+async def _validate_organization(session: AsyncSession, organization_id: UUID) -> None:
+    organization = await organization_crud.get_organization(session, id=organization_id)
+    if not organization:
+        raise HTTPException(status_code=404, detail=f"Organization {organization_id} not found")
+
+
+async def _validate_exhibition_data(session: AsyncSession, exhibition_in: ExhibitionCreate) -> None:
+    await _validate_organization(session, exhibition_in.organization_id)
+
+
 @log_method_call
 async def create_exhibition(
     session: AsyncSession,
     exhibition_in: ExhibitionCreate,
 ) -> ExhibitionPublic:
+    await _validate_exhibition_data(session, exhibition_in)
     exhibition = await _create_base_exhibition(session, exhibition_in)
     exhibition_id = exhibition.id
     exhibition = exhibition.model_dump()
@@ -188,12 +202,41 @@ async def get_exhibitions(
     skip: int = 0,
     limit: int = settings.DEFAULT_QUERY_LIMIT,
     current_user_id: UUID | None = None,
+    search: str | None = None,
 ) -> ExhibitionsPublic:
     """
     Retrieve a paginated list of exhibitions with filtering, sorting, and related data.
     """
-    query_builder = ExhibitionQueryBuilder(session, filters, sort, skip, limit, current_user_id)
+    query_builder = ExhibitionQueryBuilder(
+        session,
+        filters,
+        sort,
+        skip,
+        limit,
+        current_user_id,
+        search,
+    )
     return await query_builder.execute()
+
+
+@log_method_call
+async def get_user_exhibition_likes(
+    session: AsyncSession,
+    exhibition_id: uuid.UUID,
+    current_user_id: uuid.UUID,
+) -> Sequence[UserExhibitionLike]:
+    return (
+        (
+            await session.execute(
+                select(UserExhibitionLike).where(
+                    UserExhibitionLike.exhibition_id == exhibition_id,
+                    UserExhibitionLike.user_id == current_user_id,
+                ),
+            )
+        )
+        .scalars()
+        .all()
+    )
 
 
 class ExhibitionQueryBuilder:
@@ -207,6 +250,7 @@ class ExhibitionQueryBuilder:
         skip: int,
         limit: int,
         current_user_id=None,
+        search: str | None = None,
     ):
         self.session = session
         self.filters = filters
@@ -217,6 +261,7 @@ class ExhibitionQueryBuilder:
         self.count_statement = select(func.count(Exhibition.id))
         self._needs_likes = True
         self.current_user_id = current_user_id
+        self.search = search
 
     async def execute(self) -> ExhibitionsPublic:
         """Builds and executes the query, returning paginated results."""
@@ -264,6 +309,7 @@ class ExhibitionQueryBuilder:
             )
 
         self._apply_filters()
+        self._apply_search()
         self._apply_sorting()
         self._apply_pagination()
         if (
@@ -380,6 +426,13 @@ class ExhibitionQueryBuilder:
         """Applies pagination to the query."""
 
         self.statement = self.statement.offset(self.skip).limit(self.limit)
+
+    def _apply_search(self) -> None:
+        """Applies search filtering to the query."""
+        if self.search:
+            self.statement = self.statement.where(
+                Exhibition.title.startswith(self.search),
+            )
 
     def _apply_sorting(self) -> None:
         """Applies sorting to the query."""

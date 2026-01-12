@@ -1,9 +1,10 @@
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variants
 from backend.app.db.models.exhibition_block import ExhibitionBlockPublic
+from backend.app.db.models.exhibition_moderation_comment import ExhibitionModerationCommentPublic
 from backend.app.db.models.exhibition_participant import ExhibitionParticipant
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
@@ -13,22 +14,28 @@ from .exhibition_tag import ExhibitionTag
 from .tag import TagPublic
 
 if TYPE_CHECKING:
+    from backend.app.db.models.admin_action import AdminAction
     from backend.app.db.models.exhibition_tag import ExhibitionTag
     from backend.app.db.models.tag import TagPublic
 
 
-class ExhibitionStatusEnum(str, Enum):
-    draft = "draft"
+class ExhibitionStatusEnum(Variants):
     published = "published"
-    archived = "archived"
+    draft = "draft"
+    on_mo_review = "on_mo_review"
+    on_mo_revision = "on_mo_revision"
+    ready_for_platform = "ready_for_platform"
+    awaiting_platform_review = "awaiting_platform_review"
+    needs_revision_after_moderation = "needs_revision_after_moderation"
+    published_changes_pending_review = "published_changes_pending_review"
 
 
-class CoverTypeEnum(str, Enum):
+class CoverTypeEnum(Variants):
     inside = "inside"
     outside = "outside"
 
 
-class DateTemplate(str, Enum):
+class DateTemplate(Variants):
     year: str = "year"
     decade: str = "decade"
     century: str = "century"
@@ -39,7 +46,7 @@ class ExhibitionBase(SQLModel):
     description: str | None = Field(default=None, nullable=True)
     cover_image_key: str = Field(max_length=255, nullable=False)
     cover_type: CoverTypeEnum | None = Field(default=CoverTypeEnum.outside)
-    status: ExhibitionStatusEnum = Field(default=ExhibitionStatusEnum.draft, nullable=False)
+    status: str = Field(default=ExhibitionStatusEnum.draft, nullable=False)
     rating: float = Field(default=0.0, nullable=False)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
 
@@ -59,6 +66,10 @@ class Exhibition(ExhibitionBase, table=True):
 
     exhibition_tags: list["ExhibitionTag"] = Relationship(back_populates="exhibition")
     participants: list["ExhibitionParticipant"] = Relationship(back_populates="exhibition")
+    admin_actions: list["AdminAction"] = Relationship(
+        back_populates="target_exhibition",
+        sa_relationship_kwargs={"foreign_keys": "AdminAction.target_exhibition_id"},
+    )
 
 
 class ExhibitionCreate(ExhibitionBase):
@@ -83,6 +94,10 @@ class ExhibitionPublic(ExhibitionBase):
     is_liked_by_current_user: bool | None = None
     likes_count: int | None = Field(default=0)
     blocks: list[ExhibitionBlockPublic] | None = None
+
+
+class ExhibitionWithCommentsPublic(ExhibitionPublic):
+    moderation_comments: list["ExhibitionModerationCommentPublic"]
 
 
 class ExhibitionsPublic(SQLModel):

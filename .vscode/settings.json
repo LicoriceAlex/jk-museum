@@ -3,13 +3,14 @@
         "**/__pycache__": true,
         "**/.mypy_cache": true,
         "**/.pytest_cache": true,
-        "**/.vscode": true,
         "**/*.pyc": true,
         "**/*.pyo": true,
         "**/*.pyd": true,
         "**/.venv": true,
         "**/venv": true,
-        "**/env": true
+        "**/env": true,
+        "**/frontend/": true,
+        "**/node_modules/": true
     },
     "search.exclude": {
         "**/__pycache__": true,
