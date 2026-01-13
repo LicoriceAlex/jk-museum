@@ -58,7 +58,100 @@
   padding: 1.67vw; // 32px -> 1.67vw
   display: flex;
   flex-direction: column;
-  gap: 0.83vw; // 16px -> 0.83vw
+  gap: 1.25vw; // 24px -> 1.25vw
+}
+
+.organizationSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.52vw; // 10px -> 0.52vw
+}
+
+.label {
+  font-family: var(--font-secondary);
+  font-size: 0.94vw; // 18px -> 0.94vw
+  font-weight: 400;
+  color: #253A30;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selectInput {
+  width: 100%;
+  padding: 0.83vw 1.04vw; // 16px 20px -> 0.83vw 1.04vw
+  border: 1px solid #253A30;
+  border-radius: 0.41vw; // 8px -> 0.41vw
+  background: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: #344E41;
+  }
+}
+
+.selectText {
+  font-family: var(--font-secondary);
+  font-size: 0.94vw; // 18px -> 0.94vw
+  color: #253A30;
+  flex: 1;
+}
+
+.checkIcon {
+  color: #344E41;
+  flex-shrink: 0;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.26vw; // 5px -> 0.26vw
+  background: white;
+  border: 1px solid #253A30;
+  border-radius: 0.41vw; // 8px -> 0.41vw
+  box-shadow: 0 0.26vw 0.78vw rgba(0, 0, 0, 0.1); // 5px 15px -> 0.26vw 0.78vw
+  z-index: 100;
+  max-height: 10.42vw; // 200px -> 10.42vw
+  overflow-y: auto;
+}
+
+.dropdownItem {
+  padding: 0.83vw 1.04vw; // 16px 20px -> 0.83vw 1.04vw
+  font-family: var(--font-secondary);
+  font-size: 0.94vw; // 18px -> 0.94vw
+  color: #253A30;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(52, 78, 65, 0.1);
+  }
+
+  &.selected {
+    background-color: rgba(52, 78, 65, 0.15);
+    font-weight: 500;
+  }
+
+  &:first-child {
+    border-radius: 0.41vw 0.41vw 0 0; // 8px -> 0.41vw
+  }
+
+  &:last-child {
+    border-radius: 0 0 0.41vw 0.41vw; // 8px -> 0.41vw
+  }
 }
 
 .option {

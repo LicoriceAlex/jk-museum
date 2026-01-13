@@ -24,6 +24,8 @@ import {
   deleteBlock,
 } from '../../features/exhibitions/service';
 import { useParams } from 'react-router-dom';
+import ExhibitSelectorModal from './components/ExhibitSelectorModal/ExhibitSelectorModal';
+import { getToken } from '../../utils/serviceToken';
 
 const mapTypeToApi = (type: string) => {
   if (type === 'IMAGE_UPLOAD') return 'CAROUSEL';
@@ -76,6 +78,66 @@ const ExhibitionConstructor: React.FC = () => {
     setExhibitionData(prev => ({ ...prev, ...newData }));
   };
   const [isNoticeOpen, setIsNoticeOpen] = useState(true);
+  const [showCreateExhibitModal, setShowCreateExhibitModal] = useState(false);
+  const [showExhibitSelector, setShowExhibitSelector] = useState(false);
+
+  const handleCreateExhibit = () => {
+    setShowCreateExhibitModal(true);
+  };
+
+  const handleSelectExistingExhibits = () => {
+    setShowExhibitSelector(true);
+  };
+
+  const handleExhibitCreated = (exhibit: any) => {
+    // После создания экспоната, добавляем его в новый блок как экспонат
+    const newBlock: ExhibitionBlock = {
+      id: `block-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      type: 'IMAGE_UPLOAD',
+      position: exhibitionData.blocks.length,
+      items: [{
+        id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        exhibit_id: exhibit.id,
+        image_url: exhibit.image_key ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${exhibit.image_key}` : undefined,
+      }],
+      settings: {}
+    };
+
+    setExhibitionData(prev => ({
+      ...prev,
+      blocks: [...prev.blocks, newBlock]
+    }));
+
+    setShowCreateExhibitModal(false);
+  };
+
+  const handleExhibitsSelected = (exhibits: any[]) => {
+    // Добавляем выбранные экспонаты в новый блок
+    const items = exhibits.map(exhibit => ({
+      id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      exhibit_id: exhibit.id,
+      image_url: exhibit.image_key ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${exhibit.image_key}` : undefined,
+    }));
+
+    const blockType: BlockType = exhibits.length === 1 ? 'IMAGE_UPLOAD' :
+      exhibits.length === 2 ? 'IMAGES_2' :
+      exhibits.length === 3 ? 'IMAGES_3' : 'IMAGES_4';
+
+    const newBlock: ExhibitionBlock = {
+      id: `block-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      type: blockType,
+      position: exhibitionData.blocks.length,
+      items,
+      settings: {}
+    };
+
+    setExhibitionData(prev => ({
+      ...prev,
+      blocks: [...prev.blocks, newBlock]
+    }));
+
+    setShowExhibitSelector(false);
+  };
 
   const addBlock = useCallback((type: BlockType, initialData?: { items?: BlockItem[]; content?: string; }) => {
     console.log('ExhibitionConstructor: addBlock received type:', type, 'and initialData.items:', initialData?.items);
@@ -117,9 +179,21 @@ const ExhibitionConstructor: React.FC = () => {
   const updateBlock = (blockId: string, updatedBlock: Partial<ExhibitionBlock>) => {
     setExhibitionData(prev => ({
       ...prev,
-      blocks: prev.blocks.map(block =>
-        block.id === blockId ? { ...block, ...updatedBlock } : block
-      )
+      blocks: prev.blocks.map(block => {
+        if (block.id === blockId) {
+          // Правильно мерджим settings, чтобы не потерять существующие значения
+          const mergedSettings = updatedBlock.settings
+            ? { ...block.settings, ...updatedBlock.settings }
+            : block.settings;
+          
+          return {
+            ...block,
+            ...updatedBlock,
+            settings: mergedSettings,
+          };
+        }
+        return block;
+      })
     }));
   };
 
@@ -139,6 +213,21 @@ const ExhibitionConstructor: React.FC = () => {
 
     const newBlocks = [...exhibitionData.blocks];
     [newBlocks[blockIndex], newBlocks[newIndex]] = [newBlocks[newIndex], newBlocks[blockIndex]];
+
+    newBlocks.forEach((block, index) => {
+      block.position = index;
+    });
+
+    setExhibitionData(prev => ({ ...prev, blocks: newBlocks }));
+  };
+
+  const moveBlockToPosition = (blockId: string, newPosition: number) => {
+    const blockIndex = exhibitionData.blocks.findIndex(block => block.id === blockId);
+    if (blockIndex === -1 || newPosition < 0 || newPosition >= exhibitionData.blocks.length) return;
+
+    const newBlocks = [...exhibitionData.blocks];
+    const [movedBlock] = newBlocks.splice(blockIndex, 1);
+    newBlocks.splice(newPosition, 0, movedBlock);
 
     newBlocks.forEach((block, index) => {
       block.position = index;
@@ -273,12 +362,9 @@ const ExhibitionConstructor: React.FC = () => {
         await updateExhibition(expoId, {
           title: exhibitionData.title || '',
           description: exhibitionData.description || '',
-          cover_image_key: coverKey,
+          cover_image_key: coverKey || '',
           cover_type: 'outside',
           status: 'draft',
-          date_template: 'year',
-          start_year: 0,
-          end_year: 0,
           rating: 0,
           settings: settings,
           organization_id: ORGANIZATION_ID,
@@ -393,6 +479,11 @@ const ExhibitionConstructor: React.FC = () => {
               position: i,
             };
 
+            // Логируем для отладки, если есть width или height
+            if (block.settings?.width || block.settings?.height) {
+              console.log(`[Save] Block ${block.id} settings:`, block.settings);
+            }
+
             // Определяем блоки, которые требуют items
             const requiresItems = 
               apiType === 'CAROUSEL' ||
@@ -448,8 +539,8 @@ const ExhibitionConstructor: React.FC = () => {
 
             const blockPayload: any = {
               type: apiType,
-              content: block.content,
-              settings: block.settings || {},
+              content: block.content || null,
+              settings: blockSettings,
               position: i,
             };
 
@@ -470,12 +561,9 @@ const ExhibitionConstructor: React.FC = () => {
         const exhibitionResponse = await createExhibition({
           title: exhibitionData.title || '',
           description: exhibitionData.description || '',
-          cover_image_key: coverKey,
+          cover_image_key: coverKey || '',
           cover_type: 'outside',
           status: 'draft',
-          date_template: 'year',
-          start_year: 0,
-          end_year: 0,
           rating: 0,
           settings: settings,
           organization_id: ORGANIZATION_ID,
@@ -489,16 +577,51 @@ const ExhibitionConstructor: React.FC = () => {
           const block = exhibitionData.blocks[i];
 
           let itemsPayload: Array<{ position: number; text?: string; image_key?: string }> | undefined = undefined;
+          let blockSettings = { ...(block.settings || {}) };
+          const exhibitIds: string[] = [];
 
           if (block.items && block.items.length > 0) {
             const processedItems = await Promise.all(
               block.items.map(async (item, idx) => {
-                const imageKey = await uploadItemImageIfNeeded(item.image_url);
-                return {
-                  position: idx,
-                  text: item.text || undefined,
-                  image_key: imageKey,
-                };
+                // Если у элемента есть exhibit_id, получаем image_key из экспоната
+                if (item.exhibit_id) {
+                  try {
+                    const token = getToken();
+                    const exhibitUrl = `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/exhibits/${item.exhibit_id}`;
+                    const exhibitResponse = await fetch(exhibitUrl, {
+                      headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                      },
+                    });
+                    if (exhibitResponse.ok) {
+                      const exhibitData = await exhibitResponse.json();
+                      exhibitIds.push(item.exhibit_id);
+                      return {
+                        position: idx,
+                        text: item.text || undefined,
+                        image_key: exhibitData.image_key || item.image_url?.split('/').pop() || '',
+                      };
+                    }
+                  } catch (error) {
+                    console.error('Error fetching exhibit:', error);
+                  }
+                  // Если не удалось получить экспонат, используем image_url
+                  exhibitIds.push(item.exhibit_id);
+                  const imageKey = await uploadItemImageIfNeeded(item.image_url);
+                  return {
+                    position: idx,
+                    text: item.text || undefined,
+                    image_key: imageKey,
+                  };
+                } else {
+                  // Обычная обработка изображения
+                  const imageKey = await uploadItemImageIfNeeded(item.image_url);
+                  return {
+                    position: idx,
+                    text: item.text || undefined,
+                    image_key: imageKey,
+                  };
+                }
               })
             );
 
@@ -517,6 +640,11 @@ const ExhibitionConstructor: React.FC = () => {
                 itemsPayload = processedItems.filter(item => item.text);
               }
             }
+
+            // Сохраняем exhibit_id в settings блока
+            if (exhibitIds.length > 0) {
+              blockSettings.exhibit_ids = exhibitIds;
+            }
           }
 
           const isImageLike =
@@ -534,8 +662,8 @@ const ExhibitionConstructor: React.FC = () => {
 
           const blockPayload: any = {
             type: apiType,
-            content: block.content,
-            settings: block.settings || {},
+            content: block.content || null,
+            settings: blockSettings,
             position: i,
           };
 
@@ -579,20 +707,24 @@ const ExhibitionConstructor: React.FC = () => {
             : '',
           blocks: (data.blocks || [])
             .sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0))
-            .map((b: any, idx: number) => ({
-              id: b.id || `block-${Date.now()}-${idx}`,
-              type: mapTypeFromApi(b.type, b.items),
-              position: b.position ?? idx,
-              content: b.content || '',
-              settings: b.settings || {},
-              items: (b.items || []).map((it: any, i: number) => ({
-                id: it.id || `${b.id || idx}-item-${i}`,
-                text: it.text,
-                image_url: it.image_key
-                  ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${it.image_key}`
-                  : undefined,
-              })),
-            })),
+            .map((b: any, idx: number) => {
+              const exhibitIds = (b.settings?.exhibit_ids || []) as string[];
+              return {
+                id: b.id || `block-${Date.now()}-${idx}`,
+                type: mapTypeFromApi(b.type, b.items),
+                position: b.position ?? idx,
+                content: b.content || '',
+                settings: b.settings || {},
+                items: (b.items || []).map((it: any, i: number) => ({
+                  id: it.id || `${b.id || idx}-item-${i}`,
+                  text: it.text,
+                  image_url: it.image_key
+                    ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${it.image_key}`
+                    : undefined,
+                  exhibit_id: exhibitIds[i] || undefined,
+                })),
+              };
+            }),
         }));
 
         if (data.settings?.constructor?.fontSettings) {
@@ -641,11 +773,14 @@ const ExhibitionConstructor: React.FC = () => {
           updateBlock={updateBlock}
           removeBlock={removeBlock}
           moveBlock={moveBlock}
+          moveBlockToPosition={moveBlockToPosition}
           fontSettings={fontSettings}
           colorSettings={colorSettings}
           onImageUpload={handleImageUpload}
           onImageRemove={handleImageRemove}
           pageBackground={pageBackground}
+          onCreateNewExhibit={handleCreateExhibit}
+          onSelectExistingExhibits={handleSelectExistingExhibits}
         />
       </main>
 
@@ -674,6 +809,12 @@ const ExhibitionConstructor: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ExhibitSelectorModal
+        isOpen={showExhibitSelector}
+        onClose={() => setShowExhibitSelector(false)}
+        onSelect={handleExhibitsSelected}
+      />
     </div>
   );
 };

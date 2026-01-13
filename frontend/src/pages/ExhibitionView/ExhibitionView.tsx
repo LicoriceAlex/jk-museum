@@ -76,13 +76,17 @@ const ExhibitionView: React.FC = () => {
               position: b.position ?? idx,
               content: b.content || '',
               settings: b.settings || {},
-              items: (b.items || []).map((it: any, i: number) => ({
-                id: it.id || `${b.id || idx}-item-${i}`,
-                text: it.text,
-                image_url: it.image_key
-                  ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${it.image_key}`
-                  : undefined,
-              })),
+              items: (b.items || []).map((it: any, i: number) => {
+                const exhibitIds = (b.settings?.exhibit_ids || []) as string[];
+                return {
+                  id: it.id || `${b.id || idx}-item-${i}`,
+                  text: it.text,
+                  image_url: it.image_key
+                    ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : ''}/api/v1/files/${it.image_key}`
+                    : undefined,
+                  exhibit_id: exhibitIds[i] || undefined,
+                };
+              }),
             })),
         };
 

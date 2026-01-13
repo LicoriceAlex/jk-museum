@@ -7,6 +7,7 @@ import QuoteBlock from '../../../ExhibitionConstructor/components/BlockComponent
 import ImageTextBlock from '../../../ExhibitionConstructor/components/BlockComponents/ImageTextBlock/ImageTextBlock';
 import ImagesGridBlock from '../../../ExhibitionConstructor/components/BlockComponents/ImagesGridBlock/ImagesGridBlock';
 import ImageBlock from '../../../ExhibitionConstructor/components/BlockComponents/ImageBlock/ImageBlock';
+import ExhibitBlock from '../../../ExhibitionConstructor/components/BlockComponents/ExhibitBlock/ExhibitBlock';
 import LayoutImgTextImgBlock from '../../../ExhibitionConstructor/components/BlockComponents/LayoutImgTextImgBlock/LayoutImgTextImgBlock';
 import LayoutTextImgTextBlock from '../../../ExhibitionConstructor/components/BlockComponents/LayoutTextImgTextBlock/LayoutTextImgTextBlock';
 import CarouselBlock from '../../../ExhibitionConstructor/components/BlockComponents/CarouselBlock/CarouselBlock';
@@ -25,6 +26,17 @@ const BlockView: React.FC<BlockViewProps> = ({
   fontSettings,
   colorSettings,
 }) => {
+  // Размеры блока из settings
+  const blockWidth = block.settings?.width;
+  const blockHeight = block.settings?.height;
+
+  // Стиль для обёртки блока с применением размеров
+  const blockWrapperStyle: React.CSSProperties = {
+    width: blockWidth ? `${blockWidth}px` : '100%',
+    height: blockHeight ? `${blockHeight}px` : 'auto',
+    minHeight: blockHeight ? `${blockHeight}px` : 'auto',
+  };
+
   // Стиль для обычного текста
   const textStyle: React.CSSProperties = {
     fontFamily: fontSettings.bodyFont || fontSettings.titleFont,
@@ -90,6 +102,18 @@ const BlockView: React.FC<BlockViewProps> = ({
         );
 
       case 'IMAGE':
+      case 'IMAGE_UPLOAD':
+        // Если у блока есть exhibit_id, отображаем как карточку экспоната
+        if (block.items?.[0]?.exhibit_id) {
+          return (
+            <ExhibitBlock
+              exhibitId={block.items[0].exhibit_id}
+              imageUrl={block.items[0].image_url}
+              readOnly={true}
+            />
+          );
+        }
+        // Иначе отображаем как обычное изображение
         return (
           <ImageBlock
             imageUrl={block.items?.[0]?.image_url}
@@ -184,7 +208,7 @@ const BlockView: React.FC<BlockViewProps> = ({
   })();
 
   return (
-    <div className={styles.blockViewWrapper}>
+    <div className={styles.blockViewWrapper} style={blockWrapperStyle}>
       {content}
     </div>
   );

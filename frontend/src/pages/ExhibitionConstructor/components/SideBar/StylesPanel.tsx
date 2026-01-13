@@ -18,7 +18,7 @@ type ColorRole = keyof ColorSettings;
 
 const DEFAULT_COLORS: ColorSettings = {
   primary: '#1F3B2C',
-  secondary: '#E8E5DE',
+  secondary: '#E8E5DE', // оставляем для обратной совместимости, но не показываем в UI
   background: '#FFFFFF',
   text: '#333333',
 };
@@ -30,7 +30,74 @@ const COLOR_ROLE_LABELS: Record<ColorRole, string> = {
   text: 'Текст',
 };
 
-const COLOR_ROLE_LIST: ColorRole[] = ['primary', 'secondary', 'background', 'text'];
+const COLOR_ROLE_LIST: ColorRole[] = ['primary', 'background', 'text'];
+
+// Предустановленные цветовые палитры
+const PRESET_PALETTES: Array<{ name: string; colors: ColorSettings }> = [
+  {
+    name: 'Андеграунд',
+    colors: {
+      primary: '#000000', // черный (заголовок)
+      secondary: '#8B2E3D', // оставляем для обратной совместимости
+      background: '#F5F1E9', // светло-кремовый (фон)
+      text: '#000000', // черный (текст)
+    },
+  },
+  {
+    name: 'Деловой мягкий',
+    colors: {
+      primary: '#5A6C7D', // темно-сине-серый (заголовок)
+      secondary: '#B89A6B', // оставляем для обратной совместимости
+      background: '#F5F1E9', // светло-кремовый (фон)
+      text: '#5A6C7D', // темно-сине-серый (текст)
+    },
+  },
+  {
+    name: 'Естественный',
+    colors: {
+      primary: '#5A6B3A', // темно-оливково-зеленый (заголовок)
+      secondary: '#8BA67A', // оставляем для обратной совместимости
+      background: '#F5F1E9', // светло-бежевый (фон)
+      text: '#5A6B3A', // темно-оливково-зеленый (текст)
+    },
+  },
+  {
+    name: 'Печать',
+    colors: {
+      primary: '#000000', // черный (заголовок)
+      secondary: '#5A5A5A', // оставляем для обратной совместимости
+      background: '#E8E8E8', // светло-серый (фон)
+      text: '#000000', // черный (текст)
+    },
+  },
+  {
+    name: 'Деловой строгий',
+    colors: {
+      primary: '#4A90E2', // средний синий (заголовок)
+      secondary: '#1E3A8A', // оставляем для обратной совместимости
+      background: '#F5F1E9', // светло-бежевый (фон)
+      text: '#1E3A8A', // темно-синий (текст)
+    },
+  },
+  {
+    name: 'Фигурный нейтральный',
+    colors: {
+      primary: '#4A5568', // темно-синий/индиго (заголовок)
+      secondary: '#000000', // оставляем для обратной совместимости
+      background: '#F5F1E9', // светло-бежевый (фон)
+      text: '#000000', // черный (текст)
+    },
+  },
+  {
+    name: 'Нежнейший',
+    colors: {
+      primary: '#F06292', // средний розовый (заголовок)
+      secondary: '#C5B3E3', // оставляем для обратной совместимости
+      background: '#FFF5F5', // очень светло-розовый (фон)
+      text: '#F06292', // средний розовый (текст)
+    },
+  },
+];
 
 const fontOptions = [
   'PT Serif',
@@ -63,18 +130,23 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
 
   const togglePanel = (panel: 'font' | 'color') => {
     setExpandedPanels((prev) => {
-      const next = { ...prev };
-      if (next[panel]) {
-        next[panel] = false;
-      } else {
-        (Object.keys(next) as Array<keyof typeof next>).forEach((k) => (next[k] = false));
-        next[panel] = true;
+      const newState = {
+        ...prev,
+        [panel]: !prev[panel],
+      };
+      
+      // Если закрываем панель шрифта, сбрасываем детали
+      if (panel === 'font' && prev[panel]) {
+        setShowFontDetails(false);
       }
-      return next;
+      
+      // Если закрываем панель цвета, закрываем модалку
+      if (panel === 'color' && prev[panel]) {
+        setModalMode(null);
+      }
+      
+      return newState;
     });
-
-    if (panel === 'font') setShowFontDetails(false);
-    if (panel !== 'color') setModalMode(null);
   };
 
   const openAddColor = () => {
@@ -381,6 +453,42 @@ const StylesPanel: React.FC<StylesPanelProps> = ({
         {expandedPanels.color && (
           <div className={styles.colorSection}>
             <div className={styles.sectionTitle}>ЦВЕТОВАЯ СХЕМА</div>
+
+            {/* Предустановленные палитры */}
+            <div className={styles.presetPalettesGrid}>
+              {PRESET_PALETTES.map((palette) => (
+                <button
+                  key={palette.name}
+                  type="button"
+                  className={styles.presetPalette}
+                  onClick={() => setColorSettings(palette.colors)}
+                  aria-label={`Применить палитру: ${palette.name}`}
+                >
+                  <div className={styles.presetPaletteName}>{palette.name}</div>
+                  <div className={styles.presetPaletteColors}>
+                    <div
+                      className={styles.presetPaletteColor}
+                      style={{ backgroundColor: palette.colors.background }}
+                      title="Фон"
+                    />
+                    <div
+                      className={styles.presetPaletteColor}
+                      style={{ backgroundColor: palette.colors.primary }}
+                      title="Заголовок"
+                    />
+                    <div
+                      className={styles.presetPaletteColor}
+                      style={{ backgroundColor: palette.colors.text }}
+                      title="Текст"
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.sectionTitle} style={{ marginTop: 20 }}>
+              ТЕКУЩАЯ ПАЛИТРА
+            </div>
 
             <div className={styles.colorSchemeRow}>
               {COLOR_ROLE_LIST.map((role) => (

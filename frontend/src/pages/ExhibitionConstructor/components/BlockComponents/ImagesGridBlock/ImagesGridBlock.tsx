@@ -31,8 +31,8 @@ const ImagesGridBlock: React.FC<ImagesGridBlockProps> = ({
             imageUrl={item.image_url}
             onUpload={readOnly ? undefined : (file) => onImageUpload?.(blockId, index, file)}
             onRemove={readOnly ? undefined : () => onImageRemove?.(blockId, index)}
-            containerStyle={{ height: 280 }}
-            imageStyle={{ height: '100%', objectFit: 'cover' }}
+            containerStyle={{ height: '14.58vw' }}
+            imageStyle={{ height: '100%', objectFit: 'contain' }}
             readOnly={readOnly}
           />
         </div>

@@ -35,8 +35,8 @@ const LayoutImgTextImgBlock: React.FC<Props> = ({
           imageUrl={leftUrl}
           onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 0, file)}
           onRemove={readOnly ? undefined : () => onImageRemove(blockId, 0)}
-          containerStyle={{ height: 280 }}
-          imageStyle={{ height: '100%', objectFit: 'cover' }}
+          containerStyle={{ height: '14.58vw' }}
+          imageStyle={{ height: '100%', objectFit: 'contain' }}
           readOnly={readOnly}
         />
       </div>
@@ -57,8 +57,8 @@ const LayoutImgTextImgBlock: React.FC<Props> = ({
           imageUrl={rightUrl}
           onUpload={readOnly ? undefined : (file) => onImageUpload(blockId, 1, file)}
           onRemove={readOnly ? undefined : () => onImageRemove(blockId, 1)}
-          containerStyle={{ height: 280 }}
-          imageStyle={{ height: '100%', objectFit: 'cover' }}
+          containerStyle={{ height: '14.58vw' }}
+          imageStyle={{ height: '100%', objectFit: 'contain' }}
           readOnly={readOnly}
         />
       </div>

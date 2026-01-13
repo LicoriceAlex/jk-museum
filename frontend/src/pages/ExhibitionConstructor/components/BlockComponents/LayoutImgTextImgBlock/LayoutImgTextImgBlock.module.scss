@@ -7,16 +7,16 @@
 
 .wrap {
   width: 100%;
-  max-width: 1221px;
-  margin: 0 auto 28px;
+  max-width: 63.7vw; // 1221px на 1920px
+  margin: 0 auto 1.46vw; // 28px на 1920px
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
+  gap: 1.25vw; // 24px на 1920px
   align-items: stretch;
 }
 
 .cell {
-  min-height: 280px;
+  min-height: 14.58vw; // 280px на 1920px
 }
 
 .textCell {
@@ -50,8 +50,10 @@
     align-items: center;
     overflow: hidden;
 
-    background-color: #DCD9D3;
-    border-radius: 4px;
+    background-color: transparent;
+    border-radius: 0;
+    border: none;
+    outline: none;
   }
 
   :global(.image-block-image) {
@@ -60,8 +62,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
+    object-fit: contain;
+    border-radius: 0;
+    border: none;
+    outline: none;
   }
 
   :global(.image-block-placeholder) {

@@ -1,5 +1,5 @@
 // components/Preview/ExhibitionPreview.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import BlockPreview from '../Preview/BlockPreview';
 import { ExhibitionBlock, ExhibitionData, FontSettings, ColorSettings, PageBackgroundSettings } from '../../types';
 import ExhibitionActions from './ExhibitionActions';	  
@@ -11,12 +11,15 @@ interface ExhibitionPreviewProps {
   updateBlock: (blockId: string, updatedFields: Partial<ExhibitionBlock>) => void;
   removeBlock: (blockId: string) => void;
   moveBlock: (blockId: string, direction: 'up' | 'down') => void;
+  moveBlockToPosition?: (blockId: string, newPosition: number) => void;
   fontSettings: FontSettings;
   colorSettings: ColorSettings;
   onImageUpload: (blockId: string, itemIndex: number, file: File) => void;
   onImageRemove: (blockId: string, itemIndex: number) => void;
   className?: string;
   pageBackground: PageBackgroundSettings;
+  onCreateNewExhibit?: () => void;
+  onSelectExistingExhibits?: () => void;
 }
 
 const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
@@ -24,15 +27,49 @@ const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
                                                                 updateBlock,
                                                                 removeBlock,
                                                                 moveBlock,
+                                                                moveBlockToPosition,
                                                                 fontSettings,
                                                                 colorSettings,
                                                                 pageBackground,
                                                                 onImageUpload,
                                                                 onImageRemove,
-                                                                className
+                                                                className,
+                                                                onCreateNewExhibit,
+                                                                onSelectExistingExhibits
                                                              }) => {
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
+  const [dragOverBlockId, setDragOverBlockId] = useState<string | null>(null);
   
   console.log('ExhibitionPreview: exhibitionData.blocks at render:', exhibitionData.blocks);
+
+  const handleDragStart = (e: React.DragEvent, blockId: string) => {
+    setDraggedBlockId(blockId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', blockId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, blockId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedBlockId && draggedBlockId !== blockId) {
+      setDragOverBlockId(blockId);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetBlockId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (draggedBlockId && draggedBlockId !== targetBlockId && moveBlockToPosition) {
+      const targetIndex = exhibitionData.blocks.findIndex(b => b.id === targetBlockId);
+      if (targetIndex !== -1) {
+        moveBlockToPosition(draggedBlockId, targetIndex);
+      }
+    }
+    
+    setDraggedBlockId(null);
+    setDragOverBlockId(null);
+  };
   
   return (
     <div
@@ -139,24 +176,31 @@ const ExhibitionPreview: React.FC<ExhibitionPreviewProps> = ({
         </div>
       </div>
       
-      {exhibitionData.blocks.map((block: ExhibitionBlock) => (
+      {exhibitionData.blocks.map((block: ExhibitionBlock, index: number) => (
         <BlockPreview
           key={block.id}
           block={block}
+          index={index}
           updateBlock={updateBlock}
           removeBlock={removeBlock}
           moveBlock={moveBlock}
+          moveBlockToPosition={moveBlockToPosition}
           onImageUpload={onImageUpload}
           onImageRemove={onImageRemove}
           fontSettings={fontSettings}
           colorSettings={colorSettings}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          isDragging={draggedBlockId === block.id}
+          dragOverBlockId={dragOverBlockId}
         />
       ))}
 
       {/* Полоса с кнопками — последний элемент, прижатый к низу flex-контейнера */}
       <ExhibitionActions
-        onCreateNewItem={() => console.log('Новый экспонат')}
-        onSelectExisting={() => console.log('Выбрать из существующих')}
+        onCreateNewItem={onCreateNewExhibit}
+        onSelectExisting={onSelectExistingExhibits}
         onCreateExhibition={() => console.log('Создать выставку')}
         onAddToDrafts={() => console.log('Добавить в черновики')}
       />

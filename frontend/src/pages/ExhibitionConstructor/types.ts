@@ -20,6 +20,7 @@ export interface BlockItem {
   image_url?: string;
   text?: string;
   type?: 'image' | 'text';
+  exhibit_id?: string;
 }
 
 export interface ExhibitionBlock {
@@ -34,6 +35,9 @@ export interface ExhibitionBlock {
     text_left_html?: string;
     text_right_html?: string;
     carousel_variant?: string;
+    fontSize?: number; // Размер шрифта для конкретного блока
+    width?: number; // Ширина блока в процентах или пикселях
+    height?: number; // Высота блока в пикселях
     [key: string]: any;
   };
   position: number;

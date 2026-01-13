@@ -1,20 +1,28 @@
 .imageBlock {
   width: 100%;
   height: 100%;
-  min-height: 280px;
+  min-height: 14.58vw; // 280px на 1920px
   display: block;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  border: none;
+  outline: none;
+  background: transparent;
 }
 
 .imageContainer {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 280px;
-  display: block;
+  min-height: 14.58vw; // 280px на 1920px
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  border: none;
+  outline: none;
+  background: transparent;
 }
 
 .uploadContainer {
@@ -35,8 +43,9 @@
 .image {
   width: 100%;
   height: 100%;
-  min-height: 280px;
-  object-fit: cover;
+  object-fit: contain !important;
+  border: none;
+  outline: none;
   border-radius: 0;
   display: block;
   box-sizing: border-box;

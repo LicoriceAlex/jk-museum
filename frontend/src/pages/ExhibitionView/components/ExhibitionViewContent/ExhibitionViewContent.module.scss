@@ -1,5 +1,5 @@
 .exhibitionView {
-  padding: 79px 40px 46px 171px;
+  padding: 4.11vw 2.08vw 2.4vw 8.91vw; // 79px 40px 46px 171px на 1920px
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -22,10 +22,10 @@
 
 .headerContent {
   display: flex;
-  gap: 80px;
+  gap: 4.17vw; // 80px на 1920px
   align-items: flex-start;
-  margin-bottom: 40px;
-  margin-top: 112px;
+  margin-bottom: 2.08vw; // 40px на 1920px
+  margin-top: 5.83vw; // 112px на 1920px
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -37,10 +37,12 @@
 }
 
 .coverImage {
-  width: 384px;
-  height: 256px;
-  object-fit: cover;
-  border-radius: 8px;
+  width: 20vw; // 384px на 1920px
+  height: 13.33vw; // 256px на 1920px
+  object-fit: contain;
+  border: none;
+  outline: none;
+  border-radius: 0;
   flex-shrink: 0;
 
   @media (max-width: 768px) {
@@ -57,7 +59,7 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 0;
-  max-width: 757px;
+  max-width: 39,42vw;
   font-family: 'Cormorant SC', serif;
 
   h1 {
@@ -99,6 +101,6 @@
 .blocksContainer {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 2.08vw; // 40px на 1920px
 }
 

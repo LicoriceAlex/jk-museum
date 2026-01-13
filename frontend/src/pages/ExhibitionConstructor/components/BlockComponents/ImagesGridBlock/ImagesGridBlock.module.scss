@@ -16,16 +16,16 @@
 
 .imageGridBlock {
   width: 100%;
-  max-width: 1221px;
-  margin: 0 auto 28px;
+  max-width: 63.7vw; // 1221px на 1920px
+  margin: 0 auto 1.46vw; // 28px на 1920px
 
   display: grid;
-  gap: 16px;
+  gap: 0.83vw; // 16px на 1920px
   align-items: stretch;
 }
 
 .cell {
-  height: 280px;
+  height: 14.58vw; // 280px на 1920px
 }
 
 .gridItem :global(.imageBlock) {
@@ -40,13 +40,18 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  border: none;
+  outline: none;
+  background: transparent;
 }
 
 .gridItem :global(.image) {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
+  border: none;
+  outline: none;
 }
 
 .gridItem :global(.uploadContainer) {

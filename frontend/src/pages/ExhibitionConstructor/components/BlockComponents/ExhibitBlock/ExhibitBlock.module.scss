@@ -1,0 +1,107 @@
+.card {
+  background-color: var(--color-exhibitspage2, #E9E8DF);
+  overflow: hidden;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  transition: transform 0.3s ease;
+  border-radius: 0;
+  margin: 0 auto;
+  padding: 0;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.imageContainer {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--color-exibitcard6, #1A2620);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  min-height: 100px;
+  background: rgba(233, 232, 223, 0.9);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.titleOverlay {
+  margin: 0;
+  color: var(--color-exibitcard6, #1A2620);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-main, 'Cormorant SC', serif);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0;
+}
+
+.viewButtonOverlay {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: var(--color-exibitcard6, #1A2620);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  font-family: var(--font-main, 'Cormorant SC', serif);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0;
+  text-transform: none;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background-color: var(--color-exibitcard6, #1A2620);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.loading,
+.error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 16px;
+}
+
+.error {
+  color: #d9534f;
+}

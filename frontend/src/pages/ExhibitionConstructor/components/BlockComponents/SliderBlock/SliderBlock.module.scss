@@ -33,12 +33,14 @@
     width: 100%;
     padding-bottom: 75%;
     position: relative;
-    background-color: #DCD9D3;
-    border-radius: 4px;
+    background-color: transparent;
+    border-radius: 0;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
+    outline: none;
   }
   :global(.image-block-image) {
     position: absolute;
@@ -46,8 +48,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
+    object-fit: contain;
+    border-radius: 0;
+    border: none;
+    outline: none;
   }
   :global(.image-block-placeholder) {
     color: #888;
