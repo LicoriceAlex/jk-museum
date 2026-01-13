@@ -3,10 +3,12 @@ from .exhibition import ExhibitionPublic, ExhibitionsPublic, ExhibitionsPublicWi
 from .exhibition_block import ExhibitionBlockPublic
 from .exhibition_block_item import ExhibitionBlockItem
 from .exhibition_exhibit import ExhibitionExhibit
+from .exhibition_moderation_comment import ExhibitionModerationComment
 from .exhibition_participant import ExhibitionParticipant
 from .exhibition_rating import ExhibitionRating
 from .exhibition_tag import ExhibitionTag
 from .organization import OrganizationPublic, OrganizationResponse, OrganizationsPublic
+from .organization_moderation_comment import OrganizationModerationComment
 from .tag import TagPublic
 from .template import Template
 from .user import UserPublic
@@ -26,6 +28,7 @@ __all__ = (
     "ExhibitionBlockItem",
     "ExhibitionBlockPublic",
     "ExhibitionExhibit",
+    "ExhibitionModerationComment",
     "ExhibitionParticipant",
     "ExhibitionPublic",
     "ExhibitionRating",
@@ -33,6 +36,7 @@ __all__ = (
     "ExhibitionsPublic",
     "ExhibitionsPublicWithPagination",
     "OrganizationMemberPublic",
+    "OrganizationModerationComment",
     "OrganizationPublic",
     "OrganizationResponse",
     "OrganizationsPublic",

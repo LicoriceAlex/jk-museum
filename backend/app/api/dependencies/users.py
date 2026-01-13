@@ -14,7 +14,7 @@ from backend.app.db.models.user import (
 )
 from backend.app.db.models.user_organization import (
     UserOrganization,
-    UserOrganizationEnum,
+    UserOrganizationRole,
 )
 from backend.app.db.schemas import TokenPayload
 from backend.app.utils.logger import log_method_call
@@ -63,8 +63,17 @@ async def get_user_or_404(session: SessionDep, user_id: uuid.UUID) -> User:
     return user
 
 
+@log_method_call
+async def get_current_admin(session: SessionDep, token: TokenDep) -> User:
+    current_user = await get_current_user(session, token)
+    if not current_user.role == RoleEnum.admin:
+        raise HTTPException(status_code=403, detail="The user doesn't have enough privileges")
+    return current_user
+
+
 UserOr404 = Annotated[User, Depends(get_user_or_404)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentAdmin = Annotated[User, Depends(get_current_admin)]
 OptionalCurrentUser = Annotated[User | None, Depends(get_optional_user)]
 
 
@@ -107,7 +116,7 @@ async def get_current_active_organization_member(
         user_id=current_user.id,
         organization_id=organization.id,
     )
-    if not user_org or user_org.status != UserOrganizationEnum.active:
+    if not user_org or user_org.status != UserOrganizationRole.active:
         raise HTTPException(
             status_code=403,
             detail="Only active organization members can add new members.",

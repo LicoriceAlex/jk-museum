@@ -1,14 +1,18 @@
 from datetime import datetime
-from enum import Enum
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variants
 from backend.app.db.models.exhibition_block_item import ExhibitionBlockItemCreate
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, SQLModel
 
+if TYPE_CHECKING:
+    pass
 
-class ExhibitionBlockTypeEnum(str, Enum):
+
+class ExhibitionBlockTypeEnum(Variants):
     HEADER = "HEADER"
     TEXT = "TEXT"
     QUOTE = "QUOTE"
@@ -20,10 +24,11 @@ class ExhibitionBlockTypeEnum(str, Enum):
     IMAGES_3 = "IMAGES_3"
     IMAGES_4 = "IMAGES_4"
     CAROUSEL = "CAROUSEL"
+    VK_VIDEO_LINK = "VK_VIDEO_LINK"
 
 
 class ExhibitionBlockBase(SQLModel):
-    type: ExhibitionBlockTypeEnum = Field(nullable=False)
+    type: str = Field(nullable=False)
     content: str | None = Field(nullable=True)
     settings: dict = Field(sa_column=Column(JSONB, nullable=False))
     position: int | None = Field(nullable=False)
@@ -49,6 +54,7 @@ class ExhibitionBlock(ExhibitionBlockBase, table=True):
 
 
 class ExhibitionBlockCreate(ExhibitionBlockBase):
+    type: ExhibitionBlockTypeEnum
     exhibition_id: UUID
 
 

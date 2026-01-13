@@ -1,8 +1,8 @@
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variants
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -10,13 +10,13 @@ if TYPE_CHECKING:
     from backend.app.db.models.admin_action import AdminAction
 
 
-class RoleEnum(str, Enum):
+class RoleEnum(Variants):
     user = "user"
     moderator = "moderator"
     admin = "admin"
 
 
-class StatusEnum(str, Enum):
+class StatusEnum(Variants):
     active = "active"
     blocked = "blocked"
 
@@ -64,6 +64,7 @@ class UserRegister(SQLModel):
 class UserUpdate(SQLModel):
     name: str | None
     surname: str | None
+    patronymic: str | None
     profile_image_key: str | None
     about_me: str | None
 

@@ -1,21 +1,22 @@
 import uuid
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 
+from backend.app.api.dependencies.common import Variants
 from sqlmodel import Field, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.user import UserPublic
 
 
-class UserOrganizationEnum(str, Enum):
-    active = "active"
-    left = "left"
+class UserOrganizationRole(Variants):
+    director = "director"
+    redactor = "redactor"
+    member = "member"
 
 
 class UserOrganizationBase(SQLModel):
-    status: UserOrganizationEnum = Field(nullable=False, default=UserOrganizationEnum.active)
+    role: str = Field(nullable=False, default=UserOrganizationRole.member)
     position: str | None = Field(default=None, nullable=True)
 
 
@@ -57,5 +58,5 @@ class OrganizationMembersPublic(SQLModel):
 
 
 class OrganizationMemberUpdate(SQLModel):
-    status: UserOrganizationEnum | None = None
+    status: UserOrganizationRole | None = None
     position: str | None = None

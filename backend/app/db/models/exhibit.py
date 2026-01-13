@@ -1,21 +1,21 @@
 import datetime
-from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from backend.app.api.dependencies.common import Variants
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from backend.app.db.models.organization import Organization
 
 
-class ExhibitType(str, Enum):
+class ExhibitType(Variants):
     painting = "картина"
     sculpture = "скульптура"
     other = "другое"
 
 
-class DateTemplate(str, Enum):
+class DateTemplate(Variants):
     year: str = "year"
     decade: str = "decade"
     century: str = "century"

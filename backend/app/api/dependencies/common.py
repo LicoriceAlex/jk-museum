@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from enum import Enum
 from typing import Annotated
 
 from backend.app.core.config import settings
@@ -22,6 +23,14 @@ async def get_db_session():
         yield session
     finally:
         await session.close()
+
+
+class Variants(str, Enum): ...
+
+
+class SortOrder(Variants):
+    ASC = "asc"
+    DESC = "desc"
 
 
 SessionDep = Annotated[AsyncSession, Depends(get_db)]
